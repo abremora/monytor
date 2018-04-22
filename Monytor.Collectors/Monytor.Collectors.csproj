@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RavenDB.Client" Version="3.5.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
+    <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

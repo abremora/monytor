@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor", "Monytor\Monytor.csproj", "{83816E74-BFB8-4270-A7E4-1E0D6EF08E11}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Collectors", "Monytor.Collectors\Monytor.Collectors.csproj", "{F1F0F5AB-59D4-417D-A9EE-E61993170DF5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Core", "Monytor.Core\Monytor.Core.csproj", "{0BC4D19F-D896-44B3-AF69-72F616045BC8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Domain", "Monytor.Domain\Monytor.Domain.csproj", "{6F5AC79B-3836-4B62-89DB-3460BE52B170}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Infrastructure", "Monytor.Infrastructure\Monytor.Infrastructure.csproj", "{038403C8-BEDA-4FA6-A60C-935ACE21C2BF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.RavenDb", "Monytor.RavenDb\Monytor.RavenDb.csproj", "{34A3345C-735C-41B6-802A-24D7D7C95B73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.WebApi", "Monytor.WebApi\Monytor.WebApi.csproj", "{9867CBAD-EC06-4F64-8290-088FE5426CBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83816E74-BFB8-4270-A7E4-1E0D6EF08E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83816E74-BFB8-4270-A7E4-1E0D6EF08E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83816E74-BFB8-4270-A7E4-1E0D6EF08E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83816E74-BFB8-4270-A7E4-1E0D6EF08E11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1F0F5AB-59D4-417D-A9EE-E61993170DF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1F0F5AB-59D4-417D-A9EE-E61993170DF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1F0F5AB-59D4-417D-A9EE-E61993170DF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1F0F5AB-59D4-417D-A9EE-E61993170DF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BC4D19F-D896-44B3-AF69-72F616045BC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BC4D19F-D896-44B3-AF69-72F616045BC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BC4D19F-D896-44B3-AF69-72F616045BC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BC4D19F-D896-44B3-AF69-72F616045BC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F5AC79B-3836-4B62-89DB-3460BE52B170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F5AC79B-3836-4B62-89DB-3460BE52B170}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F5AC79B-3836-4B62-89DB-3460BE52B170}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F5AC79B-3836-4B62-89DB-3460BE52B170}.Release|Any CPU.Build.0 = Release|Any CPU
+		{038403C8-BEDA-4FA6-A60C-935ACE21C2BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{038403C8-BEDA-4FA6-A60C-935ACE21C2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{038403C8-BEDA-4FA6-A60C-935ACE21C2BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{038403C8-BEDA-4FA6-A60C-935ACE21C2BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34A3345C-735C-41B6-802A-24D7D7C95B73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34A3345C-735C-41B6-802A-24D7D7C95B73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34A3345C-735C-41B6-802A-24D7D7C95B73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34A3345C-735C-41B6-802A-24D7D7C95B73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9867CBAD-EC06-4F64-8290-088FE5426CBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9867CBAD-EC06-4F64-8290-088FE5426CBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9867CBAD-EC06-4F64-8290-088FE5426CBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9867CBAD-EC06-4F64-8290-088FE5426CBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49D22672-1954-4D96-8502-45812129099F}
+	EndGlobalSection
+EndGlobal

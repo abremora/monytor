@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Authors>Alexander Bremora</Authors>
+    <Company>Alexander Bremora</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="CommandLineParser" Version="2.2.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Quartz" Version="3.0.4" />
+    <PackageReference Include="RavenDB.Client" Version="3.5.5" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Monytor.Collectors\Monytor.Collectors.csproj" />
+    <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
+    <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
+    <ProjectReference Include="..\Monytor.RavenDb\Monytor.RavenDb.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="collectorconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

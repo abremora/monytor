@@ -1,0 +1,62 @@
+{
+  "Collectors": [
+    {
+      "$type": "Monytor.Collectors.AllCollectionCollector, Monytor.Collectors",
+      "Source": {
+        "Url": "http://localhost:8080",
+        "Database": "Monytor"
+      },
+      "GroupName": "Collection",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3
+    },
+    {
+      "$type": "Monytor.Collectors.CollectionCollector, Monytor.Collectors",
+      "CollectionName": null,
+      "Source": {
+        "Url": "http://localhost:8080",
+        "Database": "Monytor"
+      },
+      "GroupName": "Collection",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3
+    },
+    {
+      "$type": "Monytor.Collectors.StartingWithCollector, Monytor.Collectors",
+      "StartingWith": null,
+      "Source": {
+        "Url": "http://localhost:8080",
+        "Database": "Monytor"
+      },
+      "GroupName": "StartingDocumentId",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3
+    },
+    {
+      "$type": "Monytor.Collectors.SystemInformationCollector, Monytor.Collectors",
+      "GroupName": "SysemInformation",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3
+    }
+  ]
+}
