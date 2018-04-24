@@ -7,7 +7,7 @@ namespace Monytor.Infrastructure {
                 Url = url,
                 DefaultDatabase = databaseName,
                 Conventions = new DocumentConvention() {
-                    FindClrTypeName = t => t.Name
+                    FindTypeTagName = t => t.Name                    
                 }
             };
 
