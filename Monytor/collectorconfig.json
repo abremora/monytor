@@ -6,7 +6,7 @@
         "Url": "http://localhost:8080",
         "Database": "Monytor"
       },
-      "GroupName": "Collection",
+      "GroupName": "AllCollection",
       "StartingTimeDelay": "00:00:00",
       "RandomTimeDelay": "00:00:00",
       "PollingInterval": "01:00:00",
@@ -17,7 +17,7 @@
     },
     {
       "$type": "Monytor.Collectors.CollectionCollector, Monytor.Collectors",
-      "CollectionName": null,
+      "CollectionName": "Serie",
       "Source": {
         "Url": "http://localhost:8080",
         "Database": "Monytor"
@@ -33,7 +33,7 @@
     },
     {
       "$type": "Monytor.Collectors.StartingWithCollector, Monytor.Collectors",
-      "StartingWith": null,
+      "StartingWith": "Serie",
       "Source": {
         "Url": "http://localhost:8080",
         "Database": "Monytor"
@@ -49,7 +49,7 @@
     },
     {
       "$type": "Monytor.Collectors.SystemInformationCollector, Monytor.Collectors",
-      "GroupName": "SysemInformation",
+      "GroupName": "SystemInformation",
       "StartingTimeDelay": "00:00:00",
       "RandomTimeDelay": "00:00:00",
       "PollingInterval": "01:00:00",
