@@ -10,7 +10,7 @@ namespace Monytor.Collectors {
         public override string GroupName { get; set; }
 
         public SystemInformationCollector() {
-            GroupName = "SysemInformation";
+            GroupName = "SystemInformation";
         }
 
         public override IEnumerable<Serie> Run() {
@@ -20,7 +20,7 @@ namespace Monytor.Collectors {
             var mem = processes.Sum(x => x.WorkingSet64);
 
             var serie = new Serie {
-                Id = Serie.CreateId("TotalMemory", "SystemInformation", currentTime),
+                Id = Serie.CreateId("TotalMemory", GroupName, currentTime),
                 Tag = "TotalMemory",
                 Group = GroupName,
                 Time = currentTime,

@@ -28,7 +28,7 @@ namespace Monytor.Collectors {
             }
 
             var serie = new Serie {
-                Id = Serie.CreateId(StartingWith, "StartingDocumentId", currentTime),
+                Id = Serie.CreateId(StartingWith, GroupName, currentTime),
                 Tag = StartingWith,
                 Group = GroupName,
                 Time = currentTime,

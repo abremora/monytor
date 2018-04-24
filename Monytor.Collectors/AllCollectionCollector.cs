@@ -30,7 +30,7 @@ namespace Monytor.Collectors {
 
             foreach (var result in results.Results["Tag"].Values) {
                 var serie = new Serie {
-                    Id = Serie.CreateId(result.Range, "Collection", currentTime),
+                    Id = Serie.CreateId(result.Range, GroupName, currentTime),
                     Tag = result.Range,
                     Group = GroupName,
                     Time = currentTime,

@@ -29,7 +29,7 @@ namespace Monytor.Collectors {
             }
 
             var serie = new Serie {
-                Id = Serie.CreateId(CollectionName, "Collection", currentTime),
+                Id = Serie.CreateId(CollectionName, GroupName, currentTime),
                 Tag = CollectionName,
                 Group = GroupName,
                 Time = currentTime,
