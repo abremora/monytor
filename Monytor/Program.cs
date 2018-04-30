@@ -9,6 +9,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
 using Monytor.Setup;
+using Monytor.Core.Configurations;
 
 namespace Monytor {
     class Program {
@@ -20,9 +21,10 @@ namespace Monytor {
             Logger.NewLine();
 
             try {
+                var config = new CollectorConfigCreator();
                 var parser = new Parser(x => x.CaseSensitive = false);
                 var options = parser.ParseArguments<ConsoleArguments>(args)
-                    .WithParsed(o => { if (o.CreateDefaultConfig) ConfigCreator.CreateDeaultCollectorConfig(); })                    ;
+                    .WithParsed(o => { if (o.CreateDefaultConfig) config.CreateDefaultConfig(); })                    ;
                 
                 if (options.Tag == ParserResultType.NotParsed) {
                     goto End;
@@ -35,10 +37,9 @@ namespace Monytor {
                 }
 
                 var container = Bootstrapper.Setup();
-                if (!ConfigCreator.HasConfig()) {                    
-                    Logger.Warning($"Config file '{ConfigCreator.ConfigFileName}' not found. Create default config.\nUse --help for further assistance.");
+                if (!config.HasConfig()) {                    
+                    Logger.Warning($"Config file '{config.ConfigFileName}' not found. Create default config.\nUse --help for further assistance.");
                 }
-                var collectorConfig = ConfigCreator.LoadCollectorConfig();    
 
                 RunAsync(container.Result).GetAwaiter().GetResult();         
             }
@@ -62,7 +63,7 @@ namespace Monytor {
                 scheduler.JobFactory = new AutofacJobFactory(container);
 
                 await scheduler.Start();
-                await ConfigScheduler(scheduler);
+                await ConfigScheduler(scheduler, container);
 
                 Logger.Info("Scheduler started");
                 Logger.Text("Press <ENTER> to close the application");
@@ -77,9 +78,8 @@ namespace Monytor {
             }
         }
 
-        private static async Task ConfigScheduler(IScheduler scheduler) {
-            var collectorConfig = ConfigCreator.LoadCollectorConfig();
-
+        private static async Task ConfigScheduler(IScheduler scheduler, IContainer container) {
+            var collectorConfig = container.Resolve<CollectorConfig>();
             foreach (var collector in collectorConfig.Collectors) {
                 Logger.Info("Register: " + collector.GetType().Name);
 

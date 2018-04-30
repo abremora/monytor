@@ -1,5 +1,4 @@
-﻿using Monytor.Collectors;
-using Monytor.Core.Configurations;
+﻿using Autofac;
 using Monytor.Infrastructure;
 using Newtonsoft.Json;
 using System;
@@ -9,50 +8,53 @@ using System.Linq;
 using System.Reflection;
 
 namespace Monytor.Setup {
-    internal class ConfigCreator {
-        public const string ConfigFileName = "collectorconfig.json";
 
-        public static void CreateDeaultCollectorConfig() {
-            IEnumerable<Collector> instances = LoadAllCollectors();
+    public abstract class ConfigCreator {
+        public abstract string ConfigFileName { get; }
 
-            var config = new CollectorConfig {
-                Collectors = instances.ToList()
-            };
-
-            var directoy = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            var collectorConfig = Path.Combine(directoy, ConfigFileName);
-
-            var content = JsonConvert.SerializeObject(config, JsonSerializerSettings());
-            File.WriteAllText(collectorConfig, content);
-            Logger.Info($"{ConfigFileName} was created.");
-        }
-
-        public static CollectorConfig LoadCollectorConfig() {
-            var collectorConfig = Path.Combine(".", ConfigFileName);
-            var content = File.ReadAllText(collectorConfig);
-            return JsonConvert.DeserializeObject<CollectorConfig>(content, JsonSerializerSettings());
-        }
-
-        public static bool HasConfig() {
+        public bool HasConfig() {
             return File.Exists(Path.Combine(".", ConfigFileName));
         }
 
-        private static JsonSerializerSettings JsonSerializerSettings() {
+        public void WriteConfig(object config, string configPath) {
+            var content = JsonConvert.SerializeObject(config, JsonSerializerSettings());
+            File.WriteAllText(configPath, content);
+            Logger.Info($"{ConfigFileName} was created.");
+        }
+
+        public string GetConfigPath() {
+            var directoy = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            return Path.Combine(directoy, ConfigFileName);
+        }
+
+        public static JsonSerializerSettings JsonSerializerSettings() {
             return new JsonSerializerSettings {
                 Formatting = Formatting.Indented,
                 TypeNameHandling = TypeNameHandling.Auto
             };
         }
 
-        private static IEnumerable<Collector> LoadAllCollectors() {
-            // Hack: Bind DLL with collectors
-            new SystemInformationCollector();
-
+         public static IEnumerable<T> LoadAll<T>()
+            where T : class {
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             var instances = loadedAssemblies.SelectMany(s => s.GetTypes())
-                .Where(p => typeof(Collector).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
-                .Select(x => Activator.CreateInstance(x) as Collector);
+                .Where(p => typeof(T).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)                
+                .Select(x => Activator.CreateInstance(x) as T);
+            return instances;
+        }
+
+        public static object LoadBehavior(Type behaviorType, Type instance) {
+            var constructedListType = behaviorType.MakeGenericType(instance);
+            return LoadAll(constructedListType).Single();
+        }
+
+        private static IEnumerable<object> LoadAll(Type type) {
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            var instances = loadedAssemblies.SelectMany(s => s.GetTypes())
+                .Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
+                .Select(x => Activator.CreateInstance(x));
             return instances;
         }
     }
