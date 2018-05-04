@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="collectorconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="collectorconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
@@ -18,16 +28,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Monytor.Collectors\Monytor.Collectors.csproj" />
     <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation\Monytor.Implementation.csproj" />
     <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
     <ProjectReference Include="..\Monytor.RavenDb\Monytor.RavenDb.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="collectorconfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

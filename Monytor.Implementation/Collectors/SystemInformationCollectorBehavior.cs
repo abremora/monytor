@@ -5,24 +5,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Monytor.Collectors {
-    public class SystemInformationCollector : Collector {
-        public override string GroupName { get; set; }
+namespace Monytor.Implementation.Collectors {
+    public class SystemInformationCollectorBehavior : CollectorBehavior<SystemInformationCollector> {
+        public override IEnumerable<Serie> Run(Collector collector) {
+            var collectorTyped = collector as SystemInformationCollector;
+            if (collectorTyped == null) yield return null;
 
-        public SystemInformationCollector() {
-            GroupName = "SystemInformation";
-        }
-
-        public override IEnumerable<Serie> Run() {
             var currentTime = DateTime.UtcNow;
 
             var processes = Process.GetProcesses();
             var mem = processes.Sum(x => x.WorkingSet64);
 
             var serie = new Serie {
-                Id = Serie.CreateId("TotalMemory", GroupName, currentTime),
+                Id = Serie.CreateId("TotalMemory", collectorTyped.GroupName, currentTime),
                 Tag = "TotalMemory",
-                Group = GroupName,
+                Group = collectorTyped.GroupName,
                 Time = currentTime,
                 Value = mem.ToString()
             };

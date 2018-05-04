@@ -1,8 +1,8 @@
-﻿using Monytor.Core.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Monytor.Core.Configurations {
+
     public abstract class Collector {
         public abstract string GroupName { get; set; }
         public TimeSpan StartingTimeDelay { get; set; }
@@ -12,7 +12,7 @@ namespace Monytor.Core.Configurations {
         public DateTimeOffset? StartingTime { get; set; }
         public DateTimeOffset? EndAt { get; set; }
         public int Priority { get; set; } = 3;
-        
-        public abstract IEnumerable<Serie> Run();
+
+        public List<Verifier> Verifiers { get; set; } = new List<Verifier>();
     }
 }

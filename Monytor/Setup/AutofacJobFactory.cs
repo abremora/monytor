@@ -14,8 +14,7 @@ namespace Monytor.Setup {
             return (IJob)_container.Resolve(bundle.JobDetail.JobType);
         }
 
-        public void ReturnJob(IJob job) {
-            
+        public void ReturnJob(IJob job) {            
         }
     }
 }

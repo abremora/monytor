@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Autofac;
 using System;
 using Monytor.Core.Configurations;
+using Monytor.Core.Repositories;
 
 namespace Monytor.Infrastructure {
     [DisallowConcurrentExecution]
@@ -26,11 +27,34 @@ namespace Monytor.Infrastructure {
                 Logger.Info($"Job: {collectorInstance.GetType().Name} | Next: {next} ({nextTimeSpan.ToString(@"hh\:mm\:ss")})");
 
                 using (var scope = _container.BeginLifetimeScope()) {
-                    var series = collectorInstance.Run();
+                    var collectorKey = collectorInstance.GetType();
+                    var collectorBehavior = _container.ResolveKeyed<CollectorBehaviorBase>(collectorKey);
+                    var series = collectorBehavior.Run(collectorInstance);
 
                     using (var bulk = _store.BulkInsert()) {
                         foreach (var serie in series) {
                             bulk.Store(serie);
+                        }
+                    }
+
+                    if (collectorInstance.Verifiers != null) {
+                        foreach (var serie in series) {
+                            foreach (var verifier in collectorInstance.Verifiers) {
+                                if (verifier == null) continue;
+
+                                var verifierKey = verifier.GetType();
+                                var verifierBehavior = _container.ResolveKeyed<VerifierBehaviorBase>(verifierKey);                                
+                                verifierBehavior.SerieRepository = _container.Resolve<ISerieRepository>();
+                                var result = verifierBehavior.Verify(verifier, serie);
+
+                                if (verifier.Notifications != null) {
+                                    foreach (var notificationId in verifier.Notifications) {
+                                        var notificationBehavior = _container.ResolveNamed<NotificationBehaviorBase>(notificationId);
+                                        var notification = _container.ResolveNamed<Notification>(notificationId);
+                                        notificationBehavior.Run(notification, result.NotificationShortDescription, result.NotificationLongDescription);
+                                    }
+                                }
+                            }
                         }
                     }
                 }

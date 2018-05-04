@@ -7,18 +7,15 @@ using Monytor.Core.Configurations;
 using Monytor.Core.Models;
 using Monytor.Infrastructure;
 
-namespace Monytor.Collectors {
-    public class AllCollectionCollector : Collector {
-        public DatabaseSource Source { get; set; } = new DatabaseSource();
-        public override string GroupName { get; set; }
+namespace Monytor.Implementation.Collectors {
+    public class AllCollectionCollectorBehavior : CollectorBehavior<AllCollectionCollector> {
 
-        public AllCollectionCollector() {
-            GroupName = "Collection";
-        }
+        public override IEnumerable<Serie> Run(Collector collector) {
+            var collectorTyped = collector as AllCollectionCollector;
+            if (collectorTyped == null) yield return null;
 
-        public override IEnumerable<Serie> Run() {
-                var currentTime = DateTime.UtcNow;
-            var source = RavenHelper.CreateStore(Source.Url, Source.Database);
+            var currentTime = DateTime.UtcNow;
+            var source = RavenHelper.CreateStore(collectorTyped.Source.Url, collectorTyped.Source.Database);
 
             FacetResults results;
             using (var session = source.OpenSession()) {
@@ -30,9 +27,9 @@ namespace Monytor.Collectors {
 
             foreach (var result in results.Results["Tag"].Values) {
                 var serie = new Serie {
-                    Id = Serie.CreateId(result.Range, GroupName, currentTime),
+                    Id = Serie.CreateId(result.Range, collectorTyped.GroupName, currentTime),
                     Tag = result.Range,
-                    Group = GroupName,
+                    Group = collectorTyped.GroupName,
                     Time = currentTime,
                     Value = result.Count.ToString()
                 };

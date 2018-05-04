@@ -10,28 +10,73 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Monytor.Infrastructure;
+using Monytor.Core.Repositories;
+using Monytor.Core.Configurations;
 
 namespace Monytor.Setup {
     internal class Bootstrapper {
         public async static Task<IContainer> Setup() {
             Logger.Info("Load config");
-            var config = LoadConfig();
+            var appConfig = LoadConfig();
             Logger.Info("Load database");
-            var documentStore = SetupDatabase(config);
+            var documentStore = SetupDatabase(appConfig);
 
             Logger.Info("Setup DI");
+            var builder = await SetupDi(appConfig, documentStore);
+            return builder.Build();
+        }
+
+        private static async Task<ContainerBuilder> SetupDi(IConfigurationRoot appConfig, DocumentStore documentStore) {
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(config)
+            builder.RegisterInstance(appConfig)
                    .As<IConfigurationRoot>();
             builder.RegisterInstance(documentStore)
                    .As<IDocumentStore>();
+            builder.RegisterType<SerieRepository>()
+                    .As<ISerieRepository>();
+
+            builder.RegisterType<CollectorConfig>();
+
+            var config = new CollectorConfigCreator();
+            var collectorConfig = config.LoadConfig();
+
+            builder.RegisterInstance(collectorConfig);
+
+            SetupCollectors(builder, collectorConfig);
+            SetupVerfiers(builder, collectorConfig);
+            SetupNotifications(builder, collectorConfig);
 
             var scheduler = await new StdSchedulerFactory().GetScheduler();
 
             builder.RegisterInstance(scheduler).As<IScheduler>();
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).Where(x => typeof(IJob).IsAssignableFrom(x));
+            return builder;
+        }
 
-            return builder.Build();
+        private static void SetupNotifications(ContainerBuilder builder, CollectorConfig collectorConfig) {
+            foreach (var notification in collectorConfig.Notifications) {
+                var b = ConfigCreator.LoadBehavior(typeof(NotificationBehavior<>), notification.GetType());
+                builder.RegisterInstance(b).Named(notification.Id, typeof(NotificationBehaviorBase));
+                builder.RegisterInstance(notification).Named(notification.Id, typeof(Notification));
+            }
+        }
+
+        private static void SetupVerfiers(ContainerBuilder builder, CollectorConfig collectorConfig) {
+            var distinctVerifiers = collectorConfig.Collectors
+                .SelectMany(x => x.Verifiers.Select(y => y.GetType())).Distinct();
+
+            foreach (var verifier in distinctVerifiers) {
+                var b = ConfigCreator.LoadBehavior(typeof(VerfiyBehavior<>), verifier);
+                builder.RegisterInstance(b).Keyed(verifier, typeof(VerifierBehaviorBase));
+            }
+        }
+
+        private static void SetupCollectors(ContainerBuilder builder, CollectorConfig collectorConfig) {
+            var distinctCollectors = collectorConfig.Collectors.Select(x => x.GetType()).Distinct();
+            foreach (var collector in distinctCollectors) {
+                var b = ConfigCreator.LoadBehavior(typeof(CollectorBehavior<>), collector);
+                builder.RegisterInstance(b).Keyed(collector, typeof(CollectorBehaviorBase));
+            }
         }
 
         private static DocumentStore SetupDatabase(IConfigurationRoot config) {
@@ -41,7 +86,6 @@ namespace Monytor.Setup {
             var db = RavenHelper.CreateStore(url, databaseName);
 
             new SerieIndex().SideBySideExecuteAsync(db);
-
             return db;
         }
 

@@ -32,13 +32,24 @@ namespace Monytor.RavenDb {
             }
         }
 
-        public IEnumerable<Serie> GetSeries(SerieQuery query) {
+        public IEnumerable<Serie> GetSeries(SerieQuery queryModel) {
             using (var session = _store.OpenSession()) {
-                return session.Query<Serie, SerieIndex>()
-                    .Where(x => x.Time >= query.Start
-                    && x.Time <= query.End
-                    && x.Tag == query.Tag
-                    && x.Group == query.Group);
+                var query = session.Query<Serie, SerieIndex>()
+                    .Where(x => x.Time >= queryModel.Start
+                    && x.Time <= queryModel.End
+                    && x.Tag == queryModel.Tag
+                    && x.Group == queryModel.Group);                   
+
+                if(queryModel.OrderBy == Ordering.Ascending) {
+                    query.OrderBy(x => x.Time);
+                }
+                else {
+                    query.OrderByDescending(x => x.Time);
+                }
+
+                query.Take(queryModel.MaxValues);
+
+                return query;
             }
         }
     }
