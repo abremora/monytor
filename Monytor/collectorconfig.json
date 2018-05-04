@@ -73,7 +73,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.StartingWithCollector, Monytor.Implementation",
-      "StartingWith": null,
+      "StartingWith": "Serie",
       "Source": {
         "Url": "http://localhost:8080",
         "Database": "Monytor"
