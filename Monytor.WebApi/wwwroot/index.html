@@ -7,13 +7,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>
-    <title>Job Monitor</title>
+    <title>Monytor Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <style>
-        body {
-            margin: 15px;
-        }
-
         canvas {
             -moz-user-select: none;
             -webkit-user-select: none;
@@ -40,56 +36,78 @@
             display: inline-block;
         }
     </style>
+    <script id="tutorial-template" type="text/template">
+        <div class="tutorial">
+            <h1 class="tutorial-heading">{{title}}<h1>
+        </div>
+    </script>
 </head>
 <body>
-    <h1>Collector Dashboard</h1>
-    <div class="container">
-        <div id="buttonNav">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
-                <div><span class="fas fa-plus"></span> Add Collector</div>
-            </button>
-        </div>
-        <canvas id="myChart"></canvas>
-    </div>
-    <div class="modal" tabindex="-1" role="dialog" id="addModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Select collector</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+    <nav class="navbar navbar-light sticky-top bg-light flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Monytor Dashboard</a>
+        <div class="w-100"></div>
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap m-1">
+                <button type="button" class="btn btn-primary" id="addView">
+                    <div><span class="fas fa-plus"></span> Add view</div>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+                <div id="chartArea">
+                    <div id="buttonNav">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
+                            <div><span class="fas fa-plus"></span> Add Collector</div>
+                        </button>
+                    </div>
+                    <canvas id="myChart" width="900" height="380"></canvas>
                 </div>
-                <div class="form-group">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="url">Url</label>
-                            <input type="text" name="url" id="url" value="http://localhost:51736/api/serie" class="form-control" />
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="start">Start</label>
-                                    <input type="date" name="start" id="start" class="form-control" />
-                                </div>
-                                <div class="col">
-                                    <label for="end">End</label>
-                                    <input type="date" name="end" id="end" class="form-control" />
+            </main>
+        </div>
+        <div class="modal" tabindex="-1" role="dialog" id="addModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Select collector</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="url">Url</label>
+                                <input type="text" name="url" id="url" value="http://localhost:51736/api/serie" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="start">Start</label>
+                                        <input type="date" name="start" id="start" class="form-control" />
+                                    </div>
+                                    <div class="col">
+                                        <label for="end">End</label>
+                                        <input type="date" name="end" id="end" class="form-control" />
+                                    </div>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label for="group">Group</label>
+                                <select class="form-control" id="group"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tag">Tag</label>
+                                <select class="form-control" id="tag"></select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="group">Group</label>
-                            <select class="form-control" id="group"></select>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="add">Add</button>
                         </div>
-                        <div class="form-group">
-                            <label for="tag">Tag</label>
-                            <select class="form-control" id="tag"></select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="add">Add</button>
                     </div>
                 </div>
             </div>

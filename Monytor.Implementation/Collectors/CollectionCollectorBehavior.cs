@@ -19,7 +19,7 @@ namespace Monytor.Implementation.Collectors {
             using (var session = store.OpenSession()) {
                 result = session.Advanced
                     .DocumentQuery<RavenJObject>("Raven/DocumentsByEntityName")
-                    .WhereStartsWith("Tag", collectorTyped.CollectionName)
+                    .WhereEquals("Tag", collectorTyped.CollectionName)
                     .Count();
             }
 

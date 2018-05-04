@@ -3,43 +3,11 @@ var apiUrl = "http://localhost:51736/api/serie";
 
 $(document).ready(function () {
     var today = moment();
-    $("#start").val(moment(today).subtract(7, 'days').format('YYYY-MM-DD'));
+    $("#start").val(moment(today).subtract(1, 'days').format('YYYY-MM-DD'));
     $("#end").val(today.format('YYYY-MM-DD'));
 
-    var ctx = document.getElementById("myChart").getContext('2d');
-    window.myChart = new Chart(ctx, {
-        type: 'line',
-        options: {
-            responsive: true,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        steps: 5,
-                        stepValue: 5
-                    }
-                }],
-                xAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true
-                    },
-                    type: 'time',
-                    time: {
-                        unit: 'day',
-                        distribution: 'linear'                        
-                    },
-                    tooltips: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    hover: {
-                        mode: 'nearest',
-                        intersect: true
-                    },
-                }]
-            }
-        }
-    });
+    var canvas = document.getElementById("myChart");
+    window.myChart = createChart(canvas);
 
     $.ajax({
         url: apiUrl
@@ -66,6 +34,43 @@ $("#group").on('change', function () {
     setTagsFromArray(tagIndex);
 })
 
+var createChart = function (canvas) {
+    var ctx = canvas.getContext('2d');
+    return new Chart(ctx, {
+        type: 'line',
+        options: {
+            responsive: true,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        steps: 5,
+                        stepValue: 5
+                    }
+                }],
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true
+                    },
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        distribution: 'linear'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                }]
+            }
+        }
+    });
+};
+
 var randomColorGenerator = function () {
     return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
 };
@@ -80,6 +85,12 @@ var setTagsFromArray = function (tagIndex) {
         }));
     }
 };
+
+$("#addView").click(function () {
+    var newCanvas = $('<canvas/>', { id: 'mycanvas', height: 200, width: 150 })[0];
+    $("#chartArea").append(newCanvas);
+    var newChart = createChart(newCanvas,);   
+});
 
 $("#add").click(function () {
     var group = $("#group option:selected").text();
