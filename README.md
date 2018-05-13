@@ -9,6 +9,7 @@ Monytor runs "Collectors" which are responsible for collecting data. The result 
 A dashboard visualizes all collected data. Therefore, Monytor provides a Web API to access all time series.
 
 ![Monytor Dashboard](/images/monytor_dashboard.png?raw=true)
+![Monytor Collector Console](/images/monytor_console.png?raw=true)
 
 ## Requirements
 - .NET Core 2.0
