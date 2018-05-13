@@ -10,6 +10,10 @@ A dashboard visualizes all collected data. Therefore, Monytor provides a Web API
 
 ![Monytor Dashboard](/images/monytor_dashboard.png?raw=true)
 
+## Requirements
+- .NET Core 2.0
+- RavenDB Server 3.5 ([Link](https://ravendb.net/))
+
 ## Build
 
 Build Monytor
