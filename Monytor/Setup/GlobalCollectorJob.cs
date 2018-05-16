@@ -49,6 +49,10 @@ namespace Monytor.Infrastructure {
 
                                 if (verifier.Notifications != null) {
                                     foreach (var notificationId in verifier.Notifications) {
+                                        if (!_container.IsRegisteredWithName<NotificationBehaviorBase>(notificationId)) {
+                                            Logger.Error($"'{collectorKey}/{verifierKey}/{notificationId}' not found.");
+                                            continue;
+                                        }
                                         var notificationBehavior = _container.ResolveNamed<NotificationBehaviorBase>(notificationId);
                                         var notification = _container.ResolveNamed<Notification>(notificationId);
                                         notificationBehavior.Run(notification, result.NotificationShortDescription, result.NotificationLongDescription);

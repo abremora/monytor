@@ -21,6 +21,12 @@ namespace Monytor.Infrastructure {
             ColorLog(ex.ToString(), ConsoleColor.Red);
         }
 
+        public static void Error(string message) {
+            if (string.IsNullOrWhiteSpace(message)) return;
+
+            ColorLog(message, ConsoleColor.Red);
+        }
+
         public static void ColorLog(string message, ConsoleColor color) {
             var temp = Console.ForegroundColor;
             Console.ForegroundColor = color;
