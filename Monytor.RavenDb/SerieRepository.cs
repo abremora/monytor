@@ -38,9 +38,9 @@ namespace Monytor.RavenDb {
                     .Where(x => x.Time >= queryModel.Start
                     && x.Time <= queryModel.End
                     && x.Tag == queryModel.Tag
-                    && x.Group == queryModel.Group);                   
+                    && x.Group == queryModel.Group);
 
-                if(queryModel.OrderBy == Ordering.Ascending) {
+                if (queryModel.OrderBy == Ordering.Ascending) {
                     query.OrderBy(x => x.Time);
                 }
                 else {
@@ -50,6 +50,13 @@ namespace Monytor.RavenDb {
                 query.Take(queryModel.MaxValues);
 
                 return query;
+            }
+        }
+
+        public void Store(Serie serie) {
+            using (var session = _store.OpenSession()) {
+                session.Store(serie);
+                session.SaveChanges();
             }
         }
     }

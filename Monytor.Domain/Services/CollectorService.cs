@@ -22,5 +22,9 @@ namespace Monytor.Domain.Services {
         public IEnumerable<Serie> GetSeries(SerieQuery query) {
             return _repository.GetSeries(query);
         }
+
+        public void Set(Serie serie) {
+            _repository.Store(serie);
+        }
     }
 }

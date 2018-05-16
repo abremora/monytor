@@ -7,6 +7,7 @@ namespace Monytor.Core.Repositories {
         Dictionary<string, IEnumerable<string>> GetGroupValueSummary();
         Serie GetSerie(int id);
         IEnumerable<Serie> GetSeries(SerieQuery query);
+        void Store(Serie serie);
     }
 
     public interface IUnitOfWork : IDisposable {

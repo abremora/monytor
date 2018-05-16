@@ -6,5 +6,6 @@ namespace Monytor.Core.Services {
         IEnumerable<Serie> GetSeries(SerieQuery query);
         Serie GetSerie(int id);
         Dictionary<string, IEnumerable<string>> GetGroupValueSummary();
+        void Set(Serie serie);
     }
 }

@@ -14,15 +14,12 @@ namespace Monytor.WebApi.Controllers {
         public SerieController(ICollectorService collectorService) {
             _collectorService = collectorService;
         }
-   
-        // GET api/values/5
+
         [HttpGet("{id}")]
-        public Serie Get(int id)
-        {
+        public Serie Get(int id) {
             return _collectorService.GetSerie(id);
         }
 
-        // GET api/user/firstname/lastname/address
         [HttpGet("{start}/{end}/{group}/{tag}")]
         public IEnumerable<Serie> Get(DateTime start, DateTime end, string group, string tag) {
             var query = new SerieQuery {
@@ -37,6 +34,11 @@ namespace Monytor.WebApi.Controllers {
         [HttpGet]
         public List<KeyValuePair<string, IEnumerable<string>>> GroupValueSummary() {
             return _collectorService.GetGroupValueSummary().ToList();
+        }
+
+        [HttpPost]
+        public void Set([FromBody]Serie serie) {
+            _collectorService.Set(serie);
         }
     }
 }
