@@ -1,19 +1,19 @@
 {
   "Notifications": [
-    {
-      "$type": "Monytor.Implementation.Notifications.EmailNotification, Monytor.Implementation",
-      "Id": "Monytor.EmailNotification",
-      "Smtp": "smtp.example.com",
-      "Port": "587",
-      "UseDefaultCredentials": false,
-      "User": "YOUR_USERNAME",
-      "Password": "YOUR_PASSWORD",
-      "To": [
-        "admin@example.com"
-      ],
-      "From": "alert@example.com",
-      "SubjectPrefix": "ALERT: "
-    }
+    //{
+    //  "$type": "Monytor.Implementation.Notifications.EmailNotification, Monytor.Implementation",
+    //  "Id": "Monytor.EmailNotification",
+    //  "Smtp": "smtp.example.com",
+    //  "Port": "587",
+    //  "UseDefaultCredentials": false,
+    //  "User": "YOUR_USERNAME",
+    //  "Password": "YOUR_PASSWORD",
+    //  "To": [
+    //    "admin@example.com"
+    //  ],
+    //  "From": "alert@example.com",
+    //  "SubjectPrefix": "ALERT: "
+    //}
   ],
   "Collectors": [
     {
