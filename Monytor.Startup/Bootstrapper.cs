@@ -13,8 +13,8 @@ using Monytor.Infrastructure;
 using Monytor.Core.Repositories;
 using Monytor.Core.Configurations;
 
-namespace Monytor.Setup {
-    internal class Bootstrapper {
+namespace Monytor.Startup {
+    public class Bootstrapper {
         public async static Task<IContainer> Setup() {
             Logger.Info("Load config");
             var appConfig = LoadConfig();
@@ -36,6 +36,8 @@ namespace Monytor.Setup {
                     .As<ISerieRepository>();
 
             builder.RegisterType<CollectorConfig>();
+            builder.RegisterType<SchedulerStartup>();
+            builder.RegisterType<AutofacJobFactory>().SingleInstance();
 
             var config = new CollectorConfigCreator();
             var collectorConfig = config.LoadConfig();

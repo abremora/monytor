@@ -1,15 +1,13 @@
 ﻿using Monytor.Core.Configurations;
-using Monytor.Implementation.Collectors;
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
 
-namespace Monytor.Setup {
-    internal class CollectorConfigCreator : ConfigCreator {
+namespace Monytor.Startup {
+    public class CollectorConfigCreator : ConfigCreator {
         public override string ConfigFileName => "collectorconfig.json";
 
         public void CreateDefaultConfig() {
-            new SystemInformationCollector();
             var instances = LoadAll<Collector>().ToList();
             var verifiers = LoadAll<Verifier>().ToList();
             var notifications = LoadAll<Notification>().ToList();

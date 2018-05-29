@@ -5,8 +5,9 @@ using Autofac;
 using System;
 using Monytor.Core.Configurations;
 using Monytor.Core.Repositories;
+using Monytor.Infrastructure;
 
-namespace Monytor.Infrastructure {
+namespace Monytor.Startup {
     [DisallowConcurrentExecution]
     public class GlobalCollectorJob : IJob {
         private readonly IDocumentStore _store;

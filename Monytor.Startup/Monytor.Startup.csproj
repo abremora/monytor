@@ -1,21 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Authors>Alexander Bremora</Authors>
-    <Company>Alexander Bremora</Company>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="collectorconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="collectorconfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
@@ -29,16 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
-    <ProjectReference Include="..\Monytor.Implementation\Monytor.Implementation.csproj" />
     <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
     <ProjectReference Include="..\Monytor.RavenDb\Monytor.RavenDb.csproj" />
-    <ProjectReference Include="..\Monytor.Startup\Monytor.Startup.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
+  
 </Project>

@@ -1,0 +1,124 @@
+{
+  "Notifications": [
+    //{
+    //  "$type": "Monytor.Implementation.Notifications.EmailNotification, Monytor.Implementation",
+    //  "Id": "Monytor.EmailNotification",
+    //  "Smtp": "smtp.example.com",
+    //  "Port": "587",
+    //  "UseDefaultCredentials": false,
+    //  "User": "YOUR_USERNAME",
+    //  "Password": "YOUR_PASSWORD",
+    //  "To": [
+    //    "admin@example.com"
+    //  ],
+    //  "From": "alert@example.com",
+    //  "SubjectPrefix": "ALERT: "
+    //}
+  ],
+  "Collectors": [
+    {
+      "$type": "Monytor.NetFramework.Implementation.PerformanceCounterCollector, Monytor.NetFramework.Implementation",
+      "GroupName": "PerformanceCounterCollector",
+      "Category": "Prozessorinformationen",
+      "Name": "Prozessorzeit (%)",
+      "Instance": "_Total",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": [
+        {
+          "$type": "Monytor.Implementation.Verifiers.SerieChangeVerifier, Monytor.Implementation",
+          "Group": null,
+          "Tag": null,
+          "TimeInterval": "00:00:00",
+          "Notifications": [
+            "Monytor.EmailNotification"
+          ]
+        }
+      ]
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.CollectionCollector, Monytor.Implementation",
+      "CollectionName": "Serie",
+      "Source": {
+        "Url": "http://localhost:8080",
+        "Database": "Monytor"
+      },
+      "GroupName": "Collection",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": [
+        {
+          "$type": "Monytor.Implementation.Verifiers.SerieChangeVerifier, Monytor.Implementation",
+          "Group": "Collection",
+          "Tag": "Serie",
+          "TimeInterval": "00:00:00",
+          "SerieRepository": null,
+          "Notifications": [
+            "Monytor.EmailNotification"
+          ]
+        }
+      ]
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.StartingWithCollector, Monytor.Implementation",
+      "StartingWith": "Serie",
+      "Source": {
+        "Url": "http://localhost:8080",
+        "Database": "Monytor"
+      },
+      "GroupName": "StartingDocumentId",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": [
+        {
+          "$type": "Monytor.Implementation.Verifiers.SerieChangeVerifier, Monytor.Implementation",
+          "Group": "Collection",
+          "Tag": "Serie",
+          "TimeInterval": "00:00:00",
+          "SerieRepository": null,
+          "Notifications": [
+            "Monytor.EmailNotification"
+          ]
+        }
+      ]
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.SystemInformationCollector, Monytor.Implementation",
+      "GroupName": "SystemInformation",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": [
+        {
+          "$type": "Monytor.Implementation.Verifiers.SerieChangeVerifier, Monytor.Implementation",
+          "Group": "Collection",
+          "Tag": "Serie",
+          "TimeInterval": "00:00:00",
+          "SerieRepository": null,
+          "Notifications": [
+            "Monytor.EmailNotification"
+          ]
+        }
+      ]
+    }
+  ]
+}
