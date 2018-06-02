@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Monytor.Core.Configurations;
+using System.Linq;
 
 namespace Monytor.Startup {
     public class SchedulerStartup : IDisposable {
@@ -16,43 +17,51 @@ namespace Monytor.Startup {
         }
 
         public async Task ConfigScheduler(CollectorConfig collectorConfig) {
-            foreach (var collector in collectorConfig.Collectors) {
-                Logger.Info("Register: " + collector.GetType().Name);
+            var collectorGroups = collectorConfig.Collectors
+                .GroupBy(x => x.GetType());
 
-                var dic = new Dictionary<string, object> {
-                    { "CollectorType", collector }
-                };
-                IJobDetail job = JobBuilder.Create<GlobalCollectorJob>()
-                  .WithIdentity(collector.GetType().Name, "CollectorGroup")
-                  .SetJobData(new JobDataMap(dic as IDictionary<string, object>))
-                  .Build();
+            foreach (var collectorGroup in collectorGroups) {
+                var counter = 0;
+                foreach (var collector in collectorGroup) {
+                    var identityName = $"{collector.GetType().Name}({counter})";
+                    counter++;
+                    Logger.Info("Register: " + identityName);
 
-                var triggerBuilder = TriggerBuilder.Create()
-                    .WithIdentity(collector.GetType().Name, "group")
-                    .WithPriority(collector.Priority)
-                    .EndAt(collector.EndAt);
+                    var dic = new Dictionary<string, object> {
+                    { "CollectorType", collector }};
 
-                if (collector.StartingTime.HasValue || collector.RandomTimeDelay.Ticks > 0) {
-                    var startTime = DateTimeOffset.UtcNow;
-                    if (collector.StartingTime.HasValue) {
-                        startTime = collector.StartingTime.Value;
+                    IJobDetail job = JobBuilder.Create<GlobalCollectorJob>()
+                      .WithIdentity(identityName, "CollectorGroup")
+                      .SetJobData(new JobDataMap(dic as IDictionary<string, object>))
+                      .Build();
+
+                    var triggerBuilder = TriggerBuilder.Create()
+                        .WithIdentity(identityName, "group")
+                        .WithPriority(collector.Priority)
+                        .EndAt(collector.EndAt);
+
+                    if (collector.StartingTime.HasValue || collector.RandomTimeDelay.Ticks > 0) {
+                        var startTime = DateTimeOffset.UtcNow;
+                        if (collector.StartingTime.HasValue) {
+                            startTime = collector.StartingTime.Value;
+                        }
+                        startTime = startTime.Add(collector.RandomTimeDelay);
+                        triggerBuilder.StartAt(startTime);
                     }
-                    startTime = startTime.Add(collector.RandomTimeDelay);
-                    triggerBuilder.StartAt(startTime);
+                    else {
+                        triggerBuilder.StartNow();
+                    }
+
+                    var trigger = triggerBuilder.WithSimpleSchedule(x => x
+                        .WithInterval(collector.PollingInterval)
+                        .RepeatForever())
+                    .Build();
+
+                    await _scheduler.ScheduleJob(job, trigger);
+                    _scheduler.JobFactory = _factory;
+
+                    await _scheduler.Start();
                 }
-                else {
-                    triggerBuilder.StartNow();
-                }
-
-                var trigger = triggerBuilder.WithSimpleSchedule(x => x
-                    .WithInterval(collector.PollingInterval)
-                    .RepeatForever())
-                .Build();
-
-                await _scheduler.ScheduleJob(job, trigger);
-                _scheduler.JobFactory = _factory;
-
-                await _scheduler.Start();
             }
         }
 
