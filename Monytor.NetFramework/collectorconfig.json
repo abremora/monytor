@@ -29,17 +29,7 @@
       "StartingTime": null,
       "EndAt": null,
       "Priority": 3,
-      "Verifiers": [
-        {
-          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
-          "Group": null,
-          "Tag": null,
-          "TimeInterval": "00:00:00",
-          "Notifications": [
-            "Monytor.EmailNotification"
-          ]
-        }
-      ]
+      "Verifiers": []
     },
     {
       "$type": "Monytor.Implementation.Collectors.CollectionCollector, Monytor.Implementation",
@@ -70,7 +60,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.StartingWithCollector, Monytor.Implementation",
-      "StartingWith": "Serie",
+      "StartingWith": "Series",
       "Source": {
         "Url": "http://localhost:8080",
         "Database": "Monytor"
@@ -83,17 +73,7 @@
       "StartingTime": null,
       "EndAt": null,
       "Priority": 3,
-      "Verifiers": [
-        {
-          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
-          "Group": "Collection",
-          "Tag": "Series",
-          "TimeInterval": "00:00:00",
-          "Notifications": [
-            "Monytor.EmailNotification"
-          ]
-        }
-      ]
+      "Verifiers": []
     },
     {
       "$type": "Monytor.Implementation.Collectors.SystemInformationCollector, Monytor.Implementation",
@@ -105,17 +85,7 @@
       "StartingTime": null,
       "EndAt": null,
       "Priority": 3,
-      "Verifiers": [
-        {
-          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
-          "Group": "Collection",
-          "Tag": "Series",
-          "TimeInterval": "00:00:00",          
-          "Notifications": [
-            "Monytor.EmailNotification"
-          ]
-        }
-      ]
+      "Verifiers": []
     }
   ]
 }

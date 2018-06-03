@@ -30,17 +30,7 @@
       "StartingTime": null,
       "EndAt": null,
       "Priority": 3,
-      "Verifiers": [
-        {
-          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
-          "Group": "Collection",
-          "Tag": "Series",
-          "TimeInterval": "01:00:00",        
-          "Notifications": [
-            "Monytor.EmailNotification"
-          ]
-        }
-      ]
+      "Verifiers": []
     },
     {
       "$type": "Monytor.Implementation.Collectors.CollectionCollector, Monytor.Implementation",
@@ -84,17 +74,7 @@
       "StartingTime": null,
       "EndAt": null,
       "Priority": 3,
-      "Verifiers": [
-        {
-          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
-          "Group": "Collection",
-          "Tag": "Series",
-          "TimeInterval": "00:00:00",
-          "Notifications": [
-            "Monytor.EmailNotification"
-          ]
-        }
-      ]
+      "Verifiers": []
     },
     {
       "$type": "Monytor.Implementation.Collectors.SystemInformationCollector, Monytor.Implementation",
@@ -106,17 +86,7 @@
       "StartingTime": null,
       "EndAt": null,
       "Priority": 3,
-      "Verifiers": [
-        {
-          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
-          "Group": "Collection",
-          "Tag": "Series",
-          "TimeInterval": "00:00:00",
-          "Notifications": [
-            "Monytor.EmailNotification"
-          ]
-        }
-      ]
+      "Verifiers": []
     }
   ]
 }
