@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Monytor.RavenDb
 {
-    public class SerieIndex : AbstractIndexCreationTask<Serie> {
+    public class SeriesIndex : AbstractIndexCreationTask<Series> {
         public class Result {
             public string Tag { get; set; }
             public string Group { get; set; }
@@ -13,7 +13,7 @@ namespace Monytor.RavenDb
             public string Value { get; set; }
         }
 
-        public SerieIndex() {
+        public SeriesIndex() {
             Map = series => from serie in series
                             select new Result {
                                 Tag = serie.Tag,

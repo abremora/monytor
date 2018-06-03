@@ -4,29 +4,29 @@ using System;
 using System.Linq;
 
 namespace Monytor.Implementation.Verifiers {
-    public class SerieChangeVerifierBehavior : VerfiyBehavior<SerieChangeVerifier> {
-        public override VerifyResult Verify(Verifier verifier, Serie serie) {
-            var typedVerifier = verifier as SerieChangeVerifier;
+    public class SerieChangeVerifierBehavior : VerfiyBehavior<SeriesChangeVerifier> {
+        public override VerifyResult Verify(Verifier verifier, Series series) {
+            var typedVerifier = verifier as SeriesChangeVerifier;
             if(typedVerifier == null)
                 return new VerifyResult { Successful = false };
             if (verifier.Notifications == null || !verifier.Notifications.Any())
                 return new VerifyResult { Successful = false };
 
-            var query = new SerieQuery {
+            var query = new SeriesQuery {
                 Group = typedVerifier.Group,
                 Tag = typedVerifier.Tag,
-                End = serie.Time.Subtract(typedVerifier.TimeInterval),
+                End = series.Time.Subtract(typedVerifier.TimeInterval),
                 Start = DateTime.MinValue,
                 OrderBy = Ordering.Descanding,
                 MaxValues = 1
             };
-            var serieResult = SerieRepository.GetSeries(query)
+            var serieResult = SeriesRepository.GetSeries(query)
                 .FirstOrDefault();
 
             return new VerifyResult {
-                Successful = serie.Value == serie.Value,
+                Successful = series.Value == series.Value,
                 NotificationShortDescription = $"Series '{typedVerifier.Group}:{typedVerifier.Tag}' unchange",
-                NotificationLongDescription = $"Series '{serie.Id}' with '{typedVerifier.Group}:{typedVerifier.Tag}:{serie.Value}' is unchange at least {typedVerifier.TimeInterval}"
+                NotificationLongDescription = $"Series '{series.Id}' with '{typedVerifier.Group}:{typedVerifier.Tag}:{series.Value}' is unchange at least {typedVerifier.TimeInterval}"
             };
         }
     }

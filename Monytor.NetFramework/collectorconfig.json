@@ -31,7 +31,7 @@
       "Priority": 3,
       "Verifiers": [
         {
-          "$type": "Monytor.Implementation.Verifiers.SerieChangeVerifier, Monytor.Implementation",
+          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
           "Group": null,
           "Tag": null,
           "TimeInterval": "00:00:00",
@@ -43,7 +43,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.CollectionCollector, Monytor.Implementation",
-      "CollectionName": "Serie",
+      "CollectionName": "Series",
       "Source": {
         "Url": "http://localhost:8080",
         "Database": "Monytor"
@@ -58,11 +58,10 @@
       "Priority": 3,
       "Verifiers": [
         {
-          "$type": "Monytor.Implementation.Verifiers.SerieChangeVerifier, Monytor.Implementation",
+          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
           "Group": "Collection",
-          "Tag": "Serie",
+          "Tag": "Series",
           "TimeInterval": "00:00:00",
-          "SerieRepository": null,
           "Notifications": [
             "Monytor.EmailNotification"
           ]
@@ -86,11 +85,10 @@
       "Priority": 3,
       "Verifiers": [
         {
-          "$type": "Monytor.Implementation.Verifiers.SerieChangeVerifier, Monytor.Implementation",
+          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
           "Group": "Collection",
-          "Tag": "Serie",
+          "Tag": "Series",
           "TimeInterval": "00:00:00",
-          "SerieRepository": null,
           "Notifications": [
             "Monytor.EmailNotification"
           ]
@@ -109,11 +107,10 @@
       "Priority": 3,
       "Verifiers": [
         {
-          "$type": "Monytor.Implementation.Verifiers.SerieChangeVerifier, Monytor.Implementation",
+          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
           "Group": "Collection",
-          "Tag": "Serie",
-          "TimeInterval": "00:00:00",
-          "SerieRepository": null,
+          "Tag": "Series",
+          "TimeInterval": "00:00:00",          
           "Notifications": [
             "Monytor.EmailNotification"
           ]

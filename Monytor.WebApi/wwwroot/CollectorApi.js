@@ -1,4 +1,4 @@
-﻿var apiUrl = "http://localhost:51736/api/serie";
+﻿var apiUrl = "http://localhost:51736/api/series";
 var chartNumber = 0;
 var allGroups = new Array();
 var groupToTagArray = new Array();

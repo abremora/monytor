@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Monytor.NetFramework.Implementation {
     public class PerformanceCounterCollectorBehavior : CollectorBehavior<PerformanceCounterCollector> {
-        public override IEnumerable<Serie> Run(Collector collector) {
+        public override IEnumerable<Series> Run(Collector collector) {
             var collectorTyped = collector as PerformanceCounterCollector;
             if (collectorTyped == null) yield return null;
 
@@ -25,15 +25,15 @@ namespace Monytor.NetFramework.Implementation {
             }
 
             var tag = $"{collectorTyped.Category}/{collectorTyped.Name}";
-            var serie = new Serie {
-                Id = Serie.CreateId(tag, collectorTyped.GroupName, currentTime),
+            var series = new Series {
+                Id = Series.CreateId(tag, collectorTyped.GroupName, currentTime),
                 Tag = tag,
                 Group = collectorTyped.GroupName,
                 Time = currentTime,
                 Value = value.ToString()
             };
 
-            yield return serie;
+            yield return series;
         }
     }
 }

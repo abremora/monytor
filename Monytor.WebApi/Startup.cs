@@ -28,7 +28,7 @@ namespace Monytor.WebApi {
 
             services.AddSingleton<IDocumentStore>(store);
             services.AddTransient<ICollectorService, CollectorService>();
-            services.AddTransient<ISerieRepository, SerieRepository>();
+            services.AddTransient<ISeriesRepository, SeriesRepository>();
 
             services.AddCors();
             services.AddMvc();            

@@ -5,17 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Monytor.RavenDb {
-    public class SerieRepository : ISerieRepository {
+    public class SeriesRepository : ISeriesRepository {
 
         private readonly IDocumentStore _store;
 
-        public SerieRepository(IDocumentStore store) {
+        public SeriesRepository(IDocumentStore store) {
             _store = store;
         }
 
         public Dictionary<string, IEnumerable<string>> GetGroupValueSummary() {
             using (var session = _store.OpenSession()) {
-                var result = session.Query<Serie, SerieIndex>()
+                var result = session.Query<Series, SeriesIndex>()
                     .Select(x => new { x.Group, x.Tag })
                     .Distinct()
                     .ToList();
@@ -26,15 +26,15 @@ namespace Monytor.RavenDb {
             }
         }
 
-        public Serie GetSerie(int id) {
+        public Series GetSeries(int id) {
             using (var session = _store.OpenSession()) {
-                return session.Load<Serie>(id); ;
+                return session.Load<Series>(id); ;
             }
         }
 
-        public IEnumerable<Serie> GetSeries(SerieQuery queryModel) {
+        public IEnumerable<Series> GetSeries(SeriesQuery queryModel) {
             using (var session = _store.OpenSession()) {
-                var query = session.Query<Serie, SerieIndex>()
+                var query = session.Query<Series, SeriesIndex>()
                     .Where(x => x.Time >= queryModel.Start
                     && x.Time <= queryModel.End
                     && x.Tag == queryModel.Tag
@@ -53,9 +53,9 @@ namespace Monytor.RavenDb {
             }
         }
 
-        public void Store(Serie serie) {
+        public void Store(Series series) {
             using (var session = _store.OpenSession()) {
-                session.Store(serie);
+                session.Store(series);
                 session.SaveChanges();
             }
         }

@@ -10,7 +10,7 @@ using Monytor.Infrastructure;
 namespace Monytor.Implementation.Collectors {
     public class AllCollectionCollectorBehavior : CollectorBehavior<AllCollectionCollector> {
 
-        public override IEnumerable<Serie> Run(Collector collector) {
+        public override IEnumerable<Series> Run(Collector collector) {
             var collectorTyped = collector as AllCollectionCollector;
             if (collectorTyped == null) yield return null;
 
@@ -26,15 +26,15 @@ namespace Monytor.Implementation.Collectors {
             }
 
             foreach (var result in results.Results["Tag"].Values) {
-                var serie = new Serie {
-                    Id = Serie.CreateId(result.Range, collectorTyped.GroupName, currentTime),
+                var series = new Series {
+                    Id = Series.CreateId(result.Range, collectorTyped.GroupName, currentTime),
                     Tag = result.Range,
                     Group = collectorTyped.GroupName,
                     Time = currentTime,
                     Value = result.Count.ToString()
                 };
 
-                yield return serie;
+                yield return series;
             }
         }
     }

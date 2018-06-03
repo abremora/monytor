@@ -32,8 +32,8 @@ namespace Monytor.Startup {
                    .As<IConfigurationRoot>();
             builder.RegisterInstance(documentStore)
                    .As<IDocumentStore>();
-            builder.RegisterType<SerieRepository>()
-                    .As<ISerieRepository>();
+            builder.RegisterType<SeriesRepository>()
+                    .As<ISeriesRepository>();
 
             builder.RegisterType<CollectorConfig>();
             builder.RegisterType<SchedulerStartup>();
@@ -87,7 +87,7 @@ namespace Monytor.Startup {
 
             var db = RavenHelper.CreateStore(url, databaseName);
 
-            new SerieIndex().SideBySideExecuteAsync(db);
+            new SeriesIndex().SideBySideExecuteAsync(db);
             return db;
         }
 

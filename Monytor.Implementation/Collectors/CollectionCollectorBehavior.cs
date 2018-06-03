@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Monytor.Implementation.Collectors {
     public class CollectionCollectorBehavior : CollectorBehavior<CollectionCollector> {
-        public override IEnumerable<Serie> Run(Collector collector) {
+        public override IEnumerable<Series> Run(Collector collector) {
             var collectorTyped = collector as CollectionCollector;
             if (collectorTyped == null) yield return null;
 
@@ -23,15 +23,15 @@ namespace Monytor.Implementation.Collectors {
                     .Count();
             }
 
-            var serie = new Serie {
-                Id = Serie.CreateId(collectorTyped.CollectionName, collectorTyped.GroupName, currentTime),
+            var series = new Series {
+                Id = Series.CreateId(collectorTyped.CollectionName, collectorTyped.GroupName, currentTime),
                 Tag = collectorTyped.CollectionName,
                 Group = collectorTyped.GroupName,
                 Time = currentTime,
                 Value = result.ToString()
             };
 
-            yield return serie;
+            yield return series;
         }
     }
 }
