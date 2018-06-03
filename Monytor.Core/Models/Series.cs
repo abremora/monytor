@@ -9,7 +9,7 @@ namespace Monytor.Core.Models {
         public string Value { get; set; }
 
         public static string CreateId(string tag, string group, DateTime time) {
-            return $"{nameof(Series)}/{group}/{tag}/{time.ToString("yyyy-MM-ddThhmmssfff")}";
+            return $"{nameof(Series)}/{group}/{tag}/{time.ToString("yyyy-MM-ddThhmmssfff")}/";
         }
     }
 }
