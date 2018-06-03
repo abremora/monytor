@@ -3,6 +3,7 @@ using Monytor.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Monytor.NetFramework.Implementation {
     public class PerformanceCounterCollectorBehavior : CollectorBehavior<PerformanceCounterCollector> {
@@ -21,6 +22,9 @@ namespace Monytor.NetFramework.Implementation {
                 // The method nextValue() always returns a 0 value on the first call. 
                 // So you have to call this method a second time.
                 value = perfCounter.NextValue();
+                // Wait 1 sec to get accurate values as suggested here:
+                // https://stackoverflow.com/questions/2181828/why-the-cpu-performance-counter-kept-reporting-0-cpu-usage
+                Thread.Sleep(1000);
                 value = perfCounter.NextValue();
             }
 
