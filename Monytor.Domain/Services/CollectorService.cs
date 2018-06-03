@@ -1,6 +1,7 @@
 ﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Monytor.Core.Services;
+using System;
 using System.Collections.Generic;
 
 namespace Monytor.Domain.Services {
@@ -20,7 +21,16 @@ namespace Monytor.Domain.Services {
         }
 
         public IEnumerable<Series> GetSeries(SeriesQuery query) {
-            return _repository.GetSeries(query);
+            var unescapedQuery = new SeriesQuery {
+                Start = query.Start,
+                End = query.End,
+                MaxValues = query.MaxValues,
+                OrderBy = query.OrderBy,
+                Group = Uri.UnescapeDataString(query.Group),
+                Tag = Uri.UnescapeDataString(query.Tag)
+            };
+            
+            return _repository.GetSeries(unescapedQuery);
         }
 
         public void Set(Series series) {
