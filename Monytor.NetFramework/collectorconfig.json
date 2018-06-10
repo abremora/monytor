@@ -17,6 +17,36 @@
   ],
   "Collectors": [
     {
+      "$type": "Monytor.Implementation.Collectors.RestApiCollector, Monytor.Implementation",
+      "GroupName": "Subscription",
+      "TagName": "Id_1",
+      "RequestUri": "http://localhost:8080/databases/Monytor/debug/subscriptions",
+      "JsonPath": "$.[?(@.SubscriptionId == 1)].AckEtag",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": []
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.RestApiCollector, Monytor.Implementation",
+      "GroupName": "LastEtag",
+      "TagName": "Series",
+      "RequestUri": "http://localhost:8080/databases/Monytor/indexes/SeriesIndex?query=Tag%3ASeries%20AND%20Group%3ACollection&start=0&pageSize=16&sort=-Time",
+      "JsonPath": "$.Results[0].@metadata.@etag",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": []
+    },
+    {
       "$type": "Monytor.NetFramework.Implementation.PerformanceCounterCollector, Monytor.NetFramework.Implementation",
       "GroupName": "PerformanceCounterCollector",
       "Category": "Prozessorinformationen",
