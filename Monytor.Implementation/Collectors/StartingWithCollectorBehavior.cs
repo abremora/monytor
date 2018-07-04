@@ -1,6 +1,9 @@
 ﻿using Monytor.Core.Configurations;
 using Monytor.Core.Models;
 using Monytor.Infrastructure;
+using Raven.Abstractions.Data;
+using Raven.Client;
+using Raven.Client.Linq;
 using Raven.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -14,24 +17,27 @@ namespace Monytor.Implementation.Collectors {
             var currentTime = DateTime.UtcNow;
             var store = RavenHelper.CreateStore(collectorTyped.Source.Url, collectorTyped.Source.Database);
 
-            int result = 0;
+            FacetResults results;
 
             using (var session = store.OpenSession()) {
-                result = session.Advanced
-                    .DocumentQuery<RavenJObject>("Raven/DocumentsByEntityName")
-                    .WhereStartsWith("__document_id", collectorTyped.StartingWith)
-                    .Count();
+                results = session.Query<RavenJObject>("Raven/DocumentsByEntityName")                    
+                    .Where(x => ((string)x.Tag).StartsWith(collectorTyped.StartingWith))
+                    .AggregateBy(x => x.Tag)
+                    .CountOn(x => x.Tag)
+                    .ToList();
             }
 
-            var serie = new Series {
-                Id = Series.CreateId(collectorTyped.StartingWith, collectorTyped.GroupName, currentTime),
-                Tag = collectorTyped.StartingWith,
-                Group = collectorTyped.GroupName,
-                Time = currentTime,
-                Value = result.ToString()
-            };
+            foreach (var result in results.Results["Tag"].Values) {
+                var series = new Series {
+                    Id = Series.CreateId(result.Range, collectorTyped.GroupName, currentTime),
+                    Tag = result.Range,
+                    Group = collectorTyped.GroupName,
+                    Time = currentTime,
+                    Value = result.Count.ToString()
+                };
 
-            yield return serie;
+                yield return series;
+            }           
         }
     }
 }
