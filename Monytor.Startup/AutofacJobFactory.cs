@@ -2,11 +2,11 @@
 using Quartz;
 using Quartz.Spi;
 
-namespace Monytor.Setup {
+namespace Monytor.Startup {
     public class AutofacJobFactory : IJobFactory {
-        private readonly IContainer _container;
+        private readonly ILifetimeScope _container;
 
-        public AutofacJobFactory(IContainer container) {
+        public AutofacJobFactory(ILifetimeScope container) {
             _container = container;
         }
 

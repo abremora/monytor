@@ -1,4 +1,4 @@
-﻿var apiUrl = "http://localhost:51736/api/serie";
+﻿var apiUrl = "http://localhost:51736/api/series";
 var chartNumber = 0;
 var allGroups = new Array();
 var groupToTagArray = new Array();
@@ -119,7 +119,9 @@ $("#addView").click(function () {
 var addClick = function (event) {
     var modelGroup = $(this).closest(".form-group");
     var group = modelGroup.find("#group option:selected").text();
+    var groupEscaped = encodeURIComponent(group);
     var tag = modelGroup.find("#tag option:selected").text();
+    var tagEscaped = encodeURIComponent(tag);
 
     var end = modelGroup.find("#end").val(); 
     var endDay = moment(end).add(1, 'day').subtract(1, 'second').toISOString();
@@ -127,8 +129,8 @@ var addClick = function (event) {
     var url = $("#url").val() + "/"
         + $("#start").val() + "/"
         + endDay + "/"
-        + group + "/"
-        + tag;
+        + groupEscaped + "/"
+        + tagEscaped;
 
     var chartnr = $(this).closest(".chartWrapper").find("canvas").attr("data-chartnr");
 
@@ -163,9 +165,7 @@ var addClick = function (event) {
         var min = Math.min(...result),
             max = Math.max(...result);
 
-        var color = randomColorGenerator();
-
-        
+        var color = randomColorGenerator();        
 
         var chart = charts[chartnr];
         chart.data.datasets.push({

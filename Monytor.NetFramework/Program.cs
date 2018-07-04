@@ -1,15 +1,14 @@
 ﻿using Autofac;
 using CommandLine;
-using Monytor.Infrastructure;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Monytor.Core.Configurations;
-using Monytor.Startup;
 using Monytor.Implementation.Collectors;
+using Monytor.Infrastructure;
+using Monytor.NetFramework.Implementation;
+using Monytor.Startup;
+using System;
+using System.Threading.Tasks;
 
-namespace Monytor {
+namespace Monytor.NetFramework {
     class Program {
         static void Main(string[] args) {
             Logger.Text(CommandLine.Text.HeadingInfo.Default);
@@ -23,8 +22,8 @@ namespace Monytor {
                 var config = new CollectorConfigCreator();
                 var parser = new Parser(x => x.CaseSensitive = false);
                 var options = parser.ParseArguments<ConsoleArguments>(args)
-                    .WithParsed(o => { if (o.CreateDefaultConfig) config.CreateDefaultConfig(); })                    ;
-                
+                    .WithParsed(o => { if (o.CreateDefaultConfig) config.CreateDefaultConfig(); });
+
                 if (options.Tag == ParserResultType.NotParsed) {
                     goto End;
                 }
@@ -36,14 +35,14 @@ namespace Monytor {
                 }
 
                 var container = Bootstrapper.Setup();
-                if (!config.HasConfig()) {                    
+                if (!config.HasConfig()) {
                     Logger.Warning($"Config file '{config.ConfigFileName}' not found. Create default config.\nUse --help for further assistance.");
                 }
 
-                RunAsync(container.Result).GetAwaiter().GetResult();         
+                RunAsync(container.Result).GetAwaiter().GetResult();
             }
             catch (Exception ex) {
-                Logger.Error(ex);                
+                Logger.Error(ex);
             }
 
             End:
@@ -51,17 +50,13 @@ namespace Monytor {
             Console.ReadLine();
         }
 
-        private static void SetupBinder() {
-            new SystemInformationCollector();
-        }
-
         private static async Task RunAsync(IContainer container) {
             SchedulerStartup scheduler = null;
             try {
                 scheduler = container.Resolve<SchedulerStartup>();
-                var collectorConfig = container.Resolve<CollectorConfig>();
+                var collecotConfig = container.Resolve<CollectorConfig>();
 
-                await scheduler.ConfigScheduler(collectorConfig);
+                await scheduler.ConfigScheduler(collecotConfig);
 
                 Logger.Info("Scheduler started");
                 Logger.Text("Press <ENTER> to close the application");
@@ -76,11 +71,14 @@ namespace Monytor {
             }
         }
 
-        private static IConfigurationRoot LoadConfig() {
-            return new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+        private static void SetupBinder() {
+            new SystemInformationCollector();
+            new PerformanceCounterCollector();
         }
+    }
+
+    internal class ConsoleArguments {
+        [Option(Default = false, HelpText = "Create a default config with settings for all collectors.")]
+        public bool CreateDefaultConfig { get; set; }
     }
 }

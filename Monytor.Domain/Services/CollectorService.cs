@@ -1,13 +1,14 @@
 ﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Monytor.Core.Services;
+using System;
 using System.Collections.Generic;
 
 namespace Monytor.Domain.Services {
     public class CollectorService : ICollectorService {
-        private readonly ISerieRepository _repository;
+        private readonly ISeriesRepository _repository;
 
-        public CollectorService(ISerieRepository repository) {
+        public CollectorService(ISeriesRepository repository) {
             _repository = repository;
         }
 
@@ -15,12 +16,25 @@ namespace Monytor.Domain.Services {
             return _repository.GetGroupValueSummary();
         }
 
-        public Serie GetSerie(int id) {
-            return _repository.GetSerie(id);
+        public Series GetSerie(int id) {
+            return _repository.GetSeries(id);
         }
 
-        public IEnumerable<Serie> GetSeries(SerieQuery query) {
-            return _repository.GetSeries(query);
+        public IEnumerable<Series> GetSeries(SeriesQuery query) {
+            var unescapedQuery = new SeriesQuery {
+                Start = query.Start,
+                End = query.End,
+                MaxValues = query.MaxValues,
+                OrderBy = query.OrderBy,
+                Group = Uri.UnescapeDataString(query.Group),
+                Tag = Uri.UnescapeDataString(query.Tag)
+            };
+            
+            return _repository.GetSeries(unescapedQuery);
+        }
+
+        public void Set(Series series) {
+            _repository.Store(series);
         }
     }
 }

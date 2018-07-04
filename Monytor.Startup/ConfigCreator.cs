@@ -7,8 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Monytor.Setup {
-
+namespace Monytor.Startup {
     public abstract class ConfigCreator {
         public abstract string ConfigFileName { get; }
 
@@ -38,7 +37,7 @@ namespace Monytor.Setup {
             where T : class {
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var instances = loadedAssemblies.SelectMany(s => s.GetTypes())
+            var instances = loadedAssemblies.SelectMany(s => s.ExportedTypes)
                 .Where(p => typeof(T).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)                
                 .Select(x => Activator.CreateInstance(x) as T);
             return instances;

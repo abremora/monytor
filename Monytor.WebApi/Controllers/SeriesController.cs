@@ -7,25 +7,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Monytor.WebApi.Controllers {
     [Route("api/[controller]")]
-    public class SerieController : Controller
+    public class SeriesController : Controller
     {
         private readonly ICollectorService _collectorService;
 
-        public SerieController(ICollectorService collectorService) {
+        public SeriesController(ICollectorService collectorService) {
             _collectorService = collectorService;
         }
-   
-        // GET api/values/5
+
         [HttpGet("{id}")]
-        public Serie Get(int id)
-        {
+        public Series Get(int id) {
             return _collectorService.GetSerie(id);
         }
 
-        // GET api/user/firstname/lastname/address
         [HttpGet("{start}/{end}/{group}/{tag}")]
-        public IEnumerable<Serie> Get(DateTime start, DateTime end, string group, string tag) {
-            var query = new SerieQuery {
+        public IEnumerable<Series> Get(DateTime start, DateTime end, string group, string tag) {
+            var query = new SeriesQuery {
                 Start = start,
                 End = end,
                 Group = group,
@@ -37,6 +34,11 @@ namespace Monytor.WebApi.Controllers {
         [HttpGet]
         public List<KeyValuePair<string, IEnumerable<string>>> GroupValueSummary() {
             return _collectorService.GetGroupValueSummary().ToList();
+        }
+
+        [HttpPost]
+        public void Set([FromBody]Series series) {
+            _collectorService.Set(series);
         }
     }
 }

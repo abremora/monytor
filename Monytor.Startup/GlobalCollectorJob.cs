@@ -5,8 +5,9 @@ using Autofac;
 using System;
 using Monytor.Core.Configurations;
 using Monytor.Core.Repositories;
+using Monytor.Infrastructure;
 
-namespace Monytor.Infrastructure {
+namespace Monytor.Startup {
     [DisallowConcurrentExecution]
     public class GlobalCollectorJob : IJob {
         private readonly IDocumentStore _store;
@@ -44,11 +45,15 @@ namespace Monytor.Infrastructure {
 
                                 var verifierKey = verifier.GetType();
                                 var verifierBehavior = _container.ResolveKeyed<VerifierBehaviorBase>(verifierKey);                                
-                                verifierBehavior.SerieRepository = _container.Resolve<ISerieRepository>();
+                                verifierBehavior.SeriesRepository = _container.Resolve<ISeriesRepository>();
                                 var result = verifierBehavior.Verify(verifier, serie);
 
                                 if (verifier.Notifications != null) {
                                     foreach (var notificationId in verifier.Notifications) {
+                                        if (!_container.IsRegisteredWithName<NotificationBehaviorBase>(notificationId)) {
+                                            Logger.Error($"'{collectorKey}/{verifierKey}/{notificationId}' not found.");
+                                            continue;
+                                        }
                                         var notificationBehavior = _container.ResolveNamed<NotificationBehaviorBase>(notificationId);
                                         var notification = _container.ResolveNamed<Notification>(notificationId);
                                         notificationBehavior.Run(notification, result.NotificationShortDescription, result.NotificationLongDescription);

@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Monytor.Core.Models {
-    public class SerieQuery {
+    public class SeriesQuery {
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public int MaxValues { get; set; }
