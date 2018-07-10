@@ -1,24 +1,59 @@
-﻿var apiUrl = "http://localhost:51736/api/series";
-var chartNumber = 0;
-var allGroups = new Array();
-var groupToTagArray = new Array();
+﻿var chartNumber = 0;
 var charts = new Array();
 
-$(document).ready(function () {
+var loadAllSeriesGroups = function (chartnr) {
+    var input = $(document).find("#url" + chartnr);
+    var url = input.val();
     $.ajax({
-        url: apiUrl
+        url: url
     }).then(function (data) {
-        var index;
+        setJsonGroupTagDataAsDataAttribute(chartnr, data);
+        setJsonGroupTagDataToControls(data, chartnr);
+    }).catch((err) => {
+        alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);
+        resetGroupTagControls(chartnr);
+    });
+}
 
-        groupToTagArray = new Array(); 
-        for (index = 0; index < data.length; ++index) {
-            allGroups.push(data[index]);
-                                           
-            var tages = data[index].value;
-            groupToTagArray.push(tages);
-        }
-    });  
-})
+var resetGroupTagControls = function (chartnr) {
+    var groupControl = $(document).find("#group" + chartnr);
+    var tagControl = $(document).find("#tag" + chartnr);
+
+    groupControl.empty();
+    tagControl.empty();
+}
+
+var setJsonGroupTagDataToControls = function (jsonData, chartnr) {
+    resetGroupTagControls(chartnr);
+
+    var groupControl = $(document).find("#group" + chartnr);
+    var tagControl = $(document).find("#tag" + chartnr);
+
+    for (var index = 0; index < jsonData.length; ++index) {
+        groupControl.append($('<option>', {
+            value: index,
+            text: jsonData[index].key
+        }));
+    }
+
+    setTagsFromArray(jsonData[0].value, tagControl);
+}
+
+var setJsonGroupTagDataAsDataAttribute = function (chartnr, jsonData) {
+    var groupTagData = getGroupTagFromControl(chartnr);
+    groupTagData.data("jsonGroupTag", jsonData);
+}
+
+var getGroupTagFromControl = function (chartnr) {
+    var groupTagData = $(document).find("#jsonGroupTag" + chartnr);
+    return groupTagData;
+}
+
+var getJsonGroupTagFromControl = function (chartnr) {
+    var groupTagData = getGroupTagFromControl(chartnr);
+    var json = groupTagData.data("jsonGroupTag");
+    return json;
+}
 
 var createChart = function (canvas) {
     var ctx = canvas.getContext('2d');
@@ -62,8 +97,11 @@ var randomColorGenerator = function () {
     return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
 };
 
-var setTagsFromArray = function (tagIndex, tagElement) {
-    var tages = groupToTagArray[tagIndex];
+var getApiUrl = function () {
+    return window.location.origin + "/api/series";
+};
+
+var setTagsFromArray = function (tages, tagElement) {
     tagElement.empty();
     for (tagIndex = 0; tagIndex < tages.length; ++tagIndex) {
         tagElement.append($('<option>', {
@@ -84,55 +122,68 @@ $("#addView").click(function () {
     wrapper.innerHTML = html;
 
     var today = moment();
-    $(wrapper).find("#start").val(moment(today).subtract(1, 'days').format('YYYY-MM-DD'));
-    $(wrapper).find("#end").val(today.format('YYYY-MM-DD'));
-  
+   
+    var start = $(wrapper).find("#start" + chartNumber);
+    start.val(moment(today).subtract(1, 'days').format('YYYY-MM-DD'));
+    var end = $(wrapper).find("#end" + chartNumber);
+    end.val(today.format('YYYY-MM-DD'));
+    var group = $(wrapper).find("#group" + chartNumber);
+    var tag = $(wrapper).find("#tag" + chartNumber);
+
+    var currentUrl = getApiUrl();
+    var input = $(wrapper).find("#url" + chartNumber);
+    input.val(currentUrl);
+
+    input.on('input', function () {
+        var chartnr = $(this).data("chartnr");
+        delay(function (args) {
+            var chartnr = args;
+            var input = $(document).find("#url" + chartnr);
+            var group = $(document).find("#group" + chartnr);
+            var tag = $(document).find("#tag" + chartnr);
+            var currentUrl = input.val();
+
+            loadAllSeriesGroups(chartnr);
+        }, chartnr, 1000);
+    });
+    
     var canvas = $(wrapper).find("canvas")[0];
     $("#chartArea").append(wrapper);
     var newChart = createChart(canvas); 
 
-    charts.push(newChart);
-
-    chartNumber++;
-
-    var group = $(wrapper).find("#group");
-    var tag = $(wrapper).find("#tag");
-    var add = $(wrapper).find("#add");
-
-    for (index = 0; index < allGroups.length; ++index) {
-        group.append($('<option>', {
-            value: index,
-            text: allGroups[index].key
-        }));
-    }   
-
+    charts.push(newChart);   
+    
     group.on('change', function () {
         var tagIndex = this.value;
-        setTagsFromArray(tagIndex, tag);
+        var chartnr = $(this).data("chartnr");
+        var groupTagData = getJsonGroupTagFromControl(chartnr);
+        var selectedGroup = groupTagData[tagIndex];
+
+        setTagsFromArray(selectedGroup.value, tag);
     });
 
-    add.click(addClick);
+    loadAllSeriesGroups(chartNumber);
 
-    setTagsFromArray(0, tag);
+    chartNumber++;
+    var add = $(wrapper).find("#add");
+    add.click(addClick);
 });
 
 var addClick = function (event) {
-    var modelGroup = $(this).closest(".form-group");
-    var group = modelGroup.find("#group option:selected").text();
+    var chartnr = $(this).data("chartnr");
+    var group = $(document).find("#group" + chartnr + " option:selected").text();
     var groupEscaped = encodeURIComponent(group);
-    var tag = modelGroup.find("#tag option:selected").text();
+    var tag = $(document).find("#tag" + chartnr + " option:selected").text();
     var tagEscaped = encodeURIComponent(tag);
 
-    var end = modelGroup.find("#end").val(); 
+    var end = $(document).find("#end" + chartnr).val(); 
     var endDay = moment(end).add(1, 'day').subtract(1, 'second').toISOString();
 
-    var url = $("#url").val() + "/"
-        + $("#start").val() + "/"
+    var url = $("#url" + chartnr).val() + "/"
+        + $("#start" + chartnr).val() + "/"
         + endDay + "/"
         + groupEscaped + "/"
-        + tagEscaped;
-
-    var chartnr = $(this).closest(".chartWrapper").find("canvas").attr("data-chartnr");
+        + tagEscaped;   
 
     $.ajax({
         url: url
@@ -180,3 +231,11 @@ var addClick = function (event) {
         chart.update();
     });
 };
+
+var delay = (function () {
+    var timer = 0;
+    return function (callback, args, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms, args);
+    };
+})();

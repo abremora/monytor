@@ -89,32 +89,33 @@
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label for="url">Url</label>
-                                        <input type="text" name="url" id="url" value="http://localhost:51736/api/series" class="form-control" />
+                                        <input type="text" name="url" id="url{{chartnr}}" data-chartnr="{{chartnr}}" class="form-control" />
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col">
                                                 <label for="start">Start</label>
-                                                <input type="date" name="start" id="start" class="form-control" />
+                                                <input type="date" name="start" id="start{{chartnr}}" class="form-control" />
                                             </div>
                                             <div class="col">
                                                 <label for="end">End</label>
-                                                <input type="date" name="end" id="end" class="form-control" />
+                                                <input type="date" name="end" id="end{{chartnr}}" class="form-control" />
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="jsonGroupTag{{chartnr}}"></div>
                                     <div class="form-group">
                                         <label for="group">Group</label>
-                                        <select class="form-control" id="group"></select>
+                                        <select class="form-control" id="group{{chartnr}}" data-chartnr="{{chartnr}}"></select>
                                     </div>
                                     <div class="form-group">
                                         <label for="tag">Tag</label>
-                                        <select class="form-control" id="tag"></select>
+                                        <select class="form-control" id="tag{{chartnr}}"></select>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="add">Add</button>
+                                    <button type="button" class="btn btn-primary" id="add" data-chartnr="{{chartnr}}">Add</button>
                                 </div>
                             </div>
                         </div>
