@@ -41,13 +41,13 @@ namespace Monytor.RavenDb {
                     && x.Group == queryModel.Group);
 
                 if (queryModel.OrderBy == Ordering.Ascending) {
-                    query.OrderBy(x => x.Time);
+                    query = query.OrderBy(x => x.Time);
                 }
                 else {
-                    query.OrderByDescending(x => x.Time);
+                    query = query.OrderByDescending(x => x.Time);
                 }
 
-                query.Take(queryModel.MaxValues);
+                query = query.Take(queryModel.MaxValues);
 
                 return query;
             }
