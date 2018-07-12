@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.1.1" />
     <PackageReference Include="RavenDB.Client" Version="3.5.5" />
   </ItemGroup>
 
@@ -25,6 +26,12 @@
     <ProjectReference Include="..\Monytor.Domain\Monytor.Domain.csproj" />
     <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
     <ProjectReference Include="..\Monytor.RavenDb\Monytor.RavenDb.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="start.cmd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
