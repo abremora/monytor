@@ -1,0 +1,38 @@
+{
+  "name": "monytor",
+  "version": "1.0.0",
+  "description": "Monytor is a configurable monitoring tool written in .NET Core.",
+  "private":  true,
+  "main": "index.js",
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "bootstrap": "^4.1.1",
+    "chart.js": "^2.7.2",
+    "moment": "^2.22.2",
+    "mustache": "^2.3.0",
+    "@fortawesome/fontawesome-free": "^5.1.0"    
+  },
+  "devDependencies": {
+    "gulp":  "3.9.1",
+    "gulp-concat": "2.6.1",
+    "gulp-cssmin": "0.1.7",
+    "gulp-uglify": "2.0.1",
+    "rimraf": "2.6.1",
+    "merge-stream": "^1.0.1",
+    "run-sequence": "^2.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abremora/monytor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abremora/monytor/issues"
+  },
+  "homepage": "https://github.com/abremora/monytor#readme"
+}
