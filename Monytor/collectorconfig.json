@@ -29,7 +29,17 @@
       "StartingTime": null,
       "EndAt": null,
       "Priority": 3,
-      "Verifiers": []
+      "Verifiers": [
+        {
+          "$type": "Monytor.Implementation.Verifiers.SeriesUnchangedVerifier, Monytor.Implementation",
+          "Group": "Subscription",
+          "Tag": "Id_1",
+          "TimeInterval": "00:00:00",
+          "Notifications": [
+            "Monytor.EmailNotification"
+          ]
+        }
+      ]
     },
     {
       "$type": "Monytor.Implementation.Collectors.RestApiCollector, Monytor.Implementation",
@@ -52,7 +62,7 @@
         "Url": "http://localhost:8080",
         "Database": "Monytor"
       },
-      "GroupName": "Collection",
+      "GroupName": "AllCollection",
       "StartingTimeDelay": "00:00:00",
       "RandomTimeDelay": "00:00:00",
       "PollingInterval": "01:00:00",
@@ -79,7 +89,7 @@
       "Priority": 3,
       "Verifiers": [
         {
-          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
+          "$type": "Monytor.Implementation.Verifiers.SeriesChangedVerifier, Monytor.Implementation",
           "Group": "Collection",
           "Tag": "Series",
           "TimeInterval": "00:00:00",
@@ -91,7 +101,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.StartingWithCollector, Monytor.Implementation",
-      "StartingWith": "Serie",
+      "StartingWith": "Series",
       "Source": {
         "Url": "http://localhost:8080",
         "Database": "Monytor"

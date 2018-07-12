@@ -6,6 +6,7 @@ using System;
 using Monytor.Core.Configurations;
 using Monytor.Core.Repositories;
 using Monytor.Infrastructure;
+using System.Linq;
 
 namespace Monytor.Startup {
     [DisallowConcurrentExecution]
@@ -30,7 +31,8 @@ namespace Monytor.Startup {
                 using (var scope = _container.BeginLifetimeScope()) {
                     var collectorKey = collectorInstance.GetType();
                     var collectorBehavior = _container.ResolveKeyed<CollectorBehaviorBase>(collectorKey);
-                    var series = collectorBehavior.Run(collectorInstance);
+                    var series = collectorBehavior.Run(collectorInstance)
+                        .ToList();
 
                     using (var bulk = _store.BulkInsert()) {
                         foreach (var serie in series) {
@@ -41,14 +43,16 @@ namespace Monytor.Startup {
                     if (collectorInstance.Verifiers != null) {
                         foreach (var serie in series) {
                             foreach (var verifier in collectorInstance.Verifiers) {
-                                if (verifier == null) continue;
+                                if (verifier == null 
+                                    || verifier.Notifications == null
+                                    || verifier.Notifications.Count == 0) continue;
 
                                 var verifierKey = verifier.GetType();
                                 var verifierBehavior = _container.ResolveKeyed<VerifierBehaviorBase>(verifierKey);                                
                                 verifierBehavior.SeriesRepository = _container.Resolve<ISeriesRepository>();
                                 var result = verifierBehavior.Verify(verifier, serie);
 
-                                if (verifier.Notifications != null) {
+                                if (result.Successful) {
                                     foreach (var notificationId in verifier.Notifications) {
                                         if (!_container.IsRegisteredWithName<NotificationBehaviorBase>(notificationId)) {
                                             Logger.Error($"'{collectorKey}/{verifierKey}/{notificationId}' not found.");
