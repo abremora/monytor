@@ -26,7 +26,7 @@ namespace Monytor.Startup {
                 var next = context.NextFireTimeUtc?.LocalDateTime;
                 var nextTimeSpan = context.NextFireTimeUtc.HasValue ? context.NextFireTimeUtc.Value.Subtract(DateTimeOffset.UtcNow) : TimeSpan.MinValue;
 
-                Logger.Info($"Job: {collectorInstance.GetType().Name} | Next: {next} ({nextTimeSpan.ToString(@"hh\:mm\:ss")})");
+                Logger.Info($"Job: {collectorInstance.GetType().Name} | Group:{collectorInstance.GroupName} | Text:'{collectorInstance.DisplayName}' | Next: {next} ({nextTimeSpan.ToString(@"hh\:mm\:ss")})");
 
                 using (var scope = _container.BeginLifetimeScope()) {
                     var collectorKey = collectorInstance.GetType();

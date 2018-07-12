@@ -4,6 +4,8 @@ using System.Collections.Generic;
 namespace Monytor.Core.Configurations {
 
     public abstract class Collector {
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
         public abstract string GroupName { get; set; }
         public TimeSpan StartingTimeDelay { get; set; }
         public TimeSpan RandomTimeDelay { get; set; }
