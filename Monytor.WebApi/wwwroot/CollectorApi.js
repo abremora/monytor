@@ -197,12 +197,12 @@ var addClick = function (event) {
         var result = data.map(a => a.value);
         var time = data.map(a => moment(a.time));
 
-        var max = moment.max(time);
-        var min = moment.min(time);
+        var maxTime = moment.max(time);
+        var minTime = moment.min(time);
 
         var timeLabel = time.map(x => x.toISOString());
 
-        var duration = moment.duration(max.diff(min));
+        var duration = moment.duration(maxTime.diff(minTime));
         var unit = 'day';
         if (duration.years() > 0) {
             unit = 'year';
