@@ -1,33 +1,59 @@
-﻿var chartNumber = 0;
-var charts = new Array();
+﻿var charts = new Array();
+var defaultTimeRangeInDays = 3;
 
-var loadAllSeriesGroups = function (chartnr) {
-    var input = $(document).find("#url" + chartnr);
+$(document).ready(function () {
+    if (typeof (Storage) === "undefined") {
+        alert("No support for Web Storage. Please update your browser.");
+    }
+
+    if (!sessionStorage.views)
+        sessionStorage.views = JSON.stringify(new Views());
+    else {
+        loadFromStore();
+    }
+});
+
+var loadFromStore = function () {
+    var chartNumber = 0;
+    var views = JSON.parse(sessionStorage.views);
+    for (chartNumber = 0; chartNumber < views.views.length; chartNumber++) {
+        var linkId = insertChart(chartNumber);
+        loadAllSeriesGroups(linkId);
+        var collectorIndex = 0;
+        for (collectorIndex = 0; collectorIndex < views.views[chartNumber].collectors.length; collectorIndex++) {
+            addCollector(linkId, collectorIndex);
+        }
+    }
+};
+
+
+var loadAllSeriesGroups = function (linkId) {
+    var input = $(document).find("#url" + linkId);
     var url = input.val();
     $.ajax({
         url: url
     }).then(function (data) {
-        setJsonGroupTagDataAsDataAttribute(chartnr, data);
-        setJsonGroupTagDataToControls(data, chartnr);
+        setJsonGroupTagDataToStore(linkId, data);
+        setJsonGroupTagDataToControls(data, linkId);
     }).catch((err) => {
         alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);
-        resetGroupTagControls(chartnr);
+        resetGroupTagControls(linkId);
     });
 }
 
-var resetGroupTagControls = function (chartnr) {
-    var groupControl = $(document).find("#group" + chartnr);
-    var tagControl = $(document).find("#tag" + chartnr);
+var resetGroupTagControls = function (linkId) {
+    var groupControl = $(document).find("#group" + linkId);
+    var tagControl = $(document).find("#tag" + linkId);
 
     groupControl.empty();
     tagControl.empty();
 }
 
-var setJsonGroupTagDataToControls = function (jsonData, chartnr) {
-    resetGroupTagControls(chartnr);
+var setJsonGroupTagDataToControls = function (jsonData, linkId) {
+    resetGroupTagControls(linkId);
 
-    var groupControl = $(document).find("#group" + chartnr);
-    var tagControl = $(document).find("#tag" + chartnr);
+    var groupControl = $(document).find("#group" + linkId);
+    var tagControl = $(document).find("#tag" + linkId);
 
     for (var index = 0; index < jsonData.length; ++index) {
         groupControl.append($('<option>', {
@@ -39,20 +65,22 @@ var setJsonGroupTagDataToControls = function (jsonData, chartnr) {
     setTagsFromArray(jsonData[0].value, tagControl);
 }
 
-var setJsonGroupTagDataAsDataAttribute = function (chartnr, jsonData) {
-    var groupTagData = getGroupTagFromControl(chartnr);
-    groupTagData.data("jsonGroupTag", jsonData);
+var setJsonGroupTagDataToStore = function (linkId, jsonData) {
+    var viewRoot = $("#"+ linkId);
+    var viewIndex = getElementIndex(viewRoot);
+
+    var views = JSON.parse(sessionStorage.views);
+    var viewConfig = views.views[viewIndex];
+    viewConfig.jsonData = JSON.stringify(jsonData);
+    sessionStorage.views = JSON.stringify(views);
 }
 
-var getGroupTagFromControl = function (chartnr) {
-    var groupTagData = $(document).find("#jsonGroupTag" + chartnr);
-    return groupTagData;
-}
+var getJsonGroupTagFromStore = function (linkId) {
+    var viewRoot = $("#" + linkId);
+    var viewIndex = getElementIndex(viewRoot);
 
-var getJsonGroupTagFromControl = function (chartnr) {
-    var groupTagData = getGroupTagFromControl(chartnr);
-    var json = groupTagData.data("jsonGroupTag");
-    return json;
+    var views = JSON.parse(sessionStorage.views);
+    return JSON.parse(views.views[viewIndex].jsonData);    
 }
 
 var createChart = function (canvas) {
@@ -111,79 +139,107 @@ var setTagsFromArray = function (tages, tagElement) {
     }
 };
 
-$("#addView").click(function () {   
+var insertChart = function (chartNumber) {
+    var linkId = Math.floor((Math.random() * 1000000000) + 1);
+
     var data = {
-        chartnr: chartNumber
-    }    
+        chartnr: chartNumber,
+        linkId: linkId
+    };
 
     var template = $("#chartTemplate")[0];
     var html = Mustache.render(template.innerHTML, data);
     var wrapper = document.createElement('div');
-    wrapper.innerHTML = html;
-
+    $(wrapper).attr("class", "viewRoot");
+    $(wrapper).attr("id", linkId);
+    $(wrapper).html(html);
+    
     var today = moment();
-   
-    var start = $(wrapper).find("#start" + chartNumber);
-    start.val(moment(today).subtract(1, 'days').format('YYYY-MM-DD'));
-    var end = $(wrapper).find("#end" + chartNumber);
+
+    var start = $(wrapper).find("#start" + linkId);
+    start.val(moment(today).subtract(defaultTimeRangeInDays, 'days').format('YYYY-MM-DD'));
+    var end = $(wrapper).find("#end" + linkId);
     end.val(today.format('YYYY-MM-DD'));
-    var group = $(wrapper).find("#group" + chartNumber);
-    var tag = $(wrapper).find("#tag" + chartNumber);
+    var group = $(wrapper).find("#group" + linkId);
+    var tag = $(wrapper).find("#tag" + linkId);
 
     var currentUrl = getApiUrl();
-    var input = $(wrapper).find("#url" + chartNumber);
+    var input = $(wrapper).find("#url" + linkId);
     input.val(currentUrl);
 
     input.on('input', function () {
-        var chartnr = $(this).data("chartnr");
+        var linkId = $(this).data("linkid");
         delay(function (args) {
-            var chartnr = args;
-            var input = $(document).find("#url" + chartnr);
-            var group = $(document).find("#group" + chartnr);
-            var tag = $(document).find("#tag" + chartnr);
+            var linkId = args;
+            var input = $(document).find("#url" + linkId);
+            var group = $(document).find("#group" + linkId);
+            var tag = $(document).find("#tag" + linkId);
             var currentUrl = input.val();
 
-            loadAllSeriesGroups(chartnr);
-        }, chartnr, 1000);
+            loadAllSeriesGroups(linkId);
+        }, linkId, 1000);
     });
-    
+
     var canvas = $(wrapper).find("canvas")[0];
     $("#chartArea").append(wrapper);
-    var newChart = createChart(canvas); 
+    var newChart = createChart(canvas);
+    var chartView = {
+        key: linkId,
+        value: newChart
+    };
+    charts[linkId] = chartView;
 
-    charts.push(newChart);   
-    
     group.on('change', function () {
         var tagIndex = this.value;
-        var chartnr = $(this).data("chartnr");
-        var groupTagData = getJsonGroupTagFromControl(chartnr);
+        var linkId = $(this).data("linkid");
+        var groupTagData = getJsonGroupTagFromStore(linkId);
         var selectedGroup = groupTagData[tagIndex];
 
         setTagsFromArray(selectedGroup.value, tag);
     });
 
-    loadAllSeriesGroups(chartNumber);
-
-    chartNumber++;
     var add = $(wrapper).find("#add");
     add.click(addClick);
+
+    var close = $(wrapper).find(".chart-close");
+    close.click(closeChart);
+    return linkId;
+};
+
+$("#addView").click(function () {   
+    var views = JSON.parse(sessionStorage.views);
+    var chartNumber = views.views.length;
+
+    var viewConfig = new ViewConfig();
+    views.views.push(viewConfig);
+
+    sessionStorage.views = JSON.stringify(views);
+
+    var linkId = insertChart(chartNumber); 
+    loadAllSeriesGroups(linkId);
 });
 
-var addClick = function (event) {
-    var chartnr = $(this).data("chartnr");
-    var group = $(document).find("#group" + chartnr + " option:selected").text();
-    var groupEscaped = encodeURIComponent(group);
-    var tag = $(document).find("#tag" + chartnr + " option:selected").text();
-    var tagEscaped = encodeURIComponent(tag);
+$("#closeViews").click(function () {
+    charts = new Array();
+    sessionStorage.clear();
+    $("#chartArea").empty();
+    if (!sessionStorage.views)
+        sessionStorage.views = JSON.stringify(new Views());
+});
 
-    var end = $(document).find("#end" + chartnr).val(); 
-    var endDay = moment(end).add(1, 'day').subtract(1, 'second').toISOString();
+var addCollector = function (linkId, collectorIndex) {
+    var viewRoot = $("#" + linkId);
+    var viewIndex = getElementIndex(viewRoot);
 
-    var url = $("#url" + chartnr).val() + "/"
-        + $("#start" + chartnr).val() + "/"
-        + endDay + "/"
-        + groupEscaped + "/"
-        + tagEscaped;   
+    var views = JSON.parse(sessionStorage.views);
+
+    var collectorConfig = views.views[viewIndex].collectors[collectorIndex];
+    var url = collectorConfig.url;
+    var group = collectorConfig.group;
+    var tag = collectorConfig.tag;
+
+    if (url === "" || group === "" || tag === "")
+        return;
 
     $.ajax({
         url: url
@@ -216,9 +272,9 @@ var addClick = function (event) {
         var min = Math.min(...result),
             max = Math.max(...result);
 
-        var color = randomColorGenerator();        
+        var color = randomColorGenerator();
 
-        var chart = charts[chartnr];
+        var chart = charts[linkId].value;
         chart.data.datasets.push({
             label: group + ": " + tag,
             borderColor: color,
@@ -232,6 +288,61 @@ var addClick = function (event) {
     });
 };
 
+var closeChart = function (event) {
+    var viewRoot = $(this).closest(".viewRoot");
+    var viewIndex = getElementIndex(viewRoot);
+
+    var views = new Views().load();
+    views.views.splice(viewIndex, 1);
+    new Views().save(views);
+   
+    viewRoot.remove();
+}
+
+function getElementIndex(el) {
+    var parent = el.parent();
+    var children = parent.children();
+    return children.index(el);    
+}
+
+var addClick = function (event) {
+    var view = $(this).closest(".viewRoot");
+
+    var linkId = view.attr("id");  
+
+    var group = $(document).find("#group" + linkId + " option:selected").text();
+    var groupEscaped = encodeURIComponent(group);
+    var tag = $(document).find("#tag" + linkId + " option:selected").text();
+    var tagEscaped = encodeURIComponent(tag);
+
+    var end = $(document).find("#end" + linkId).val();
+    var endDay = moment(end).add(1, 'day').subtract(1, 'second').toISOString();
+    var start = $("#start" + linkId).val();
+    
+    var url = $("#url" + linkId).val() + "/"
+        + start + "/"
+        + endDay + "/"
+        + groupEscaped + "/"
+        + tagEscaped;  
+
+    var viewIndex = getElementIndex(view);
+    var views = JSON.parse(sessionStorage.views);
+    var viewConfig = views.views[viewIndex];
+
+    var collectorConfig = new CollectorConfig();
+    collectorConfig.url = url;
+    collectorConfig.group = group;
+    collectorConfig.tag = tagEscaped;
+    collectorConfig.start = start;
+    collectorConfig.end = endDay;
+
+    viewConfig.collectors.push(collectorConfig);
+    
+    sessionStorage.views = JSON.stringify(views);
+
+    addCollector(linkId, viewConfig.collectors.length - 1);  
+};
+
 var delay = (function () {
     var timer = 0;
     return function (callback, args, ms) {
@@ -239,3 +350,30 @@ var delay = (function () {
         timer = setTimeout(callback, ms, args);
     };
 })();
+
+function CollectorConfig() {
+    this.url = "";
+    this.group = "";
+    this.tag = "";
+    this.start = null;
+    this.end = null;
+}
+
+function ViewConfig() {
+    this.jsonData = null;
+    this.collectors = new Array();
+}
+
+function Views() {
+    this.views = new Array();    
+}
+
+Views.prototype.load = function () {
+    return JSON.parse(sessionStorage.views);
+    // TODO: Return type Views instead of anonymous object
+};
+
+Views.prototype.save = function (views) {
+    // TODO: HACK: Because load() doesnot return typed object 
+    sessionStorage.views = JSON.stringify(views);
+};
