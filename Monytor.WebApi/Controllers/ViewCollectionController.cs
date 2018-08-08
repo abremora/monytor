@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Monytor.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Monytor.Core.Services;
 
@@ -15,11 +14,11 @@ namespace Monytor.WebApi.Controllers {
         }
 
         [HttpGet("{id}")]
-        public ViewCollection Get(Guid id) {
+        public ViewCollection Get(string id) {
             return _collectorService.Get(id);
         }
 
-        [HttpGet()]
+        [HttpGet]
         public IEnumerable<ViewCollection> Index() {
             return _collectorService.GetOverview();
         }

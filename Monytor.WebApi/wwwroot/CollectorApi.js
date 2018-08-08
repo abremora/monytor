@@ -1,9 +1,31 @@
 ﻿var charts = new Array();
 var defaultTimeRangeInDays = 3;
 
+var getdefaultApiUrl = function () {
+    return window.location.origin + "/api";
+};
+
+var getSeriesApiUrl = function () {
+    return sessionStorage.defaultSourceUrl + "/series";
+};
+
 $(document).ready(function () {
     if (typeof (Storage) === "undefined") {
         alert("No support for Web Storage. Please update your browser.");
+    }
+
+    if (!sessionStorage.defaultSourceUrl) {
+        sessionStorage.defaultSourceUrl = getdefaultApiUrl();
+    }
+    if (!sessionStorage.defaultTimeRangeInDays) {
+        sessionStorage.defaultTimeRangeInDays = defaultTimeRangeInDays;
+    }
+
+    var currentUrl = new URL(window.location.href);
+    var viewId = currentUrl.searchParams.get("view");
+    if (viewId != null) {
+        loadViewCollection(viewId);
+        return;
     }
 
     if (!sessionStorage.views)
@@ -12,6 +34,24 @@ $(document).ready(function () {
         loadFromStore();
     }
 });
+
+$(function () {
+    $('[data-tooltip="tooltip"]').tooltip()
+})
+
+
+$("#saveSettingButton").click(function () {
+    var url = $("#defaultSourceUrlId").val();
+    sessionStorage.defaultSourceUrl = url;
+
+    var timeRange = $("#defaultTimeRangeId").val();
+    sessionStorage.defaultTimeRangeInDays = timeRange;
+});
+
+$("#settings").click(function () {
+    $("#defaultSourceUrlId").val(sessionStorage.defaultSourceUrl);
+    $("#defaultTimeRangeId").val(sessionStorage.defaultTimeRangeInDays);
+}); 
 
 var loadFromStore = function () {
     var chartNumber = 0;
@@ -25,7 +65,6 @@ var loadFromStore = function () {
         }
     }
 };
-
 
 var loadAllSeriesGroups = function (linkId) {
     var input = $(document).find("#url" + linkId);
@@ -125,10 +164,6 @@ var randomColorGenerator = function () {
     return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
 };
 
-var getApiUrl = function () {
-    return window.location.origin + "/api/series";
-};
-
 var setTagsFromArray = function (tages, tagElement) {
     tagElement.empty();
     for (tagIndex = 0; tagIndex < tages.length; ++tagIndex) {
@@ -157,13 +192,13 @@ var insertChart = function (chartNumber) {
     var today = moment();
 
     var start = $(wrapper).find("#start" + linkId);
-    start.val(moment(today).subtract(defaultTimeRangeInDays, 'days').format('YYYY-MM-DD'));
+    start.val(moment(today).subtract(sessionStorage.defaultTimeRangeInDays, 'days').format('YYYY-MM-DD'));
     var end = $(wrapper).find("#end" + linkId);
     end.val(today.format('YYYY-MM-DD'));
     var group = $(wrapper).find("#group" + linkId);
     var tag = $(wrapper).find("#tag" + linkId);
 
-    var currentUrl = getApiUrl();
+    var currentUrl = getSeriesApiUrl();
     var input = $(wrapper).find("#url" + linkId);
     input.val(currentUrl);
 
@@ -213,7 +248,7 @@ $("#addView").click(function () {
     var viewConfig = new ViewConfig();
     views.views.push(viewConfig);
 
-    sessionStorage.views = JSON.stringify(views);
+    new Views().save(views);
 
     var linkId = insertChart(chartNumber); 
     loadAllSeriesGroups(linkId);
@@ -221,10 +256,8 @@ $("#addView").click(function () {
 
 $("#closeViews").click(function () {
     charts = new Array();
-    sessionStorage.clear();
     $("#chartArea").empty();
-    if (!sessionStorage.views)
-        sessionStorage.views = JSON.stringify(new Views());
+    new Views().save(new Views());        
 });
 
 var addCollector = function (linkId, collectorIndex) {
@@ -234,12 +267,18 @@ var addCollector = function (linkId, collectorIndex) {
     var views = JSON.parse(sessionStorage.views);
 
     var collectorConfig = views.views[viewIndex].collectors[collectorIndex];
-    var url = collectorConfig.url;
+   
     var group = collectorConfig.group;
     var tag = collectorConfig.tag;
+    var start = collectorConfig.start;
+    var end = collectorConfig.end;
 
-    if (url === "" || group === "" || tag === "")
+    var apiUrl = getSeriesApiUrl();
+    
+    if (group === "" || tag === "")
         return;
+
+    var url = getUrlRequestSeries(apiUrl, start, end, group, tag);
 
     $.ajax({
         url: url
@@ -305,40 +344,47 @@ function getElementIndex(el) {
     return children.index(el);    
 }
 
+var getUrlRequestSeries = function (apiUrl, start, end, group, tag) {
+    var endDay = moment(end).add(1, 'day').subtract(1, 'second').toISOString();
+    var tagEscaped = encodeURIComponent(tag);
+    var groupEscaped = encodeURIComponent(group);
+    var url = apiUrl + "/"
+        + start + "/"
+        + endDay + "/"
+        + groupEscaped + "/"
+        + tagEscaped;  
+
+    return url;
+}
+
+
 var addClick = function (event) {
     var view = $(this).closest(".viewRoot");
 
     var linkId = view.attr("id");  
 
     var group = $(document).find("#group" + linkId + " option:selected").text();
-    var groupEscaped = encodeURIComponent(group);
     var tag = $(document).find("#tag" + linkId + " option:selected").text();
-    var tagEscaped = encodeURIComponent(tag);
-
-    var end = $(document).find("#end" + linkId).val();
-    var endDay = moment(end).add(1, 'day').subtract(1, 'second').toISOString();
+    var end = $(document).find("#end" + linkId).val();   
     var start = $("#start" + linkId).val();
-    
-    var url = $("#url" + linkId).val() + "/"
-        + start + "/"
-        + endDay + "/"
-        + groupEscaped + "/"
-        + tagEscaped;  
+    var apiUrl = $("#url" + linkId).val();
+
+    var url = getUrlRequestSeries(apiUrl, start, end, group, tag);
 
     var viewIndex = getElementIndex(view);
     var views = JSON.parse(sessionStorage.views);
     var viewConfig = views.views[viewIndex];
 
     var collectorConfig = new CollectorConfig();
-    collectorConfig.url = url;
+    collectorConfig.url = apiUrl;
     collectorConfig.group = group;
-    collectorConfig.tag = tagEscaped;
+    collectorConfig.tag = tag;
     collectorConfig.start = start;
-    collectorConfig.end = endDay;
+    collectorConfig.end = end;
 
     viewConfig.collectors.push(collectorConfig);
-    
-    sessionStorage.views = JSON.stringify(views);
+
+    new Views().save(views);
 
     addCollector(linkId, viewConfig.collectors.length - 1);  
 };

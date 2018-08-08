@@ -4,7 +4,7 @@ using Monytor.WebApi.Controllers;
 
 namespace Monytor.Domain.Services {
     public interface IViewCollectionRepository {
-        ViewCollection Load(Guid id);
+        ViewCollection Load(string id);
         IEnumerable<ViewCollection> LoadOverview();
         void Save(ViewCollection config);
     }

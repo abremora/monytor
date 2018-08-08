@@ -1,5 +1,4 @@
-﻿using Monytor.Core.Models;
-using Monytor.Core.Services;
+﻿using Monytor.Core.Services;
 using Monytor.WebApi.Controllers;
 using System;
 using System.Collections.Generic;
@@ -11,12 +10,20 @@ namespace Monytor.Domain.Services {
         public ViewCollectionService(IViewCollectionRepository repository) {
             _repository = repository;
         }
-        public ViewCollection Get(Guid id) {
-            return _repository.Load(id);
+
+        public ViewCollection Get(string id) {
+            var internalId = ViewCollection.AddInternalId(id);
+            return _repository.Load(internalId);
         }
 
         public IEnumerable<ViewCollection> GetOverview() {
-            return _repository.LoadOverview();
+            var overview = _repository.LoadOverview();
+            
+            foreach(var view in overview) {
+                view.RemoveInternalId();
+            }
+
+            return overview;
         }
 
         public void Set(ViewCollection config) {           

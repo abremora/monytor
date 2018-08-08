@@ -12,7 +12,7 @@ namespace Monytor.Domain.Services {
             _store = store;
         }
 
-        public ViewCollection Load(Guid id) {
+        public ViewCollection Load(string id) {
             using (var session = _store.OpenSession()) {
                 return session.Load<ViewCollection>(id);
             }
@@ -26,8 +26,7 @@ namespace Monytor.Domain.Services {
         }
 
         public void Save(ViewCollection config) {
-            using (var session = _store.OpenSession()) {
-                config.Id = ViewCollection.CreateId(config.Name);
+            using (var session = _store.OpenSession()) {                
                 session.Store(config);
                 session.SaveChanges();
             }

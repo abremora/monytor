@@ -7,7 +7,7 @@
     <script src="vendor/moment/moment.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="vendor/mustache/mustache.min.js"></script>
-    <script src="vendor/@fortawesome/js/all.js" ></script>
+    <script src="vendor/@fortawesome/js/all.js"></script>
     <title>Monytor Dashboard</title>
     <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
     <style>
@@ -27,8 +27,8 @@
         .flex-item {
             padding: 5px;
             width: 600px;
-            height: 400px;
-            margin-top: 10px;           
+            height: 300px;
+            margin-top: 10px;
         }
 
         canvas {
@@ -41,13 +41,36 @@
             margin: 20px;
         }
 
-        #buttonNav {
-            display: inline-block;
+        .chartWrapper {
+            position: relative;
+        }
+         
+        .buttonNav {
+         
+        }
+
+        .chart-render-canvas {
+            position: absolute;
+            top: 15px;
+        }
+
+        .chart-close {
+            float: right;
+        }
+
+        .btn-circle {
+            width: 30px;
+            height: 30px;
+            padding: 6px 0px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.42857;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-light shadow">
+    <nav class="navbar navbar-expand-sm navbar-light sticky-top bg-light shadow">
         <a class="navbar-brand" href="#">Monytor Dashboard</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -57,7 +80,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item text-nowrap m-1">
-                    <button type="button" class="btn btn-secondary" id="loadViewCollection">
+                    <button type="button" class="btn btn-secondary" id="loadViewCollection" data-toggle="modal" data-target="#loadViewCollectionModal">
                         <span class="fas fa-upload"></span>
                     </button>
                 </li>
@@ -67,7 +90,7 @@
                     </button>
                 </li>
                 <li class="nav-item text-nowrap m-1">
-                    <button type="button" class="btn btn-secondary" id="manageViewCollection">
+                    <button type="button" class="btn btn-secondary" id="settings" data-toggle="modal" data-target="#settingsModal">
                         <span class="fas fa-cog"></span>
                     </button>
                 </li>
@@ -76,11 +99,6 @@
                 <li class="nav-item text-nowrap m-1">
                     <button type="button" class="btn btn-primary" id="addView">
                         <div><span class="fas fa-plus"></span> Add view</div>
-                    </button>
-                </li>
-                <li class="nav-item text-nowrap m-1">
-                    <button type="button" class="btn btn-primary" id="closeViews">
-                        <div><span class="fas fa-minus"></span> Close views</div>
                     </button>
                 </li>
             </ul>
@@ -93,56 +111,54 @@
 
     <template id="chartTemplate">
         <div class="flex-item chartWrapper">
-            <div>
-                <div id="buttonNav">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal{{linkId}}">
-                        <div><span class="fas fa-plus"></span> Add Collector</div>
-                    </button>
-                    <button type="button" class="btn btn-primary chart-close" data-linkid="{{linkId}}">
-                        <div><span class="fas fa-minus"></span> Close</div>
-                    </button>
-                </div>
-                <canvas data-linkid="{{linkId}}"></canvas>
-                <div class="modal" tabindex="-1" role="dialog" id="addModal{{linkId}}">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Select collector</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="form-group">
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="url">Url</label>
-                                        <input type="text" name="url" id="url{{linkId}}" data-linkid="{{linkId}}" class="form-control" />
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col">
-                                                <label for="start">Start</label>
-                                                <input type="date" name="start" id="start{{linkId}}" class="form-control" />
-                                            </div>
-                                            <div class="col">
-                                                <label for="end">End</label>
-                                                <input type="date" name="end" id="end{{linkId}}" class="form-control" />
-                                            </div>
+            <div class="buttonNav">
+                <button type="button" class="btn btn-success btn-circle" title="Add collector" data-toggle="modal" data-target="#addModal{{linkId}}">
+                    <div><span class="fas fa-plus"></span></div>
+                </button>
+                <button type="button" class="btn btn-danger btn-circle chart-close" title="Close view" data-linkid="{{linkId}}">
+                    <div><span class="fas fa-minus"></span></div>
+                </button>
+            </div>
+            <canvas class="chart-render-canvas" data-linkid="{{linkId}}"></canvas>
+            <div class="modal" tabindex="-1" role="dialog" id="addModal{{linkId}}">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Select collector</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="url">Url</label>
+                                    <input type="text" name="url" id="url{{linkId}}" data-linkid="{{linkId}}" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="start">Start</label>
+                                            <input type="date" name="start" id="start{{linkId}}" class="form-control" />
                                         </div>
-                                    </div>                                    
-                                    <div class="form-group">
-                                        <label for="group">Group</label>
-                                        <select class="form-control" id="group{{linkId}}" data-linkid="{{linkId}}"></select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="tag">Tag</label>
-                                        <select class="form-control" id="tag{{linkId}}"></select>
+                                        <div class="col">
+                                            <label for="end">End</label>
+                                            <input type="date" name="end" id="end{{linkId}}" class="form-control" />
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="add" data-linkid="{{linkId}}">Add</button>
+                                <div class="form-group">
+                                    <label for="group">Group</label>
+                                    <select class="form-control" id="group{{linkId}}" data-linkid="{{linkId}}"></select>
                                 </div>
+                                <div class="form-group">
+                                    <label for="tag">Tag</label>
+                                    <select class="form-control" id="tag{{linkId}}"></select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="add" data-linkid="{{linkId}}">Add</button>
                             </div>
                         </div>
                     </div>
@@ -163,13 +179,74 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
+                            <label for="saveViewCollectionModal-name">View Collection name:</label>
                             <input type="text" class="form-control" id="saveViewCollectionModal-name" placeholder="The name of your new collection ...">
+                        </div>
+                        <div class="form-group">
+                            <label for="saveViewCollectionModal-description">Description:</label>
+                            <input type="text" class="form-control" id="saveViewCollectionModal-description" placeholder="Description ...">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveViewCollectionModal-save">Save</button>
+                    <button type="button" class="btn btn-primary" id="saveViewCollectionModal-save" data-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loadViewCollectionModal" tabindex="-1" role="dialog" aria-labelledby="loadViewCollectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loadViewCollectionModalModalLabel">Load view</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group" id="loadViewListGroup"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Load</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="form-group">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="defaultSourceUrlId">Default source url:</label>
+                            <input type="text" name="defaultSourceUrl" id="defaultSourceUrlId" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="defaultTimeRangeId">Default time range:</label>
+                            <input type="number" name="defaultTimeRange" id="defaultTimeRangeId" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="closeViews">Admin tools:</label>
+                            <button type="button" id="closeViews" class="btn btn-primary form-control">
+                                <div>Close all views</div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="saveSettingButton">Save</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -8,8 +8,12 @@ namespace Monytor.WebApi.Controllers {
         public string Description { get; set; }
         public List<View> Views { get; set; }
 
-        public static string CreateId(string name) {
-            return $"{nameof(ViewCollection)}/{name}";
+        public void RemoveInternalId() {
+            Id = Id.Remove(0, $"{nameof(ViewCollection)}/".Length);
+        }
+
+        public static string AddInternalId(string id) {
+            return $"{nameof(ViewCollection)}/{id}";
         }
     }
 
