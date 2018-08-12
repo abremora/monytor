@@ -14,17 +14,17 @@ namespace Monytor.WebApi.Controllers {
         }
 
         [HttpGet("{id}")]
-        public ViewCollection Get(string id) {
+        public Dashboard Get(string id) {
             return _collectorService.Get(id);
         }
 
         [HttpGet]
-        public IEnumerable<ViewCollection> Index() {
+        public IEnumerable<Dashboard> Index() {
             return _collectorService.GetOverview();
         }
 
         [HttpPost]
-        public IActionResult Set([FromBody]ViewCollection config) {
+        public IActionResult Set([FromBody]Dashboard config) {
             if (config == null) return BadRequest();
             _collectorService.Set(config);
 

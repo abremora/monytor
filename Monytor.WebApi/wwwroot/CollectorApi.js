@@ -21,24 +21,47 @@ $(document).ready(function () {
         sessionStorage.defaultTimeRangeInDays = defaultTimeRangeInDays;
     }
 
+    loadAllSeriesGroupsViaUrl(getSeriesApiUrl());
+
     var currentUrl = new URL(window.location.href);
     var viewId = currentUrl.searchParams.get("view");
     if (viewId != null) {
-        loadViewCollection(viewId);
+        loadDashboardFromDb(viewId);
         return;
     }
 
-    if (!sessionStorage.views)
-        sessionStorage.views = JSON.stringify(new Views());
+    if (!sessionStorage.dashboard)
+        sessionStorage.dashboard = JSON.stringify(new Dashboard());
     else {
         loadFromStore();
     }
 });
 
-$(function () {
-    $('[data-tooltip="tooltip"]').tooltip()
-})
+$("#addViewButton").click(function () {
+    var indexOfNewView = saveNewView();
 
+    var charttype = $("#charttype option:selected").text();
+    var linkId = insertChart(indexOfNewView, charttype);
+    addCollectorForNewView(indexOfNewView, linkId);
+    updateChartConfigDialog(indexOfNewView, linkId);
+});
+
+$("#group").change(function () {
+    var tagIndex = this.value;
+    var groupTagData = getDefaultJsonGroupTagDataFromStore();
+    var selectedGroup = groupTagData[tagIndex];
+    var tag = $("#tag");
+    setTagsFromArray(selectedGroup.value, tag, null);
+});
+
+$("#addView").click(function () {
+    var today = moment();
+
+    var start = $("#start");
+    start.val(moment(today).subtract(sessionStorage.defaultTimeRangeInDays, 'days').format('YYYY-MM-DD'));
+    var end = $("#end");
+    end.val(today.format('YYYY-MM-DD'));
+});
 
 $("#saveSettingButton").click(function () {
     var url = $("#defaultSourceUrlId").val();
@@ -51,81 +74,97 @@ $("#saveSettingButton").click(function () {
 $("#settings").click(function () {
     $("#defaultSourceUrlId").val(sessionStorage.defaultSourceUrl);
     $("#defaultTimeRangeId").val(sessionStorage.defaultTimeRangeInDays);
-}); 
+});
 
 var loadFromStore = function () {
     var chartNumber = 0;
-    var views = JSON.parse(sessionStorage.views);
-    for (chartNumber = 0; chartNumber < views.views.length; chartNumber++) {
-        var linkId = insertChart(chartNumber);
-        loadAllSeriesGroups(linkId);
+    var dashboard = new Dashboard().load();
+    for (chartNumber = 0; chartNumber < dashboard.views.length; chartNumber++) {
+        var chartType = dashboard.views[chartNumber].collectors[0].chartType;
+        var linkId = insertChart(chartNumber, chartType);
+        updateChartConfigDialog(chartNumber, linkId);
+
         var collectorIndex = 0;
-        for (collectorIndex = 0; collectorIndex < views.views[chartNumber].collectors.length; collectorIndex++) {
+        for (collectorIndex = 0; collectorIndex < dashboard.views[chartNumber].collectors.length; collectorIndex++) {
             addCollector(linkId, collectorIndex);
         }
     }
 };
 
-var loadAllSeriesGroups = function (linkId) {
-    var input = $(document).find("#url" + linkId);
-    var url = input.val();
+var loadAllSeriesGroupsViaUrl = function (url) {
+    if (url == null) return;
+
     $.ajax({
         url: url
     }).then(function (data) {
-        setJsonGroupTagDataToStore(linkId, data);
-        setJsonGroupTagDataToControls(data, linkId);
+        setDefaultJsonGroupTagDataToStore(data);
+
+        var groupControl = $(document).find("#group");
+        var tagControl = $(document).find("#tag");
+        setGroupTagDataToControls(data, groupControl, tagControl, null, null);        
     }).catch((err) => {
-        alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);
-        resetGroupTagControls(linkId);
+        alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);       
     });
 }
 
-var resetGroupTagControls = function (linkId) {
-    var groupControl = $(document).find("#group" + linkId);
-    var tagControl = $(document).find("#tag" + linkId);
-
+var setGroupTagDataToControls = function (jsonData, groupControl, tagControl, groupSelected, tagSelected) {
     groupControl.empty();
-    tagControl.empty();
-}
+    tagControl.empty(); 
 
-var setJsonGroupTagDataToControls = function (jsonData, linkId) {
-    resetGroupTagControls(linkId);
-
-    var groupControl = $(document).find("#group" + linkId);
-    var tagControl = $(document).find("#tag" + linkId);
-
+    var selectedIndex = 0;
     for (var index = 0; index < jsonData.length; ++index) {
+        var groupText = jsonData[index].key;
         groupControl.append($('<option>', {
             value: index,
-            text: jsonData[index].key
+            text: groupText
         }));
+        if (groupText === groupSelected) {
+            selectedIndex = index;
+        }
     }
 
-    setTagsFromArray(jsonData[0].value, tagControl);
+    var tagValue = jsonData[0].value;
+    if (selectedIndex > 0 && selectedIndex < jsonData.length) {
+        groupControl.val(selectedIndex);
+        tagValue = jsonData[selectedIndex].value;
+    } 
+
+    setTagsFromArray(tagValue, tagControl, tagSelected);
 }
 
 var setJsonGroupTagDataToStore = function (linkId, jsonData) {
-    var viewRoot = $("#"+ linkId);
+    var viewRoot = $("#" + linkId);
     var viewIndex = getElementIndex(viewRoot);
 
-    var views = JSON.parse(sessionStorage.views);
-    var viewConfig = views.views[viewIndex];
-    viewConfig.jsonData = JSON.stringify(jsonData);
-    sessionStorage.views = JSON.stringify(views);
+    var dashboard = new Dashboard().load();
+    var view = dashboard.views[viewIndex];
+    view.jsonData = JSON.stringify(jsonData);
+    new Dashboard().save(dashboard);
+}
+
+var setDefaultJsonGroupTagDataToStore = function (jsonData) {
+    sessionStorage.defaultGroupTagData = JSON.stringify(jsonData);
 }
 
 var getJsonGroupTagFromStore = function (linkId) {
     var viewRoot = $("#" + linkId);
     var viewIndex = getElementIndex(viewRoot);
 
-    var views = JSON.parse(sessionStorage.views);
-    return JSON.parse(views.views[viewIndex].jsonData);    
+    var dashboard = JSON.parse(sessionStorage.dashboard);
+    return JSON.parse(dashboard.views[viewIndex].jsonData);
 }
 
-var createChart = function (canvas) {
+var getDefaultJsonGroupTagDataFromStore = function (jsonData) {
+    return JSON.parse(sessionStorage.defaultGroupTagData);
+}
+
+var createChart = function (canvas, charttype) {
+    if (charttype == "undefined")
+        charttype = "line";
+
     var ctx = canvas.getContext('2d');
     var chart = new Chart(ctx, {
-        type: 'line',
+        type: charttype.toLowerCase(),
         options: {
             responsive: true,
             scales: {
@@ -164,17 +203,27 @@ var randomColorGenerator = function () {
     return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
 };
 
-var setTagsFromArray = function (tages, tagElement) {
+var setTagsFromArray = function (tages, tagElement, tagSelected) {
     tagElement.empty();
+    var selectedIndex = 0;
     for (tagIndex = 0; tagIndex < tages.length; ++tagIndex) {
+        var tagText = tages[tagIndex];
         tagElement.append($('<option>', {
             value: tagIndex,
-            text: tages[tagIndex]
+            text: tagText
         }));
+
+        if (tagText === tagSelected) {
+            selectedIndex = tagIndex;
+        }
     }
+
+    if (selectedIndex > 0 && selectedIndex < tages.length) {
+        tagElement.val(selectedIndex);        
+    } 
 };
 
-var insertChart = function (chartNumber) {
+var insertChart = function (chartNumber, chartType) {
     var linkId = Math.floor((Math.random() * 1000000000) + 1);
 
     var data = {
@@ -188,41 +237,40 @@ var insertChart = function (chartNumber) {
     $(wrapper).attr("class", "viewRoot");
     $(wrapper).attr("id", linkId);
     $(wrapper).html(html);
-    
-    var today = moment();
-
-    var start = $(wrapper).find("#start" + linkId);
-    start.val(moment(today).subtract(sessionStorage.defaultTimeRangeInDays, 'days').format('YYYY-MM-DD'));
-    var end = $(wrapper).find("#end" + linkId);
-    end.val(today.format('YYYY-MM-DD'));
-    var group = $(wrapper).find("#group" + linkId);
-    var tag = $(wrapper).find("#tag" + linkId);
-
-    var currentUrl = getSeriesApiUrl();
-    var input = $(wrapper).find("#url" + linkId);
-    input.val(currentUrl);
-
-    input.on('input', function () {
-        var linkId = $(this).data("linkid");
-        delay(function (args) {
-            var linkId = args;
-            var input = $(document).find("#url" + linkId);
-            var group = $(document).find("#group" + linkId);
-            var tag = $(document).find("#tag" + linkId);
-            var currentUrl = input.val();
-
-            loadAllSeriesGroups(linkId);
-        }, linkId, 1000);
-    });
-
+        
     var canvas = $(wrapper).find("canvas")[0];
-    $("#chartArea").append(wrapper);
-    var newChart = createChart(canvas);
+    $("#chartArea").append(wrapper);   
+    var newChart = createChart(canvas, chartType);
     var chartView = {
         key: linkId,
         value: newChart
     };
     charts[linkId] = chartView;
+    return linkId;
+};
+
+var updateChartConfigDialog = function (chartNumber, linkId) {
+    var dashboard = new Dashboard().load();
+    if (dashboard.views.length == 0) return;
+
+    var view = dashboard.views[chartNumber];
+    if (view.collectors.length == 0) return;   
+
+    var collector = view.collectors[0];
+    var wrapper = $("#" + linkId);
+    var start = $(wrapper).find("#start" + linkId);
+    var end = $(wrapper).find("#end" + linkId);
+    var group = $(wrapper).find("#group" + linkId);
+    var tag = $(wrapper).find("#tag" + linkId);
+    var chartType = $(wrapper).find("#charttype" + linkId);
+
+    var groupTagData = getDefaultJsonGroupTagDataFromStore();
+    setGroupTagDataToControls(groupTagData, group, tag, collector.group, collector.tag);
+        
+    start.val(moment(collector.start).format(moment.HTML5_FMT.DATE));
+    end.val(moment(collector.end).format(moment.HTML5_FMT.DATE));
+
+    chartType.val(collector.chartType);
 
     group.on('change', function () {
         var tagIndex = this.value;
@@ -230,54 +278,62 @@ var insertChart = function (chartNumber) {
         var groupTagData = getJsonGroupTagFromStore(linkId);
         var selectedGroup = groupTagData[tagIndex];
 
-        setTagsFromArray(selectedGroup.value, tag);
+        setTagsFromArray(selectedGroup.value, tag, null);
     });
 
-    var add = $(wrapper).find("#add");
+    var add = $(wrapper).find("#update" + linkId);
     add.click(addClick);
 
     var close = $(wrapper).find(".chart-close");
     close.click(closeChart);
-    return linkId;
-};
+}
 
-$("#addView").click(function () {   
-    var views = JSON.parse(sessionStorage.views);
-    var chartNumber = views.views.length;
-
-    var viewConfig = new ViewConfig();
-    views.views.push(viewConfig);
-
-    new Views().save(views);
-
-    var linkId = insertChart(chartNumber); 
-    loadAllSeriesGroups(linkId);
+$("#updateGroupTag").click( function () {
 });
 
 $("#closeViews").click(function () {
     charts = new Array();
     $("#chartArea").empty();
-    new Views().save(new Views());        
+    new Dashboard().save(new Dashboard());
 });
 
 var addCollector = function (linkId, collectorIndex) {
     var viewRoot = $("#" + linkId);
     var viewIndex = getElementIndex(viewRoot);
 
-    var views = JSON.parse(sessionStorage.views);
+    var dashboard = new Dashboard().load();
+    var collector = dashboard.views[viewIndex].collectors[collectorIndex];
 
-    var collectorConfig = views.views[viewIndex].collectors[collectorIndex];
-   
-    var group = collectorConfig.group;
-    var tag = collectorConfig.tag;
-    var start = collectorConfig.start;
-    var end = collectorConfig.end;
+    var group = collector.group;
+    var tag = collector.tag;
+    var start = collector.start;
+    var end = collector.end;
 
-    var apiUrl = getSeriesApiUrl();
-    
+    addCollectorForValues(linkId, group, tag, start, end);
+};
+
+var addCollectorForNewView = function (indexOfview, linkId) {
+    var dashboard = new Dashboard().load();
+    var view = dashboard.views[indexOfview];
+
+    var groupSelected = $("#group option:selected").text();
+    var tagSelected = $("#tag option:selected").text();
+    var start = $("#start").val();
+    var end = $("#end").val();
+
+    addCollectorForValues(linkId, groupSelected, tagSelected, start, end);
+
+    $("#start" + linkId).val(start);
+    $("#end" + linkId).val(end);
+    $("#group" + linkId).text(groupSelected);
+    $("#tag" + linkId).text(tagSelected);
+};
+
+var addCollectorForValues = function (linkId, group, tag, start, end) {
     if (group === "" || tag === "")
         return;
 
+    var apiUrl = getSeriesApiUrl();
     var url = getUrlRequestSeries(apiUrl, start, end, group, tag);
 
     $.ajax({
@@ -331,17 +387,17 @@ var closeChart = function (event) {
     var viewRoot = $(this).closest(".viewRoot");
     var viewIndex = getElementIndex(viewRoot);
 
-    var views = new Views().load();
-    views.views.splice(viewIndex, 1);
-    new Views().save(views);
-   
+    var dashboard = new Dashboard().load();
+    dashboard.views.splice(viewIndex, 1);
+    new Dashboard().save(dashboard);
+
     viewRoot.remove();
 }
 
 function getElementIndex(el) {
     var parent = el.parent();
     var children = parent.children();
-    return children.index(el);    
+    return children.index(el);
 }
 
 var getUrlRequestSeries = function (apiUrl, start, end, group, tag) {
@@ -352,41 +408,67 @@ var getUrlRequestSeries = function (apiUrl, start, end, group, tag) {
         + start + "/"
         + endDay + "/"
         + groupEscaped + "/"
-        + tagEscaped;  
+        + tagEscaped;
 
     return url;
 }
 
+var saveNewView = function () {
+    var groupSelected = $("#group option:selected").text();
+    var tagSelected = $("#tag option:selected").text();
+    var start = $("#start").val();
+    var end = $("#end").val();
+    var chartType = $("#charttype option:selected").text();
+    var apiUrl = getSeriesApiUrl();
+
+    var url = getUrlRequestSeries(apiUrl, start, end, group, tag);
+
+    var dashboard = new Dashboard().load();
+        
+    var collectorConfig = new Collector();
+    collectorConfig.group = groupSelected;
+    collectorConfig.tag = tagSelected;
+    collectorConfig.start = start;
+    collectorConfig.end = end;
+    collectorConfig.chartType = chartType;
+
+    var view = new View();
+    view.collectors.push(collectorConfig);
+    dashboard.views.push(view);
+
+    new Dashboard().save(dashboard);
+
+    return dashboard.views.length - 1;
+};
 
 var addClick = function (event) {
     var view = $(this).closest(".viewRoot");
 
-    var linkId = view.attr("id");  
+    var linkId = view.attr("id");
 
     var group = $(document).find("#group" + linkId + " option:selected").text();
     var tag = $(document).find("#tag" + linkId + " option:selected").text();
-    var end = $(document).find("#end" + linkId).val();   
+    var end = $(document).find("#end" + linkId).val();
     var start = $("#start" + linkId).val();
-    var apiUrl = $("#url" + linkId).val();
+    var apiUrl = getdefaultApiUrl();
 
     var url = getUrlRequestSeries(apiUrl, start, end, group, tag);
 
     var viewIndex = getElementIndex(view);
-    var views = JSON.parse(sessionStorage.views);
+    var views = JSON.parse(sessionStorage.dashboard);
     var viewConfig = views.views[viewIndex];
 
-    var collectorConfig = new CollectorConfig();
-    collectorConfig.url = apiUrl;
-    collectorConfig.group = group;
-    collectorConfig.tag = tag;
-    collectorConfig.start = start;
-    collectorConfig.end = end;
+    var collector = new Collector();
+    collector.group = group;
+    collector.tag = tag;
+    collector.start = start;
+    collector.end = end;
 
-    viewConfig.collectors.push(collectorConfig);
+    viewConfig.collectors.push(collector);
 
-    new Views().save(views);
+    new Dashboard().save(views);
 
-    addCollector(linkId, viewConfig.collectors.length - 1);  
+    addCollector(linkId, viewConfig.collectors.length - 1);
 };
 
 var delay = (function () {
@@ -397,29 +479,29 @@ var delay = (function () {
     };
 })();
 
-function CollectorConfig() {
-    this.url = "";
+function Collector() {   
     this.group = "";
     this.tag = "";
     this.start = null;
     this.end = null;
+    this.chartType = "line";
 }
 
-function ViewConfig() {
+function View() {
     this.jsonData = null;
     this.collectors = new Array();
 }
 
-function Views() {
-    this.views = new Array();    
+function Dashboard() {
+    this.views = new Array();
 }
 
-Views.prototype.load = function () {
-    return JSON.parse(sessionStorage.views);
+Dashboard.prototype.load = function () {
+    return JSON.parse(sessionStorage.dashboard);
     // TODO: Return type Views instead of anonymous object
 };
 
-Views.prototype.save = function (views) {
+Dashboard.prototype.save = function (views) {
     // TODO: HACK: Because load() doesnot return typed object 
-    sessionStorage.views = JSON.stringify(views);
+    sessionStorage.dashboard = JSON.stringify(views);
 };

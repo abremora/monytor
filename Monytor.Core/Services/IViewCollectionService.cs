@@ -5,8 +5,8 @@ using Monytor.WebApi.Controllers;
 
 namespace Monytor.Core.Services {
     public interface IViewCollectionService {
-        ViewCollection Get(string id);
-        IEnumerable<ViewCollection> GetOverview();
-        void Set(ViewCollection config);
+        Dashboard Get(string id);
+        IEnumerable<Dashboard> GetOverview();
+        void Set(Dashboard config);
     }
 }

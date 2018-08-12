@@ -1,31 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Monytor.WebApi.Controllers;
 using Raven.Client;
 
 namespace Monytor.Domain.Services {
-    public class ViewCollectionRepository : IViewCollectionRepository {
+    public class DashboardRepository : IDashboardRepository {
         private readonly IDocumentStore _store;
 
-        public ViewCollectionRepository(IDocumentStore store) {
+        public DashboardRepository(IDocumentStore store) {
             _store = store;
         }
 
-        public ViewCollection Load(string id) {
+        public Dashboard Load(string id) {
             using (var session = _store.OpenSession()) {
-                return session.Load<ViewCollection>(id);
+                return session.Load<Dashboard>(id);
             }
         }
 
-        public IEnumerable<ViewCollection> LoadOverview() {
+        public IEnumerable<Dashboard> LoadOverview() {
             using (var session = _store.OpenSession()) {
-                return session.Query<ViewCollection>()
+                return session.Query<Dashboard>()
                     .Take(1024);
             }
         }
 
-        public void Save(ViewCollection config) {
+        public void Save(Dashboard config) {
             using (var session = _store.OpenSession()) {                
                 session.Store(config);
                 session.SaveChanges();

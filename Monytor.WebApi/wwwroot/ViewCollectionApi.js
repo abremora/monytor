@@ -10,7 +10,7 @@ var getUrlForViewForViewCollectionApiWithId = function (id) {
     return window.location.origin + '/?view=' + id;
 };
 
-var loadViewCollection = function (viewId) {
+var loadDashboardFromDb = function (viewId) {
     if (viewId == null)
         return;
 
@@ -24,7 +24,7 @@ var loadViewCollection = function (viewId) {
             if (viewCount == 0) return;
 
             var endDate = moment().utc().endOf('day');
-            var views = new Views();
+            var dashboard = new Dashboard();
 
             for (var i = 0; i < viewCount; i++) {
                 var view = data.views[i];
@@ -34,20 +34,21 @@ var loadViewCollection = function (viewId) {
                 var range = view.range;
                 var timespan = moment.duration(range);
                 var start = endDate.clone().subtract(timespan);
-
-                var collector = new CollectorConfig();
+                
+                var collector = new Collector();                
                 collector.group = group;
                 collector.tag = tag;
                 collector.end = endDate.utc().toISOString();
                 collector.start = start.toISOString();
+                collector.chartType = view.chartType;
 
-                var viewConfig = new ViewConfig();
-                viewConfig.collectors.push(collector);
+                var view = new View();
+                view.collectors.push(collector);
 
-                views.views.push(viewConfig);
+                dashboard.views.push(view);
             }
 
-            new Views().save(views);
+            new Dashboard().save(dashboard);
 
             loadFromStore();
         }).catch((err) => {
@@ -89,16 +90,16 @@ $("#saveViewCollectionModal-save").click(function () {
     var name = $("#saveViewCollectionModal-name").val();
     var description = $("#saveViewCollectionModal-description").val();
 
-    var views = new Views().load();
+    var dashboard = new Dashboard().load();
     var data = {
         "Name": name,
         "Description": description,
         "Views": new Array()
     };
-    for (var i = 0; i < views.views.length; i++) {
-        if (views.views[i].collectors.length == 0)
+    for (var i = 0; i < dashboard.views.length; i++) {
+        if (dashboard.views[i].collectors.length == 0)
             continue;
-        var collector = views.views[i].collectors[0];
+        var collector = dashboard.views[i].collectors[0];
         var end = moment(collector.end);
         var start = moment(collector.start);
         var diff = end.subtract(start);
@@ -107,7 +108,8 @@ $("#saveViewCollectionModal-save").click(function () {
             "Position": i,
             "Group": collector.group,
             "Tag": collector.tag,
-            "Range": timespan
+            "Range": timespan,
+            "ChartType": collector.chartType
         });
     }
 

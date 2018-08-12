@@ -44,14 +44,16 @@
         .chartWrapper {
             position: relative;
         }
-         
+
         .buttonNav {
-         
+            position: relative;
+            z-index: 20;
         }
 
         .chart-render-canvas {
             position: absolute;
             top: 15px;
+            z-index: 10;
         }
 
         .chart-close {
@@ -97,7 +99,7 @@
             </ul>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item text-nowrap m-1">
-                    <button type="button" class="btn btn-primary" id="addView">
+                    <button type="button" class="btn btn-primary" id="addView" data-toggle="modal" data-target="#addViewModal">
                         <div><span class="fas fa-plus"></span> Add view</div>
                     </button>
                 </li>
@@ -113,7 +115,7 @@
         <div class="flex-item chartWrapper">
             <div class="buttonNav">
                 <button type="button" class="btn btn-success btn-circle" title="Add collector" data-toggle="modal" data-target="#addModal{{linkId}}">
-                    <div><span class="fas fa-plus"></span></div>
+                    <div><span class="fas fa-pen"></span></div>
                 </button>
                 <button type="button" class="btn btn-danger btn-circle chart-close" title="Close view" data-linkid="{{linkId}}">
                     <div><span class="fas fa-minus"></span></div>
@@ -124,7 +126,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Select collector</h5>
+                            <h5 class="modal-title">Update collector</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -132,33 +134,36 @@
                         <div class="form-group">
                             <div class="modal-body">
                                 <div class="form-group">
-                                    <label for="url">Url</label>
-                                    <input type="text" name="url" id="url{{linkId}}" data-linkid="{{linkId}}" class="form-control" />
+                                    <label for="charttype{{linkId}}">Chart type</label>
+                                    <select class="form-control" id="charttype{{linkId}}">
+                                        <option>Line</option>
+                                        <option>Bar</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col">
-                                            <label for="start">Start</label>
+                                            <label for="start{{linkId}}">Start</label>
                                             <input type="date" name="start" id="start{{linkId}}" class="form-control" />
                                         </div>
                                         <div class="col">
-                                            <label for="end">End</label>
+                                            <label for="end{{linkId}}">End</label>
                                             <input type="date" name="end" id="end{{linkId}}" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="group">Group</label>
+                                    <label for="group{{linkId}}">Group</label>
                                     <select class="form-control" id="group{{linkId}}" data-linkid="{{linkId}}"></select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="tag">Tag</label>
+                                    <label for="tag{{linkId}}">Tag</label>
                                     <select class="form-control" id="tag{{linkId}}"></select>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" id="add" data-linkid="{{linkId}}">Add</button>
+                                <button type="button" class="btn btn-primary" id="update{{linkId}}" data-linkid="{{linkId}}">Update</button>
                             </div>
                         </div>
                     </div>
@@ -166,6 +171,55 @@
             </div>
         </div>
     </template>
+
+    <div class="modal fade" id="addViewModal" tabindex="-1" role="dialog" aria-labelledby="addViewModalModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add view</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="form-group">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="charttype">Chart type</label>
+                            <select class="form-control" id="charttype">
+                                <option>Line</option>
+                                <option>Bar</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="start">Start</label>
+                                    <input type="date" name="start" id="start" class="form-control" />
+                                </div>
+                                <div class="col">
+                                    <label for="end">End</label>
+                                    <input type="date" name="end" id="end" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="group">Group</label>
+                            <select class="form-control" id="group"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tag">Tag</label>
+                            <select class="form-control" id="tag"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="addViewButton" data-dismiss="modal">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="modal fade" id="saveViewCollectionModal" tabindex="-1" role="dialog" aria-labelledby="saveViewCollectionModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">

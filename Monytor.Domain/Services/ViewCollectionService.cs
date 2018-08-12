@@ -5,18 +5,18 @@ using System.Collections.Generic;
 
 namespace Monytor.Domain.Services {
     public class ViewCollectionService : IViewCollectionService {
-        private readonly IViewCollectionRepository _repository;
+        private readonly IDashboardRepository _repository;
 
-        public ViewCollectionService(IViewCollectionRepository repository) {
+        public ViewCollectionService(IDashboardRepository repository) {
             _repository = repository;
         }
 
-        public ViewCollection Get(string id) {
-            var internalId = ViewCollection.AddInternalId(id);
+        public Dashboard Get(string id) {
+            var internalId = Dashboard.AddInternalId(id);
             return _repository.Load(internalId);
         }
 
-        public IEnumerable<ViewCollection> GetOverview() {
+        public IEnumerable<Dashboard> GetOverview() {
             var overview = _repository.LoadOverview();
             
             foreach(var view in overview) {
@@ -26,7 +26,7 @@ namespace Monytor.Domain.Services {
             return overview;
         }
 
-        public void Set(ViewCollection config) {           
+        public void Set(Dashboard config) {           
             _repository.Save(config);
         }
     }

@@ -30,7 +30,7 @@ namespace Monytor.WebApi {
             services.AddTransient<ICollectorService, CollectorService>();
             services.AddTransient<ISeriesRepository, SeriesRepository>();
             services.AddTransient<IViewCollectionService, ViewCollectionService>();
-            services.AddTransient<IViewCollectionRepository, ViewCollectionRepository>();
+            services.AddTransient<IDashboardRepository, DashboardRepository>();
 
             services.AddCors();
             services.AddMvc();            
