@@ -26,7 +26,9 @@ namespace Monytor.WebApi.Controllers {
                 Start = start,
                 End = end,
                 Group = group,
-                Tag = tag
+                Tag = tag,
+                MaxValues = 1024,
+                OrderBy = Ordering.Ascending
             };
             return _collectorService.GetSeries(query);
         }

@@ -5,19 +5,25 @@ using Autofac;
 using System;
 using Monytor.Core.Configurations;
 using Monytor.Core.Repositories;
-using Monytor.Infrastructure;
+using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Monytor.Startup {
     [DisallowConcurrentExecution]
     public class GlobalCollectorJob : IJob {
         private readonly IDocumentStore _store;
         private readonly ILifetimeScope _container;
+        private readonly ILogger<GlobalCollectorJob> _logger;
 
-        public GlobalCollectorJob(IDocumentStore store, ILifetimeScope container) {
+        public GlobalCollectorJob(IDocumentStore store, ILifetimeScope container, ILogger<GlobalCollectorJob> logger) {
             _store = store;
             _container = container;
+            _logger = logger;
         }
         public async Task Execute(IJobExecutionContext context) {
+            if (context.CancellationToken.IsCancellationRequested)
+                return;
+
             Collector collectorInstance = null;
             try {
                 collectorInstance = context.JobDetail.JobDataMap["CollectorType"] as Collector;
@@ -25,12 +31,13 @@ namespace Monytor.Startup {
                 var next = context.NextFireTimeUtc?.LocalDateTime;
                 var nextTimeSpan = context.NextFireTimeUtc.HasValue ? context.NextFireTimeUtc.Value.Subtract(DateTimeOffset.UtcNow) : TimeSpan.MinValue;
 
-                Logger.Info($"Job: {collectorInstance.GetType().Name} | Next: {next} ({nextTimeSpan.ToString(@"hh\:mm\:ss")})");
-
+                _logger.LogInformation($"Job: {collectorInstance.GetType().Name} | Group:{collectorInstance.GroupName} | Text:'{collectorInstance.DisplayName}' | Next: {next} ({nextTimeSpan.ToString(@"hh\:mm\:ss")})");
+                
                 using (var scope = _container.BeginLifetimeScope()) {
                     var collectorKey = collectorInstance.GetType();
                     var collectorBehavior = _container.ResolveKeyed<CollectorBehaviorBase>(collectorKey);
-                    var series = collectorBehavior.Run(collectorInstance);
+                    var series = collectorBehavior.Run(collectorInstance)
+                        .ToList();
 
                     using (var bulk = _store.BulkInsert()) {
                         foreach (var serie in series) {
@@ -39,19 +46,21 @@ namespace Monytor.Startup {
                     }
 
                     if (collectorInstance.Verifiers != null) {
-                        foreach (var serie in series) {
+                        foreach (var serie in series) {                            
                             foreach (var verifier in collectorInstance.Verifiers) {
-                                if (verifier == null) continue;
+                                if (verifier == null 
+                                    || verifier.Notifications == null
+                                    || verifier.Notifications.Count == 0) continue;
 
                                 var verifierKey = verifier.GetType();
                                 var verifierBehavior = _container.ResolveKeyed<VerifierBehaviorBase>(verifierKey);                                
                                 verifierBehavior.SeriesRepository = _container.Resolve<ISeriesRepository>();
                                 var result = verifierBehavior.Verify(verifier, serie);
 
-                                if (verifier.Notifications != null) {
+                                if (result.Successful) {
                                     foreach (var notificationId in verifier.Notifications) {
                                         if (!_container.IsRegisteredWithName<NotificationBehaviorBase>(notificationId)) {
-                                            Logger.Error($"'{collectorKey}/{verifierKey}/{notificationId}' not found.");
+                                            _logger.LogError($"'{collectorKey}/{verifierKey}/{notificationId}' not found.");
                                             continue;
                                         }
                                         var notificationBehavior = _container.ResolveNamed<NotificationBehaviorBase>(notificationId);
@@ -65,7 +74,7 @@ namespace Monytor.Startup {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex, $"{context.JobDetail.Key} in {collectorInstance.GetType()}");                
+                _logger.LogError(ex, $"{context.JobDetail.Key} in {collectorInstance.GetType()}");                
             }     
         }
     }

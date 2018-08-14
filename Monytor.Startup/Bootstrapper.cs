@@ -12,21 +12,28 @@ using System.Threading.Tasks;
 using Monytor.Infrastructure;
 using Monytor.Core.Repositories;
 using Monytor.Core.Configurations;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace Monytor.Startup {
     public class Bootstrapper {
         public async static Task<IContainer> Setup() {
-            Logger.Info("Load config");
-            var appConfig = LoadConfig();
-            Logger.Info("Load database");
-            var documentStore = SetupDatabase(appConfig);
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
 
-            Logger.Info("Setup DI");
-            var builder = await SetupDi(appConfig, documentStore);
+            var logger = loggerFactory.CreateLogger<Bootstrapper>();
+
+            logger.LogInformation("Load config");
+            var appConfig = LoadConfig();
+            logger.LogInformation("Load database");
+            var documentStore = SetupDatabase(appConfig);
+            logger.LogInformation("Setup DI");
+            var builder = await SetupDi(appConfig, documentStore, loggerFactory);
+            
             return builder.Build();
         }
 
-        private static async Task<ContainerBuilder> SetupDi(IConfigurationRoot appConfig, DocumentStore documentStore) {
+        private static async Task<ContainerBuilder> SetupDi(IConfigurationRoot appConfig, DocumentStore documentStore, ILoggerFactory loggerFactory) {
             var builder = new ContainerBuilder();
             builder.RegisterInstance(appConfig)
                    .As<IConfigurationRoot>();
@@ -34,6 +41,11 @@ namespace Monytor.Startup {
                    .As<IDocumentStore>();
             builder.RegisterType<SeriesRepository>()
                     .As<ISeriesRepository>();
+            builder.RegisterInstance(loggerFactory)
+                    .As<ILoggerFactory>();
+            builder.RegisterGeneric(typeof(Logger<>))
+                .As(typeof(ILogger<>))
+                .InstancePerDependency();
 
             builder.RegisterType<CollectorConfig>();
             builder.RegisterType<SchedulerStartup>();
@@ -58,7 +70,7 @@ namespace Monytor.Startup {
         private static void SetupNotifications(ContainerBuilder builder, CollectorConfig collectorConfig) {
             foreach (var notification in collectorConfig.Notifications) {
                 var b = ConfigCreator.LoadBehavior(typeof(NotificationBehavior<>), notification.GetType());
-                builder.RegisterInstance(b).Named(notification.Id, typeof(NotificationBehaviorBase));
+                builder.RegisterType(b).Named(notification.Id, typeof(NotificationBehaviorBase));
                 builder.RegisterInstance(notification).Named(notification.Id, typeof(Notification));
             }
         }
@@ -68,8 +80,9 @@ namespace Monytor.Startup {
                 .SelectMany(x => x.Verifiers.Select(y => y.GetType())).Distinct();
 
             foreach (var verifier in distinctVerifiers) {
+
                 var b = ConfigCreator.LoadBehavior(typeof(VerfiyBehavior<>), verifier);
-                builder.RegisterInstance(b).Keyed(verifier, typeof(VerifierBehaviorBase));
+                builder.RegisterType(b).Keyed(verifier, typeof(VerifierBehaviorBase));
             }
         }
 
@@ -77,7 +90,7 @@ namespace Monytor.Startup {
             var distinctCollectors = collectorConfig.Collectors.Select(x => x.GetType()).Distinct();
             foreach (var collector in distinctCollectors) {
                 var b = ConfigCreator.LoadBehavior(typeof(CollectorBehavior<>), collector);
-                builder.RegisterInstance(b).Keyed(collector, typeof(CollectorBehaviorBase));
+                builder.RegisterType(b).Keyed(collector, typeof(CollectorBehaviorBase));
             }
         }
 

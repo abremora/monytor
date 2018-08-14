@@ -18,6 +18,8 @@
   "Collectors": [
     {
       "$type": "Monytor.Implementation.Collectors.RestApiCollector, Monytor.Implementation",
+      "DisplayName": "Subscription position",
+      "Description": "Current subscription position",
       "GroupName": "Subscription",
       "TagName": "Id_1",
       "RequestUri": "http://localhost:8080/databases/Monytor/debug/subscriptions",
@@ -29,10 +31,22 @@
       "StartingTime": null,
       "EndAt": null,
       "Priority": 3,
-      "Verifiers": []
+      "Verifiers": [
+        {
+          "$type": "Monytor.Implementation.Verifiers.SeriesUnchangedVerifier, Monytor.Implementation",
+          "Group": "Subscription",
+          "Tag": "Id_1",
+          "TimeInterval": "00:00:00",
+          "Notifications": [
+            "Monytor.EmailNotification"
+          ]
+        }
+      ]
     },
     {
       "$type": "Monytor.Implementation.Collectors.RestApiCollector, Monytor.Implementation",
+      "DisplayName": "Last etag",
+      "Description": "Etag of last series",
       "GroupName": "LastEtag",
       "TagName": "Series",
       "RequestUri": "http://localhost:8080/databases/Monytor/indexes/SeriesIndex?query=Tag%3ASeries%20AND%20Group%3ACollection&start=0&pageSize=16&sort=-Time",
@@ -48,10 +62,49 @@
     },
     {
       "$type": "Monytor.NetFramework.Implementation.PerformanceCounterCollector, Monytor.NetFramework.Implementation",
+      "DisplayName": "CPU time",
+      "Description": "Collects the current CPU time",
       "GroupName": "PerformanceCounterCollector",
       "Category": "Prozessorinformationen",
-      "Name": "Prozessorzeit (%)",
+      "Counter": "Prozessorzeit (%)",
       "Instance": "_Total",
+      "MachineName": ".",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": []
+    },
+    {
+      "$type": "Monytor.NetFramework.Implementation.PerformanceCounterCollector, Monytor.NetFramework.Implementation",
+      "DisplayName": "Free Disc C:",
+      "Description": "Free disc space C:",
+      "GroupName": "PerformanceCounterCollector",
+      "Category": "Logischer Datenträger",
+      "Counter": "Freier Speicherplatz (%)",
+      "Instance": "C:",
+      "MachineName": ".",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": []
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.AllCollectionCollector, Monytor.Implementation",
+      "Source": {
+        "Url": "http://localhost:8080",
+        "Database": "Monytor"
+      },
+      "DisplayName": "All collection",
+      "Description": "Get all count for every collection",
+      "GroupName": "AllCollection",
       "StartingTimeDelay": "00:00:00",
       "RandomTimeDelay": "00:00:00",
       "PollingInterval": "01:00:00",
@@ -68,6 +121,8 @@
         "Url": "http://localhost:8080",
         "Database": "Monytor"
       },
+      "DisplayName": "Count series",
+      "Description": "Count series collection",
       "GroupName": "Collection",
       "StartingTimeDelay": "00:00:00",
       "RandomTimeDelay": "00:00:00",
@@ -78,7 +133,7 @@
       "Priority": 3,
       "Verifiers": [
         {
-          "$type": "Monytor.Implementation.Verifiers.SeriesChangeVerifier, Monytor.Implementation",
+          "$type": "Monytor.Implementation.Verifiers.SeriesChangedVerifier, Monytor.Implementation",
           "Group": "Collection",
           "Tag": "Series",
           "TimeInterval": "00:00:00",
@@ -95,6 +150,8 @@
         "Url": "http://localhost:8080",
         "Database": "Monytor"
       },
+      "DisplayName": "Count starting with series",
+      "Description": "Count all collection starts with series",
       "GroupName": "StartingDocumentId",
       "StartingTimeDelay": "00:00:00",
       "RandomTimeDelay": "00:00:00",
@@ -107,6 +164,8 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.SystemInformationCollector, Monytor.Implementation",
+      "DisplayName": "System information",
+      "Description": "Collects information of the current system",
       "GroupName": "SystemInformation",
       "StartingTimeDelay": "00:00:00",
       "RandomTimeDelay": "00:00:00",

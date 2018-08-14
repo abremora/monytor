@@ -1,4 +1,5 @@
-﻿using Monytor.Core.Configurations;
+﻿using Microsoft.Extensions.Logging;
+using Monytor.Core.Configurations;
 using Monytor.Core.Models;
 using Monytor.Infrastructure;
 using Newtonsoft.Json.Linq;
@@ -7,8 +8,17 @@ using System.Collections.Generic;
 using System.Net.Http;
 
 namespace Monytor.Implementation.Collectors {
-    public class RestApiCollectorBehavior : CollectorBehavior<RestApiCollector> {
+    public class RestApiCollectorBehavior : CollectorBehavior<RestApiCollector>, 
+        IDisposable {
         static HttpClient _client = new HttpClient();
+
+        private readonly ILogger<RestApiCollectorBehavior> _logger;
+
+        public RestApiCollectorBehavior(ILogger<RestApiCollectorBehavior> logger) {
+            _logger = logger;
+        }
+
+     
 
         public override IEnumerable<Series> Run(Collector collector) {
             var collectorTyped = collector as RestApiCollector;
@@ -22,7 +32,7 @@ namespace Monytor.Implementation.Collectors {
                 content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             }
             else {
-                Logger.Warning($"'{collectorTyped.RequestUri}' returns: {response.StatusCode}");
+                _logger.LogWarning($"'{collectorTyped.RequestUri}' returns: {response.StatusCode}");
                 yield break;
             }
 
@@ -54,5 +64,23 @@ namespace Monytor.Implementation.Collectors {
                 yield return serie;
             }
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (disposing) {
+                    _client?.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose() {
+            Dispose(true);            
+        }
+        #endregion
     }
 }
