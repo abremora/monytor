@@ -1,19 +1,21 @@
-﻿using Monytor.Infrastructure;
-using Quartz;
+﻿using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Monytor.Core.Configurations;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Monytor.Startup {
     public class SchedulerStartup : IDisposable {
         private readonly IScheduler _scheduler;
         private readonly AutofacJobFactory _factory;
+        private readonly ILogger<SchedulerStartup> _logger;
 
-        public SchedulerStartup(IScheduler scheduler, AutofacJobFactory factory) {
+        public SchedulerStartup(IScheduler scheduler, AutofacJobFactory factory, ILogger<SchedulerStartup> logger) {
             _scheduler = scheduler;
             _factory = factory;
+            _logger = logger;
         }
 
         public async Task ConfigScheduler(CollectorConfig collectorConfig) {
@@ -25,7 +27,7 @@ namespace Monytor.Startup {
                 foreach (var collector in collectorGroup) {
                     var identityName = $"{collector.GetType().Name}({counter})";
                     counter++;
-                    Logger.Info("Register: " + identityName);
+                    _logger.LogInformation("Register: " + identityName);
 
                     var dic = new Dictionary<string, object> {
                     { "CollectorType", collector }};
@@ -65,8 +67,22 @@ namespace Monytor.Startup {
             }
         }
 
-        public void Dispose() {
-            _scheduler.Shutdown();
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (disposing) {
+                    var task = _scheduler.Shutdown(true);
+                    task.Wait(5000);
+                }
+                disposedValue = true;
+            }
         }
+
+        public void Dispose() {
+            Dispose(true);
+        }
+        #endregion
     }
 }

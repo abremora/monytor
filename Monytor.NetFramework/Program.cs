@@ -1,24 +1,36 @@
 ﻿using Autofac;
 using CommandLine;
+using Microsoft.Extensions.Logging;
 using Monytor.Core.Configurations;
 using Monytor.Implementation.Collectors;
-using Monytor.Infrastructure;
 using Monytor.NetFramework.Implementation;
 using Monytor.Startup;
+using NLog.Extensions.Logging;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Monytor.NetFramework {
     class Program {
+        static IContainer _container;
+        static ILogger _logger = null;
+        static ManualResetEventSlim _manualReset = new ManualResetEventSlim(false);
+
         static void Main(string[] args) {
-            Logger.Text(CommandLine.Text.HeadingInfo.Default);
-            Logger.Text(CommandLine.Text.CopyrightInfo.Default);
-            Logger.NewLine();
-            Logger.Text("Start application with '--help' for assistance.");
-            Logger.NewLine();
+            Console.WriteLine(CommandLine.Text.HeadingInfo.Default);
+            Console.WriteLine(CommandLine.Text.CopyrightInfo.Default);
+            Console.WriteLine();
+            Console.WriteLine("Start application with '--help' for assistance.");
+            Console.WriteLine();
+            Console.WriteLine("Press <CTRL>+<c> to close the application.");
+            Console.WriteLine();
+
+            Console.CancelKeyPress += Console_CancelKeyPress;
 
             try {
+                CreateLoggerForConsole();
                 SetupBinder();
+
                 var config = new CollectorConfigCreator();
                 var parser = new Parser(x => x.CaseSensitive = false);
                 var options = parser.ParseArguments<ConsoleArguments>(args)
@@ -31,40 +43,39 @@ namespace Monytor.NetFramework {
                 var parsedResult = options as Parsed<ConsoleArguments>;
 
                 if (parsedResult.Value.CreateDefaultConfig) {
+                    _logger.LogInformation("Default config was created");
                     goto End;
                 }
 
-                var container = Bootstrapper.Setup();
+                _container = Bootstrapper.Setup().Result;
                 if (!config.HasConfig()) {
-                    Logger.Warning($"Config file '{config.ConfigFileName}' not found. Create default config.\nUse --help for further assistance.");
+                    _logger.LogWarning($"Config file '{config.ConfigFileName}' not found. Create default config.\nUse --help for further assistance.");
                 }
 
-                RunAsync(container.Result).GetAwaiter().GetResult();
+                RunAsync().GetAwaiter().GetResult();
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                _logger?.LogCritical(ex, "Unknown error");
             }
 
             End:
-            Logger.Text("Press <ENTER> to close the application");
-            Console.ReadLine();
+            Console.WriteLine("Bye!");
         }
 
-        private static async Task RunAsync(IContainer container) {
+        private static async Task RunAsync() {
             SchedulerStartup scheduler = null;
+
             try {
-                scheduler = container.Resolve<SchedulerStartup>();
-                var collecotConfig = container.Resolve<CollectorConfig>();
+                scheduler = _container.Resolve<SchedulerStartup>();
+                var collectorConfig = _container.Resolve<CollectorConfig>();
 
-                await scheduler.ConfigScheduler(collecotConfig);
+                await scheduler.ConfigScheduler(collectorConfig);
 
-                Logger.Info("Scheduler started");
-                Logger.Text("Press <ENTER> to close the application");
-                Logger.NewLine();
-                Console.ReadLine();
+                _logger.LogInformation("Scheduler started");
+                _manualReset.Wait();
             }
             catch (Exception e) {
-                Logger.Error(e);
+                _logger.LogError(e, "Scheduler error");
             }
             finally {
                 scheduler.Dispose();
@@ -75,10 +86,20 @@ namespace Monytor.NetFramework {
             new SystemInformationCollector();
             new PerformanceCounterCollector();
         }
-    }
 
-    internal class ConsoleArguments {
-        [Option(Default = false, HelpText = "Create a default config with settings for all collectors.")]
-        public bool CreateDefaultConfig { get; set; }
+        private static void CreateLoggerForConsole() {
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
+            _logger = loggerFactory.CreateLogger<Program>();
+        }
+
+        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e) {
+            _logger?.LogInformation("Application will be closed.");
+            var scheduler = _container.Resolve<SchedulerStartup>();
+            scheduler.Dispose();
+            _container?.Dispose();
+            _logger?.LogInformation("All resources were disposed.");
+            _manualReset.Set();
+        }
     }
 }

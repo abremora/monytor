@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Monytor.Infrastructure;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,7 +17,6 @@ namespace Monytor.Startup {
         public void WriteConfig(object config, string configPath) {
             var content = JsonConvert.SerializeObject(config, JsonSerializerSettings());
             File.WriteAllText(configPath, content);
-            Logger.Info($"{ConfigFileName} was created.");
         }
 
         public string GetConfigPath() {
@@ -43,18 +41,19 @@ namespace Monytor.Startup {
             return instances;
         }
 
-        public static object LoadBehavior(Type behaviorType, Type instance) {
+        public static Type LoadBehavior(Type behaviorType, Type instance) {
             var constructedListType = behaviorType.MakeGenericType(instance);
-            return LoadAll(constructedListType).Single();
+            return LoadAllConcreteTypesOf(constructedListType).Single();
         }
 
-        private static IEnumerable<object> LoadAll(Type type) {
+        private static IEnumerable<Type> LoadAllConcreteTypesOf(Type type) {
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var instances = loadedAssemblies.SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
-                .Select(x => Activator.CreateInstance(x));
-            return instances;
+            var types = loadedAssemblies.SelectMany(s => s.GetTypes())
+                .Where(p => p.IsClass
+                    && !p.IsAbstract
+                    && type.IsAssignableFrom(p));                
+            return types;
         }
     }
 }
