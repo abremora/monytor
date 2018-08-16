@@ -30,7 +30,7 @@ namespace Monytor.Startup {
         }
 
         public CollectorConfig LoadConfig() {
-            var collectorConfig = Path.Combine(".", ConfigFileName);
+            var collectorConfig = GetConfigPath();
             var content = File.ReadAllText(collectorConfig);
             return JsonConvert.DeserializeObject<CollectorConfig>(content, JsonSerializerSettings());
         }
