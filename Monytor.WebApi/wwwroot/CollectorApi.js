@@ -308,20 +308,23 @@ var addCollector = function (linkId, collectorIndex) {
     var tag = collector.tag;
     var start = collector.start;
     var end = collector.end;
+    var meanValueType = collector.meanValueType;
 
-    addCollectorForValues(linkId, group, tag, start, end);
+    addCollectorForValues(linkId, group, tag, start, end, meanValueType);
 };
 
 var addCollectorForNewView = function (indexOfview, linkId) {
     var dashboard = new Dashboard().load();
     var view = dashboard.views[indexOfview];
+    var collector = view.collectors[0];
 
-    var groupSelected = $("#group option:selected").text();
-    var tagSelected = $("#tag option:selected").text();
-    var start = $("#start").val();
-    var end = $("#end").val();
+    var groupSelected = collector.group;
+    var tagSelected = collector.tag;
+    var start = collector.start;
+    var end = collector.end;
+    var meanValueType = collector.meanValueType;
 
-    addCollectorForValues(linkId, groupSelected, tagSelected, start, end);
+    addCollectorForValues(linkId, groupSelected, tagSelected, start, end, meanValueType);
 
     $("#start" + linkId).val(start);
     $("#end" + linkId).val(end);
@@ -329,12 +332,12 @@ var addCollectorForNewView = function (indexOfview, linkId) {
     $("#tag" + linkId).text(tagSelected);
 };
 
-var addCollectorForValues = function (linkId, group, tag, start, end) {
+var addCollectorForValues = function (linkId, group, tag, start, end, meanValueType) {
     if (group === "" || tag === "")
         return;
 
     var apiUrl = getSeriesApiUrl();
-    var url = getUrlRequestSeries(apiUrl, start, end, group, tag);
+    var url = getUrlRequestSeries(apiUrl, start, end, group, tag, meanValueType);
 
     $.ajax({
         url: url
@@ -400,7 +403,7 @@ function getElementIndex(el) {
     return children.index(el);
 }
 
-var getUrlRequestSeries = function (apiUrl, start, end, group, tag) {
+var getUrlRequestSeries = function (apiUrl, start, end, group, tag, meanValueType) {
     var endDay = moment(end).add(1, 'day').subtract(1, 'second').toISOString();
     var tagEscaped = encodeURIComponent(tag);
     var groupEscaped = encodeURIComponent(group);
@@ -409,6 +412,10 @@ var getUrlRequestSeries = function (apiUrl, start, end, group, tag) {
         + endDay + "/"
         + groupEscaped + "/"
         + tagEscaped;
+
+    if (meanValueType != null && meanValueType != "") {
+        url = url + "?meanValueType=" + meanValueType;
+    }
 
     return url;
 }
@@ -419,9 +426,10 @@ var saveNewView = function () {
     var start = $("#start").val();
     var end = $("#end").val();
     var chartType = $("#charttype option:selected").text();
-    var apiUrl = getSeriesApiUrl();
-
-    var url = getUrlRequestSeries(apiUrl, start, end, group, tag);
+    var isAverageByDay = $("#averageByDayCheckBox")[0].checked;
+    var meanValueType = null;
+    if (isAverageByDay)
+        meanValueType = "day";
 
     var dashboard = new Dashboard().load();
         
@@ -431,6 +439,7 @@ var saveNewView = function () {
     collectorConfig.start = start;
     collectorConfig.end = end;
     collectorConfig.chartType = chartType;
+    collectorConfig.meanValueType = meanValueType;
 
     var view = new View();
     view.collectors.push(collectorConfig);
@@ -485,6 +494,7 @@ function Collector() {
     this.start = null;
     this.end = null;
     this.chartType = "line";
+    this.meanValueType = null;
 }
 
 function View() {

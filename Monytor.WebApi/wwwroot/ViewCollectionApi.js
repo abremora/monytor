@@ -41,6 +41,7 @@ var loadDashboardFromDb = function (viewId) {
                 collector.end = endDate.utc().toISOString();
                 collector.start = start.toISOString();
                 collector.chartType = view.chartType;
+                collector.meanValueType = view.meanValueType;
 
                 var view = new View();
                 view.collectors.push(collector);
@@ -109,7 +110,8 @@ $("#saveViewCollectionModal-save").click(function () {
             "Group": collector.group,
             "Tag": collector.tag,
             "Range": timespan,
-            "ChartType": collector.chartType
+            "ChartType": collector.chartType,
+            "MeanValueType": collector.meanValueType
         });
     }
 

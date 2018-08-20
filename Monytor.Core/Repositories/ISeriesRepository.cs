@@ -6,6 +6,7 @@ namespace Monytor.Core.Repositories {
         Dictionary<string, IEnumerable<string>> GetGroupValueSummary();
         Series GetSeries(int id);
         IEnumerable<Series> GetSeries(SeriesQuery query);
+        IEnumerable<Series> GetSeriesByMean(SeriesQuery queryModel);
         void Store(Series series);
     }
 }       

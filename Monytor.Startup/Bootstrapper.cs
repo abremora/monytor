@@ -100,7 +100,8 @@ namespace Monytor.Startup {
 
             var db = RavenHelper.CreateStore(url, databaseName);
 
-            new SeriesIndex().SideBySideExecuteAsync(db);
+            new SeriesIndex().SideBySideExecute(db);
+            new SeriesByDayIndex().SideBySideExecute(db);
             return db;
         }
 

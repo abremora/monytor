@@ -27,10 +27,16 @@ namespace Monytor.Domain.Services {
                 MaxValues = query.MaxValues,
                 OrderBy = query.OrderBy,
                 Group = Uri.UnescapeDataString(query.Group),
-                Tag = Uri.UnescapeDataString(query.Tag)
+                Tag = Uri.UnescapeDataString(query.Tag),
+                MeanValueType = query.MeanValueType == null ? "" : query.MeanValueType
             };
-            
-            return _repository.GetSeries(unescapedQuery);
+
+            switch (unescapedQuery.MeanValueType.Trim().ToLower()) {
+                case "day":
+                    return _repository.GetSeriesByMean(unescapedQuery);
+                default:
+                    return _repository.GetSeries(unescapedQuery);
+            }
         }
 
         public void Set(Series series) {

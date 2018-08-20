@@ -8,6 +8,7 @@ namespace Monytor.Core.Models {
         public string Group { get; set; }
         public string Tag { get; set; }
         public Ordering OrderBy { get; set; } = Ordering.Ascending;
+        public string MeanValueType { get; set; }
     }
 
     public enum Ordering {
