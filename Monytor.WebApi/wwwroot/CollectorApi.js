@@ -426,11 +426,8 @@ var saveNewView = function () {
     var start = $("#start").val();
     var end = $("#end").val();
     var chartType = $("#charttype option:selected").text();
-    var isAverageByDay = $("#averageByDayCheckBox")[0].checked;
-    var meanValueType = null;
-    if (isAverageByDay)
-        meanValueType = "day";
-
+    var meanValueType = $("#meanValueSelect option:selected").val();
+    
     var dashboard = new Dashboard().load();
         
     var collectorConfig = new Collector();

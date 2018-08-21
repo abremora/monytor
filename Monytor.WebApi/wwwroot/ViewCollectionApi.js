@@ -103,8 +103,8 @@ $("#saveViewCollectionModal-save").click(function () {
         var collector = dashboard.views[i].collectors[0];
         var end = moment(collector.end);
         var start = moment(collector.start);
-        var diff = end.subtract(start);
-        var timespan = diff.format("D.HH:mm:ss");
+        var diff = end.diff(start);
+        var timespan = moment(diff).format("D.HH:mm:ss");
         data.Views.push({
             "Position": i,
             "Group": collector.group,

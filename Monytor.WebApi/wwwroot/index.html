@@ -37,9 +37,6 @@
             -ms-user-select: none;
         }
 
-        .form-group {
-            margin: 20px;
-        }
 
         .chartWrapper {
             position: relative;
@@ -134,13 +131,6 @@
                         <div class="form-group">
                             <div class="modal-body">
                                 <div class="form-group">
-                                    <label for="charttype{{linkId}}">Chart type</label>
-                                    <select class="form-control" id="charttype{{linkId}}">
-                                        <option>Line</option>
-                                        <option>Bar</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
                                     <div class="row">
                                         <div class="col">
                                             <label for="start{{linkId}}">Start</label>
@@ -160,10 +150,17 @@
                                     <label for="tag{{linkId}}">Tag</label>
                                     <select class="form-control" id="tag{{linkId}}"></select>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" id="update{{linkId}}" data-linkid="{{linkId}}">Update</button>
+                                <div class="form-group">
+                                    <label for="charttype{{linkId}}">Chart type</label>
+                                    <select class="form-control" id="charttype{{linkId}}">
+                                        <option>Line</option>
+                                        <option>Bar</option>
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" id="update{{linkId}}" data-linkid="{{linkId}}">Update</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -184,13 +181,6 @@
                 <div class="form-group">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="charttype">Chart type</label>
-                            <select class="form-control" id="charttype">
-                                <option>Line</option>
-                                <option>Bar</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <div class="row">
                                 <div class="col">
                                     <label for="start">Start</label>
@@ -210,20 +200,34 @@
                             <label for="tag">Tag</label>
                             <select class="form-control" id="tag"></select>
                         </div>
-                        <div class="form-group custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="averageByDayCheckBox">
-                            <label class="custom-control-label" for="averageByDayCheckBox">Show average values by day only</label>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="charttype">Chart type</label>
+                                    <select class="form-control" id="charttype">
+                                        <option value="line">Line</option>
+                                        <option value="bar">Bar</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="meanValueSelect">Value types</label>
+                                    <select class="form-control" id="meanValueSelect">
+                                        <option value="raw">Raw values</option>
+                                        <option value="day">Day mean values</option>
+                                        <option value="hour">Hour mean values</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="addViewButton" data-dismiss="modal">Add</button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="addViewButton" data-dismiss="modal">Add</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <div class="modal fade" id="saveViewCollectionModal" tabindex="-1" role="dialog" aria-labelledby="saveViewCollectionModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
