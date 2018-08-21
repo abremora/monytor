@@ -101,15 +101,18 @@ var loadAllSeriesGroupsViaUrl = function (url) {
 
         var groupControl = $(document).find("#group");
         var tagControl = $(document).find("#tag");
-        setGroupTagDataToControls(data, groupControl, tagControl, null, null);        
+        setGroupTagDataToControls(groupControl, tagControl, null, null);        
     }).catch((err) => {
         alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);       
     });
 }
 
-var setGroupTagDataToControls = function (jsonData, groupControl, tagControl, groupSelected, tagSelected) {
+var setGroupTagDataToControls = function (groupControl, tagControl, groupSelected, tagSelected) {
     groupControl.empty();
     tagControl.empty(); 
+
+    var jsonData = getDefaultJsonGroupTagDataFromStore();
+    if (jsonData == null) return;
 
     var selectedIndex = 0;
     for (var index = 0; index < jsonData.length; ++index) {
@@ -155,6 +158,7 @@ var getJsonGroupTagFromStore = function (linkId) {
 }
 
 var getDefaultJsonGroupTagDataFromStore = function (jsonData) {
+    if (sessionStorage.defaultGroupTagData === undefined) return null;
     return JSON.parse(sessionStorage.defaultGroupTagData);
 }
 
@@ -264,8 +268,7 @@ var updateChartConfigDialog = function (chartNumber, linkId) {
     var tag = $(wrapper).find("#tag" + linkId);
     var chartType = $(wrapper).find("#charttype" + linkId);
 
-    var groupTagData = getDefaultJsonGroupTagDataFromStore();
-    setGroupTagDataToControls(groupTagData, group, tag, collector.group, collector.tag);
+    setGroupTagDataToControls(group, tag, collector.group, collector.tag);
         
     start.val(moment(collector.start).format(moment.HTML5_FMT.DATE));
     end.val(moment(collector.end).format(moment.HTML5_FMT.DATE));
