@@ -33,7 +33,9 @@ namespace Monytor.Domain.Services {
 
             switch (unescapedQuery.MeanValueType.Trim().ToLower()) {
                 case "day":
-                    return _repository.GetSeriesByMean(unescapedQuery);
+                    return _repository.GetSeriesByDayMean(unescapedQuery);
+                case "hour":
+                    return _repository.GetSeriesByHourMean(unescapedQuery);
                 default:
                     return _repository.GetSeries(unescapedQuery);
             }

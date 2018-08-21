@@ -102,6 +102,7 @@ namespace Monytor.Startup {
 
             new SeriesIndex().SideBySideExecute(db);
             new SeriesByDayIndex().SideBySideExecute(db);
+            new SeriesByHourIndex().SideBySideExecute(db);
             return db;
         }
 
