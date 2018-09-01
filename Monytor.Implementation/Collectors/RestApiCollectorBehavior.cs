@@ -2,23 +2,23 @@
 using Monytor.Core.Configurations;
 using Monytor.Core.Models;
 using Monytor.Infrastructure;
+using Monytor.Infrastructure.Helper;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
 namespace Monytor.Implementation.Collectors {
-    public class RestApiCollectorBehavior : CollectorBehavior<RestApiCollector>, 
+    public class RestApiCollectorBehavior : CollectorBehavior<RestApiCollector>,
         IDisposable {
         static HttpClient _client = new HttpClient();
+        static Interpreter _interpreter = new Interpreter();
 
         private readonly ILogger<RestApiCollectorBehavior> _logger;
 
         public RestApiCollectorBehavior(ILogger<RestApiCollectorBehavior> logger) {
             _logger = logger;
         }
-
-     
 
         public override IEnumerable<Series> Run(Collector collector) {
             var collectorTyped = collector as RestApiCollector;
@@ -27,12 +27,15 @@ namespace Monytor.Implementation.Collectors {
             var currentTime = DateTime.UtcNow;
             string content = "";
 
-            HttpResponseMessage response = _client.GetAsync(collectorTyped.RequestUri).GetAwaiter().GetResult();
+            var replacement = _interpreter.ReplacePlaceholder(collectorTyped.RequestUri.OriginalString);
+            var requestUriPlaceholder = new Uri(replacement);
+
+            var response = _client.GetAsync(requestUriPlaceholder).GetAwaiter().GetResult();
             if (response.IsSuccessStatusCode) {
                 content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             }
             else {
-                _logger.LogWarning($"'{collectorTyped.RequestUri}' returns: {response.StatusCode}");
+                _logger.LogWarning($"'{requestUriPlaceholder}' returns: {response.StatusCode}");
                 yield break;
             }
 
@@ -40,7 +43,7 @@ namespace Monytor.Implementation.Collectors {
                 var json = JToken.Parse(content);
                 var results = json.SelectTokens(collectorTyped.JsonPath);
 
-                foreach(var result in results) {
+                foreach (var result in results) {
                     var serieParsed = new Series {
                         Id = Series.CreateId(collectorTyped.TagName, collectorTyped.GroupName, currentTime),
                         Tag = collectorTyped.TagName,
@@ -65,6 +68,10 @@ namespace Monytor.Implementation.Collectors {
             }
         }
 
+
+
+
+
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
@@ -79,7 +86,7 @@ namespace Monytor.Implementation.Collectors {
         }
 
         public void Dispose() {
-            Dispose(true);            
+            Dispose(true);
         }
         #endregion
     }
