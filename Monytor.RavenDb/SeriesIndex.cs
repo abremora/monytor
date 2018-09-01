@@ -3,8 +3,7 @@ using Raven.Client.Indexes;
 using System;
 using System.Linq;
 
-namespace Monytor.RavenDb
-{
+namespace Monytor.RavenDb {
     public class SeriesIndex : AbstractIndexCreationTask<Series> {
         public class Result {
             public string Tag { get; set; }

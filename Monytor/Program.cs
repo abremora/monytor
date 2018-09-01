@@ -51,6 +51,7 @@ namespace Monytor {
                 _container = Bootstrapper.Setup().Result;
                 if (!config.HasConfig()) {
                     _logger.LogWarning($"Config file '{config.ConfigFileName}' not found. Create default config.\nUse --help for further assistance.");
+                    return;
                 }
 
                 RunAsync().GetAwaiter().GetResult();

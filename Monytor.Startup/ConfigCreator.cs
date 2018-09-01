@@ -11,7 +11,7 @@ namespace Monytor.Startup {
         public abstract string ConfigFileName { get; }
 
         public bool HasConfig() {
-            return File.Exists(Path.Combine(".", ConfigFileName));
+            return File.Exists(GetConfigPath());
         }
 
         public void WriteConfig(object config, string configPath) {

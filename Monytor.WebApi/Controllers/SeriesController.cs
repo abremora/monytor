@@ -21,14 +21,15 @@ namespace Monytor.WebApi.Controllers {
         }
 
         [HttpGet("{start}/{end}/{group}/{tag}")]
-        public IEnumerable<Series> Get(DateTime start, DateTime end, string group, string tag) {
+        public IEnumerable<Series> Get(DateTime start, DateTime end, string group, string tag, string meanValueType = null) {
             var query = new SeriesQuery {
                 Start = start,
                 End = end,
                 Group = group,
                 Tag = tag,
                 MaxValues = 1024,
-                OrderBy = Ordering.Ascending
+                OrderBy = Ordering.Ascending,
+                MeanValueType = meanValueType
             };
             return _collectorService.GetSeries(query);
         }

@@ -100,15 +100,18 @@ namespace Monytor.Startup {
 
             var db = RavenHelper.CreateStore(url, databaseName);
 
-            new SeriesIndex().SideBySideExecuteAsync(db);
+            new SeriesIndex().SideBySideExecute(db);
+            new SeriesByDayIndex().SideBySideExecute(db);
+            new SeriesByHourIndex().SideBySideExecute(db);
             return db;
         }
 
         private static IConfigurationRoot LoadConfig() {
+            var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             return new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+                .SetBasePath(directory)
+                .AddJsonFile("appsettings.json")
+                .Build();
         }
     }
 }

@@ -23,5 +23,6 @@ namespace Monytor.WebApi.Controllers {
         public string Tag { get; set; }
         public TimeSpan Range { get; set; }
         public string ChartType { get; set; }
+        public string MeanValueType { get; set; }
     }
 }

@@ -41,6 +41,7 @@ var loadDashboardFromDb = function (viewId) {
                 collector.end = endDate.utc().toISOString();
                 collector.start = start.toISOString();
                 collector.chartType = view.chartType;
+                collector.meanValueType = view.meanValueType;
 
                 var view = new View();
                 view.collectors.push(collector);
@@ -102,14 +103,15 @@ $("#saveViewCollectionModal-save").click(function () {
         var collector = dashboard.views[i].collectors[0];
         var end = moment(collector.end);
         var start = moment(collector.start);
-        var diff = end.subtract(start);
-        var timespan = diff.format("D.HH:mm:ss");
+        var diff = end.diff(start);
+        var timespan = moment(diff).format("D.HH:mm:ss");
         data.Views.push({
             "Position": i,
             "Group": collector.group,
             "Tag": collector.tag,
             "Range": timespan,
-            "ChartType": collector.chartType
+            "ChartType": collector.chartType,
+            "MeanValueType": collector.meanValueType
         });
     }
 
