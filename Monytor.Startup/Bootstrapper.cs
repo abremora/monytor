@@ -103,6 +103,7 @@ namespace Monytor.Startup {
             new SeriesIndex().SideBySideExecute(db);
             new SeriesByDayIndex().SideBySideExecute(db);
             new SeriesByHourIndex().SideBySideExecute(db);
+            new TagGroupMapReduceIndex().SideBySideExecute(db);
             return db;
         }
 

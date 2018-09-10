@@ -17,14 +17,10 @@ namespace Monytor.RavenDb {
 
         public Dictionary<string, IEnumerable<string>> GetGroupValueSummary() {
             using (var session = _store.OpenSession()) {
-                var result = session.Query<Series, SeriesIndex>()
-                    .Select(x => new { x.Group, x.Tag })
-                    .Distinct()
-                    .ToList();
-
-
-                var z = result.GroupBy(x => x.Group).ToDictionary(g => g.Key, g => g.Select(x => x.Tag));
-                return z;
+                return session.Query<TagGroupMapReduceIndex.Result, TagGroupMapReduceIndex>()
+                    .ToList()
+                    .GroupBy(x => x.Group)
+                    .ToDictionary(g => g.Key, g => g.Select(x => x.Tag));
             }
         }
 
