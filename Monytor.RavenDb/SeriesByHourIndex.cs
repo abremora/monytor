@@ -1,12 +1,11 @@
 ﻿using Monytor.Core.Models;
 using Raven.Client.Indexes;
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Monytor.RavenDb {
-    public class SeriesByHourIndex : AbstractIndexCreationTask<Series, SeriesByDayIndex.Result> {
+    public class SeriesByHourIndex : AbstractIndexCreationTask<Series, SeriesByHourIndex.Result> {
         public class Result {
             public string Group { get; set; }
             public string Tag { get; set; }
