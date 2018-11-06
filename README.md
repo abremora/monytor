@@ -88,6 +88,7 @@ Typically a config looks like that:
       "UseDefaultCredentials": false,
       "User": "YOUR_USERNAME",
       "Password": "YOUR_PASSWORD",
+	  "EnableSsl": true,
       "To": [
         "admin@example.com"
       ],
