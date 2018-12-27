@@ -1,7 +1,6 @@
 ﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Raven.Client;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -17,20 +16,19 @@ namespace Monytor.RavenDb {
 
         public Dictionary<string, IEnumerable<string>> GetGroupValueSummary() {
             using (var session = _store.OpenSession()) {
-                var result = session.Query<Series, SeriesIndex>()
-                    .Select(x => new { x.Group, x.Tag })
-                    .Distinct()
-                    .ToList();
-
-
-                var z = result.GroupBy(x => x.Group).ToDictionary(g => g.Key, g => g.Select(x => x.Tag));
-                return z;
+                return session.Query<TagGroupMapReduceIndex.Result, TagGroupMapReduceIndex>()
+                    .OrderBy(x => x.Group)
+                    .ThenBy(x => x.Tag)
+                    .Take(1024)
+                    .ToList()
+                    .GroupBy(x => x.Group)
+                    .ToDictionary(g => g.Key, g => g.Select(x => x.Tag));
             }
         }
 
         public Series GetSeries(int id) {
             using (var session = _store.OpenSession()) {
-                return session.Load<Series>(id); ;
+                return session.Load<Series>(id);
             }
         }
 

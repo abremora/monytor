@@ -1,6 +1,50 @@
 ﻿var charts = new Array();
 var defaultTimeRangeInDays = 3;
 
+var nonNumericConfig = {
+    type: 'line',    
+    options: {
+        responsive: true,
+        title: {
+            display: true            
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true
+                },
+                offset: false,
+                bounds: 'ticks',
+                type: 'time',
+                time: {
+                    unit: 'day',
+                    distribution: 'linear',
+                    stepSize: 1
+                }
+            }],
+            yAxes: [{
+                type: 'category',
+                position: 'left',
+                display: true,
+                scaleLabel: {
+                    display: false
+                },
+                ticks: {
+                    reverse: true,
+                    callback: function (value, index, values) {
+                        return value.length > 15 ? value.substring(0, 15) + '...' : value;
+                    },
+                    autoSkip: true,
+                    autoSkipPadding: 10,
+                    source: 'auto',
+                    maxTicksLimit: 10
+                }
+            }]
+        }
+    }
+};
+
 var getdefaultApiUrl = function () {
     return window.location.origin + "/api";
 };
@@ -10,7 +54,7 @@ var getSeriesApiUrl = function () {
 };
 
 $(document).ready(function () {
-    if (typeof (Storage) === "undefined") {
+    if (typeof(Storage) === "undefined") {
         alert("No support for Web Storage. Please update your browser.");
     }
 
@@ -25,7 +69,7 @@ $(document).ready(function () {
 
     var currentUrl = new URL(window.location.href);
     var viewId = currentUrl.searchParams.get("view");
-    if (viewId != null) {
+    if (viewId !== null) {
         loadDashboardFromDb(viewId);
         return;
     }
@@ -92,7 +136,7 @@ var loadFromStore = function () {
 };
 
 var loadAllSeriesGroupsViaUrl = function (url) {
-    if (url == null) return;
+    if (url === null) return;
 
     $.ajax({
         url: url
@@ -101,18 +145,18 @@ var loadAllSeriesGroupsViaUrl = function (url) {
 
         var groupControl = $(document).find("#group");
         var tagControl = $(document).find("#tag");
-        setGroupTagDataToControls(groupControl, tagControl, null, null);        
+        setGroupTagDataToControls(groupControl, tagControl, null, null);
     }).catch((err) => {
-        alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);       
+        alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);
     });
-}
+};
 
 var setGroupTagDataToControls = function (groupControl, tagControl, groupSelected, tagSelected) {
     groupControl.empty();
-    tagControl.empty(); 
+    tagControl.empty();
 
     var jsonData = getDefaultJsonGroupTagDataFromStore();
-    if (jsonData == null) return;
+    if (jsonData === null) return;
 
     var selectedIndex = 0;
     for (var index = 0; index < jsonData.length; ++index) {
@@ -130,10 +174,10 @@ var setGroupTagDataToControls = function (groupControl, tagControl, groupSelecte
     if (selectedIndex > 0 && selectedIndex < jsonData.length) {
         groupControl.val(selectedIndex);
         tagValue = jsonData[selectedIndex].value;
-    } 
+    }
 
     setTagsFromArray(tagValue, tagControl, tagSelected);
-}
+};
 
 var setJsonGroupTagDataToStore = function (linkId, jsonData) {
     var viewRoot = $("#" + linkId);
@@ -143,11 +187,11 @@ var setJsonGroupTagDataToStore = function (linkId, jsonData) {
     var view = dashboard.views[viewIndex];
     view.jsonData = JSON.stringify(jsonData);
     new Dashboard().save(dashboard);
-}
+};
 
 var setDefaultJsonGroupTagDataToStore = function (jsonData) {
     sessionStorage.defaultGroupTagData = JSON.stringify(jsonData);
-}
+};
 
 var getJsonGroupTagFromStore = function (linkId) {
     var viewRoot = $("#" + linkId);
@@ -155,15 +199,15 @@ var getJsonGroupTagFromStore = function (linkId) {
 
     var dashboard = JSON.parse(sessionStorage.dashboard);
     return JSON.parse(dashboard.views[viewIndex].jsonData);
-}
+};
 
 var getDefaultJsonGroupTagDataFromStore = function (jsonData) {
     if (sessionStorage.defaultGroupTagData === undefined) return null;
     return JSON.parse(sessionStorage.defaultGroupTagData);
-}
+};
 
 var createChart = function (canvas, charttype) {
-    if (charttype == "undefined")
+    if (charttype === "undefined")
         charttype = "line";
 
     var ctx = canvas.getContext('2d');
@@ -174,28 +218,39 @@ var createChart = function (canvas, charttype) {
             scales: {
                 yAxes: [{
                     ticks: {
-                        steps: 5,
-                        stepValue: 5
+                        //steps: 5,
+                        //stepValue: 5
                     }
                 }],
                 xAxes: [{
                     display: true,
+                    offset: false,
+                    bounds: 'ticks',
                     scaleLabel: {
-                        display: true
+                        display: true                       
                     },
                     type: 'time',
                     time: {
                         unit: 'day',
-                        distribution: 'linear'
+                        distribution: 'linear',
+                        stepSize: 1,
+                        displayFormats: {
+                            day: 'YY-MM-DD'
+                        }
                     },
                     tooltips: {
                         mode: 'index',
-                        intersect: false,
+                        intersect: false
                     },
                     hover: {
                         mode: 'nearest',
                         intersect: true
                     },
+                    ticks: {
+                        autoSkip: true,
+                        autoSkipPadding: 0,
+                        source: 'auto'
+                    }
                 }]
             }
         }
@@ -255,10 +310,10 @@ var insertChart = function (chartNumber, chartType) {
 
 var updateChartConfigDialog = function (chartNumber, linkId) {
     var dashboard = new Dashboard().load();
-    if (dashboard.views.length == 0) return;
+    if (dashboard.views.length === 0) return;
 
     var view = dashboard.views[chartNumber];
-    if (view.collectors.length == 0) return;   
+    if (view.collectors.length === 0) return;
 
     var collector = view.collectors[0];
     var wrapper = $("#" + linkId);
@@ -269,7 +324,7 @@ var updateChartConfigDialog = function (chartNumber, linkId) {
     var chartType = $(wrapper).find("#charttype" + linkId);
 
     setGroupTagDataToControls(group, tag, collector.group, collector.tag);
-        
+
     start.val(moment(collector.start).format(moment.HTML5_FMT.DATE));
     end.val(moment(collector.end).format(moment.HTML5_FMT.DATE));
 
@@ -289,7 +344,7 @@ var updateChartConfigDialog = function (chartNumber, linkId) {
 
     var close = $(wrapper).find(".chart-close");
     close.click(closeChart);
-}
+};
 
 $("#updateGroupTag").click( function () {
 });
@@ -354,6 +409,8 @@ var addCollectorForValues = function (linkId, group, tag, start, end, meanValueT
         var result = data.map(a => a.value);
         var time = data.map(a => moment(a.time));
 
+        var isNumeric = result.length > 0 && $.isNumeric(result[0]);
+
         var maxTime = moment.max(time);
         var minTime = moment.min(time);
 
@@ -368,11 +425,6 @@ var addCollectorForValues = function (linkId, group, tag, start, end, meanValueT
             unit = 'month';
         }
 
-        var day = duration.days();
-
-        var min = Math.min(...result),
-            max = Math.max(...result);
-
         var color = randomColorGenerator();
 
         var chart = charts[linkId].value;
@@ -384,7 +436,11 @@ var addCollectorForValues = function (linkId, group, tag, start, end, meanValueT
             data: result
         });
         chart.data.labels = timeLabel;
-        chart.options.scales.xAxes[0].time.unit = unit;
+        if (!isNumeric) {
+            var distinct = [...new Set(result)];           
+            chart.options.scales.yAxes = nonNumericConfig.options.scales.yAxes;
+            chart.data.yLabels = distinct.reverse();
+        }
         chart.update();
     });
 };
@@ -398,7 +454,7 @@ var closeChart = function (event) {
     new Dashboard().save(dashboard);
 
     viewRoot.remove();
-}
+};
 
 function getElementIndex(el) {
     var parent = el.parent();
@@ -416,12 +472,12 @@ var getUrlRequestSeries = function (apiUrl, start, end, group, tag, meanValueTyp
         + groupEscaped + "/"
         + tagEscaped;
 
-    if (meanValueType != null && meanValueType != "") {
+    if (meanValueType !== null && meanValueType !== "") {
         url = url + "?meanValueType=" + meanValueType;
     }
 
     return url;
-}
+};
 
 var saveNewView = function () {
     var groupSelected = $("#group option:selected").text();

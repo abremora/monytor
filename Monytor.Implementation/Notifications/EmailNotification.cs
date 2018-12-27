@@ -2,8 +2,6 @@
 
 namespace Monytor.Implementation.Notifications {
     public class EmailNotification : Notification {
-        public override string Id => "Monytor.EmailNotification";
-
         public string Smtp { get; set; }
         public int Port { get; set; }
         public bool UseDefaultCredentials { get; set; }
