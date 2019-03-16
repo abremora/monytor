@@ -10,9 +10,4 @@ namespace Monytor.Core.Models {
         public Ordering OrderBy { get; set; } = Ordering.Ascending;
         public string MeanValueType { get; set; }
     }
-
-    public enum Ordering {
-        Ascending,
-        Descanding
-    }
 }

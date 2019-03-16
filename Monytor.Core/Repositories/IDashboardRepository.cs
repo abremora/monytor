@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Monytor.WebApi.Controllers;
 
-namespace Monytor.Domain.Services {
+namespace Monytor.Core.Repositories {
     public interface IDashboardRepository {
         Dashboard Load(string id);
         IEnumerable<Dashboard> LoadOverview();

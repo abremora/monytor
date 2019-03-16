@@ -52,7 +52,7 @@ run.cmd
 ```
 
 ### Setup & run Monytor.WebApi  only
-Run Monytor.WebApi on localhost with port 555555
+Run Monytor.WebApi on localhost with port 55555
 ```
 cd Monytor.WebApi
 dotnet Monytor.WebApi.dll --server.Urls "http://localhost:55555"
@@ -98,7 +98,7 @@ Typically a config looks like that:
   ],
   "Collectors": [
     {
-      "$type": "Monytor.Implementation.Collectors.AllCollectionCollector, Monytor.Implementation",
+      "$type": "Monytor.Implementation.Collectors.RavenDb.AllCollectionCollector, Monytor.Implementation.Collectors.RavenDb",
       "Source": {
         "Url": "http://localhost:8080",
         "Database": "Monytor"
