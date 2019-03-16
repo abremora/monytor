@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Implementation.Coll
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Implementation.Collectors.RavenDb", "Monytor.Implementation.Collectors.RavenDb\Monytor.Implementation.Collectors.RavenDb.csproj", "{5A43F70F-0E1C-4D52-9544-00173FB6D91D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monytor.Implementation.Collectors.NetFramework", "Monytor.Implementation.Collectors.Windows\Monytor.Implementation.Collectors.NetFramework.csproj", "{7D7B15D8-BBE8-4F7C-9565-38459ABA9192}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monytor.Implementation.Collectors.NetFramework", "Monytor.Implementation.Collectors.NetFramework\Monytor.Implementation.Collectors.NetFramework.csproj", "{7D7B15D8-BBE8-4F7C-9565-38459ABA9192}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Sheduler", "Monytor.Sheduler\Monytor.Sheduler.csproj", "{C3DB25C2-1689-4F28-8CC3-BE7383FA5E8B}"
 EndProject
