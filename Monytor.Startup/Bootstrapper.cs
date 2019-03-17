@@ -51,7 +51,7 @@ namespace Monytor.Startup {
             builder.RegisterType<SchedulerStartup>();
             builder.RegisterType<AutofacJobFactory>().SingleInstance();
 
-            var config = new CollectorConfigCreator();
+            var config = new CollectorConfigCreator(appConfig["collectorConfigFileName"]);
             var collectorConfig = config.LoadConfig();
 
             builder.RegisterInstance(collectorConfig);
@@ -112,6 +112,7 @@ namespace Monytor.Startup {
             return new ConfigurationBuilder()
                 .SetBasePath(directory)
                 .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.local.json", true)
                 .Build();
         }
     }

@@ -5,7 +5,12 @@ using System.Linq;
 
 namespace Monytor.Startup {
     public class CollectorConfigCreator : ConfigCreator {
-        public override string ConfigFileName => "collectorconfig.json";
+        private string _configFileName;
+        public override string ConfigFileName => _configFileName;
+
+        public CollectorConfigCreator(string configFileName = "collectorconfig.json") {
+            _configFileName = configFileName;
+        }
 
         public void CreateDefaultConfig() {
             var instances = LoadAll<Collector>().ToList();

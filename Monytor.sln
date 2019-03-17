@@ -27,13 +27,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Implementation.Coll
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Implementation.Collectors.RavenDb", "Monytor.Implementation.Collectors.RavenDb\Monytor.Implementation.Collectors.RavenDb.csproj", "{5A43F70F-0E1C-4D52-9544-00173FB6D91D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monytor.Implementation.Collectors.NetFramework", "Monytor.Implementation.Collectors.Windows\Monytor.Implementation.Collectors.NetFramework.csproj", "{7D7B15D8-BBE8-4F7C-9565-38459ABA9192}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monytor.Implementation.Collectors.NetFramework", "Monytor.Implementation.Collectors.NetFramework\Monytor.Implementation.Collectors.NetFramework.csproj", "{7D7B15D8-BBE8-4F7C-9565-38459ABA9192}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Sheduler", "Monytor.Sheduler\Monytor.Sheduler.csproj", "{C3DB25C2-1689-4F28-8CC3-BE7383FA5E8B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Sheduler.NetCore", "Monytor.Sheduler.NetCore\Monytor.Sheduler.NetCore.csproj", "{83816E74-BFB8-4270-A7E4-1E0D6EF08E11}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monytor.Sheduler.NetFramework", "Monytor.Sheduler.NetFramework\Monytor.Sheduler.NetFramework.csproj", "{32533427-5E8E-4A72-83A4-8B5204FD2E74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monytor.Implementation.Collectors.SQL", "Monytor.Implementation.Collectors.SQL\Monytor.Implementation.Collectors.SQL.csproj", "{8C71A48D-E7FA-4C78-AF68-D22931188027}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,10 @@ Global
 		{32533427-5E8E-4A72-83A4-8B5204FD2E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32533427-5E8E-4A72-83A4-8B5204FD2E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32533427-5E8E-4A72-83A4-8B5204FD2E74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C71A48D-E7FA-4C78-AF68-D22931188027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C71A48D-E7FA-4C78-AF68-D22931188027}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C71A48D-E7FA-4C78-AF68-D22931188027}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C71A48D-E7FA-4C78-AF68-D22931188027}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
