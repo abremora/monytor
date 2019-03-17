@@ -141,5 +141,24 @@
       "Priority": 3,
       "Verifiers": []
     }
+    //{
+    //  "$type": "Monytor.Implementation.Collectors.SQL.CountCollector, Monytor.Implementation.Collectors.SQL",
+    //  "TableName": "YourTable",
+    //  "Source": {
+    //    "ConnectionString": "Your Connectio String",
+    //    "DatabaseProvider": "PostgreSQL OR MSSQL"
+    //  },
+    //  "DisplayName": "Count of table YourTable",
+    //  "Description": "Count of rows in the table YourTable",
+    //  "GroupName": "Count",
+    //  "StartingTimeDelay": "00:00:00",
+    //  "RandomTimeDelay": "00:00:00",
+    //  "PollingInterval": "00:00:05",
+    //  "OverlappingReccuring": false,
+    //  "StartingTime": null,
+    //  "EndAt": null,
+    //  "Priority": 3,
+    //  "Verifiers": []
+    //}
   ]
 }

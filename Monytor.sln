@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monytor.Sheduler.NetCore", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monytor.Sheduler.NetFramework", "Monytor.Sheduler.NetFramework\Monytor.Sheduler.NetFramework.csproj", "{32533427-5E8E-4A72-83A4-8B5204FD2E74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monytor.Implementation.Collectors.SQL", "Monytor.Implementation.Collectors.SQL\Monytor.Implementation.Collectors.SQL.csproj", "{8C71A48D-E7FA-4C78-AF68-D22931188027}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,10 @@ Global
 		{32533427-5E8E-4A72-83A4-8B5204FD2E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32533427-5E8E-4A72-83A4-8B5204FD2E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32533427-5E8E-4A72-83A4-8B5204FD2E74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C71A48D-E7FA-4C78-AF68-D22931188027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C71A48D-E7FA-4C78-AF68-D22931188027}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C71A48D-E7FA-4C78-AF68-D22931188027}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C71A48D-E7FA-4C78-AF68-D22931188027}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
