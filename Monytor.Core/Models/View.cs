@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Monytor.WebApi.Controllers {
+namespace Monytor.Core.Models {
     public class View {
         public int Position { get; set; }
         public string Group { get; set; }

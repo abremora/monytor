@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Monytor.Core.Models;
 using Monytor.Core.Repositories;
-using Monytor.WebApi.Controllers;
 using Raven.Client;
 
 namespace Monytor.RavenDb {
