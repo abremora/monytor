@@ -2,5 +2,7 @@
     public enum DatabaseProvider {
         PostgreSQL,
         MSSQL,
+        Oracle,
+        MySQL
     }
 }
