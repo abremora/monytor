@@ -16,6 +16,10 @@ namespace Monytor.Implementation.Collectors.SQL {
                 using (var command = connection.CreateCommand()) {
                     command.CommandText = $"SELECT COUNT(*) FROM {collectorTyped.TableName}";
 
+                    if (!string.IsNullOrWhiteSpace(collectorTyped.WhereClause)) {
+                        command.CommandText += $" {collectorTyped.WhereClause}";
+                    }
+
                     var rowCount = command.ExecuteScalar();
                     yield return new Series {
                         Id = Series.CreateId(collectorTyped.TableName, collectorTyped.GroupName, currentTime),
