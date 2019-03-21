@@ -1,15 +1,15 @@
 ﻿
 using Monytor.Core.Configurations;
 
-namespace Monytor.Implementation.Collectors.SQL {
+namespace Monytor.Implementation.Collectors.Sql {
 
-    public class CountCollector : Collector {
+    public abstract class CountBaseCollector : Collector {
         public string TableName { get; set; }
         public string WhereClause { get; set; }
-        public SqlDatabaseSource  Source { get; set; }
+        public string ConnectionString { get; set; }
         public override string GroupName { get; set; }
 
-        public CountCollector() {
+        public CountBaseCollector() {
             GroupName = "Count";
         }        
     }

@@ -1,5 +1,5 @@
 ﻿namespace Monytor.Core.Configurations {
-    public abstract class CollectorBehavior<T> : CollectorBehaviorBase
-        where T : Collector {              
+    public abstract class CollectorBehavior<TCollector> : CollectorBehaviorBase
+        where TCollector : Collector {              
     }
 }

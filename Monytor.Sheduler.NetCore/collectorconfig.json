@@ -141,14 +141,12 @@
       "Priority": 3,
       "Verifiers": []
     }
+    // The CountCollector is available for Oracle, MsSql, MySql and PostgreSql. Just replace PostgreSql by Oracle or MsSql or MySql in the $type definition.
     //{
-    //  "$type": "Monytor.Implementation.Collectors.SQL.CountCollector, Monytor.Implementation.Collectors.SQL",
+    //  "$type": "Monytor.Implementation.Collectors.Sql.PostgreSql.CountCollector, Monytor.Implementation.Collectors.Sql.PostgreSql",
     //  "TableName": "YourTable",
     //  "WhereClause": "WHERE Conditions"
-    //  "Source": {
-    //    "ConnectionString": "Your Connection String",
-    //    "DatabaseProvider": "PostgreSQL OR MSSQL OR Oracle OR MySQL"
-    //  },
+    //  "ConnectionString": "Your ConnectionString",
     //  "DisplayName": "Count of table YourTable",
     //  "Description": "Count of rows in the table YourTable",
     //  "GroupName": "Count",
