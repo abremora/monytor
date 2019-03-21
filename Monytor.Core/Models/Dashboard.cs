@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Monytor.WebApi.Controllers {
+namespace Monytor.Core.Models {
     public class Dashboard {
         public string Id { get; set; }
         public string Name { get; set; }

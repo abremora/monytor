@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Monytor.Core.Models;
+using System;
 using System.Collections.Generic;
-using Monytor.WebApi.Controllers;
 
 namespace Monytor.Core.Repositories {
     public interface IDashboardRepository {

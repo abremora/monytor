@@ -56,6 +56,10 @@ namespace Monytor.Sheduler {
             }
             catch (Exception ex) {
                 _logger?.LogCritical(ex, "Unknown error");
+
+                #if DEBUG
+                    Console.ReadKey();
+                #endif
             }
 
         End:
