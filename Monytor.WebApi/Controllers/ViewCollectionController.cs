@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Monytor.Core.Models;
 using Monytor.Core.Services;
 
 namespace Monytor.WebApi.Controllers {

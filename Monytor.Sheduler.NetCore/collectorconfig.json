@@ -1,0 +1,163 @@
+{
+  "Notifications": [
+    //{
+    //  "$type": "Monytor.Implementation.Notifications.EmailNotification, Monytor.Implementation",
+    //  "Id": "Monytor.EmailNotification",
+    //  "Smtp": "smtp.example.com",
+    //  "Port": "587",
+    //  "UseDefaultCredentials": false,
+    //  "User": "YOUR_USERNAME",
+    //  "Password": "YOUR_PASSWORD",
+    //  "EnableSsl": true,
+    //  "To": [
+    //    "admin@example.com"
+    //  ],
+    //  "From": "alert@example.com",
+    //  "SubjectPrefix": "ALERT: "
+    //}
+  ],
+  "Collectors": [
+    {
+      "$type": "Monytor.Implementation.Collectors.RestApiCollector, Monytor.Implementation.Collectors",
+      "DisplayName": "Subscription position",
+      "Description": "Current subscription position",
+      "GroupName": "Subscription",
+      "TagName": "Id_1",
+      "RequestUri": "http://localhost:8080/databases/Monytor/debug/subscriptions",
+      "JsonPath": "$.[?(@.SubscriptionId == 1)].AckEtag",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": [
+        {
+          "$type": "Monytor.Implementation.Verifiers.SeriesUnchangedVerifier, Monytor.Implementation",
+          "Group": "Subscription",
+          "Tag": "Id_1",
+          "TimeInterval": "00:00:00",
+          "Notifications": [
+            "Monytor.EmailNotification"
+          ]
+        }
+      ]
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.RestApiCollector, Monytor.Implementation.Collectors",
+      "DisplayName": "Last etag 14 days ago",
+      "Description": "Etag of last series 14 days ago",
+      "GroupName": "LastEtag",
+      "TagName": "Series",
+      "RequestUri": "http://localhost:8080/databases/Monytor/indexes/SeriesIndex?query=Tag%3ASeries%20AND%20Group%3ACollection%20AND%20Time%3A%5B*%20TO%20{{DATETIME.UTCNOW-14.00:00:00}}%5D&start=0&pageSize=16&sort=-Time",
+      "JsonPath": "$.Results[0].@metadata.@etag",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": []
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.RavenDb.AllCollectionCollector, Monytor.Implementation.Collectors.RavenDb",
+      "Source": {
+        "Url": "http://localhost:8080",
+        "Database": "Monytor"
+      },
+      "DisplayName": "All collection",
+      "Description": "Get all count for every collection",
+      "GroupName": "AllCollection",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": []
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.RavenDb.CollectionCollector, Monytor.Implementation.Collectors.RavenDb",
+      "CollectionName": "Series",
+      "Source": {
+        "Url": "http://localhost:8080",
+        "Database": "Monytor"
+      },
+      "DisplayName": "Count series",
+      "Description": "Count series collection",
+      "GroupName": "Collection",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": [
+        {
+          "$type": "Monytor.Implementation.Verifiers.SeriesChangedVerifier, Monytor.Implementation",
+          "Group": "Collection",
+          "Tag": "Series",
+          "TimeInterval": "00:00:00",
+          "Notifications": [
+            "Monytor.EmailNotification"
+          ]
+        }
+      ]
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.RavenDb.StartingWithCollector, Monytor.Implementation.Collectors.RavenDb",
+      "StartingWith": "Series",
+      "Source": {
+        "Url": "http://localhost:8080",
+        "Database": "Monytor"
+      },
+      "DisplayName": "Count starting with series",
+      "Description": "Count all collection starts with series",
+      "GroupName": "StartingDocumentId",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": []
+    },
+    {
+      "$type": "Monytor.Implementation.Collectors.SystemInformationCollector, Monytor.Implementation.Collectors",
+      "DisplayName": "System information",
+      "Description": "Collects information of the current system",
+      "GroupName": "SystemInformation",
+      "StartingTimeDelay": "00:00:00",
+      "RandomTimeDelay": "00:00:00",
+      "PollingInterval": "01:00:00",
+      "OverlappingReccuring": false,
+      "StartingTime": null,
+      "EndAt": null,
+      "Priority": 3,
+      "Verifiers": []
+    }
+    // The CountCollector is available for Oracle, MsSql, MySql and PostgreSql. Just replace PostgreSql by Oracle or MsSql or MySql in the $type definition.
+    //{
+    //  "$type": "Monytor.Implementation.Collectors.Sql.PostgreSql.CountCollector, Monytor.Implementation.Collectors.Sql.PostgreSql",
+    //  "TableName": "YourTable",
+    //  "WhereClause": "WHERE Conditions"
+    //  "ConnectionString": "Your ConnectionString",
+    //  "DisplayName": "Count of table YourTable",
+    //  "Description": "Count of rows in the table YourTable",
+    //  "GroupName": "Count",
+    //  "StartingTimeDelay": "00:00:00",
+    //  "RandomTimeDelay": "00:00:00",
+    //  "PollingInterval": "00:00:05",
+    //  "OverlappingReccuring": false,
+    //  "StartingTime": null,
+    //  "EndAt": null,
+    //  "Priority": 3,
+    //  "Verifiers": []
+    //}
+  ]
+}

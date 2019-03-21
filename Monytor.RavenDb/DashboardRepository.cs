@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Monytor.WebApi.Controllers;
+using Monytor.Core.Models;
+using Monytor.Core.Repositories;
 using Raven.Client;
 
-namespace Monytor.Domain.Services {
+namespace Monytor.RavenDb {
     public class DashboardRepository : IDashboardRepository {
         private readonly IDocumentStore _store;
 

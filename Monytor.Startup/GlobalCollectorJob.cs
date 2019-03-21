@@ -20,9 +20,9 @@ namespace Monytor.Startup {
             _container = container;
             _logger = logger;
         }
-        public async Task Execute(IJobExecutionContext context) {
+        public  Task Execute(IJobExecutionContext context) {
             if (context.CancellationToken.IsCancellationRequested)
-                return;
+                return Task.FromCanceled(context.CancellationToken);
 
             Collector collectorInstance = null;
             try {
@@ -72,10 +72,13 @@ namespace Monytor.Startup {
                         }
                     }
                 }
+                return Task.CompletedTask;
             }
             catch (Exception ex) {
-                _logger.LogError(ex, $"{context.JobDetail.Key} in {collectorInstance.GetType()}");                
+                _logger.LogError(ex, $"{context.JobDetail.Key} in {collectorInstance.GetType()}");
+                return Task.FromException(ex);
             }     
+            
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using Monytor.Core.Services;
-using Monytor.WebApi.Controllers;
+﻿using Monytor.Core.Models;
+using Monytor.Core.Repositories;
+using Monytor.Core.Services;
 using System;
 using System.Collections.Generic;
 

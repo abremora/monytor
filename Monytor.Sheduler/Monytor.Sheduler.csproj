@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
+    <PackageReference Include="CommandLineParser" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Quartz" Version="3.0.6" />
+    <PackageReference Include="RavenDB.Client" Version="3.5.6" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.5.0" />
+  </ItemGroup>
+  
+    <ItemGroup>
+    <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.RavenDb\Monytor.Implementation.Collectors.RavenDb.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.MsSql\Monytor.Implementation.Collectors.Sql.MsSql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.MySql\Monytor.Implementation.Collectors.Sql.MySql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.Oracle\Monytor.Implementation.Collectors.Sql.Oracle.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.PostgreSql\Monytor.Implementation.Collectors.Sql.PostgreSql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.SQL\Monytor.Implementation.Collectors.Sql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors\Monytor.Implementation.Collectors.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation\Monytor.Implementation.csproj" />
+    <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
+    <ProjectReference Include="..\Monytor.RavenDb\Monytor.RavenDb.csproj" />
+    <ProjectReference Include="..\Monytor.Startup\Monytor.Startup.csproj" />
+  </ItemGroup>
+</Project>
