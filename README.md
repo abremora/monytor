@@ -1,3 +1,5 @@
+![Build status](https://ci.appveyor.com/api/projects/status/1fbl5mjfwfmjj4vs/branch/master?svg=true)
+
 # Monytor
 
 Monytor is a configurable monitoring tool written in .NET Standard. Most services run with .NET Core. But to use Windows specific functions (e.g. Performance Counter) there is a version for .NET Framework available, too.  
