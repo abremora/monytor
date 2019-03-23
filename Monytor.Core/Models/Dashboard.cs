@@ -7,11 +7,7 @@ namespace Monytor.Core.Models {
         public string Description { get; set; }
         public List<View> Views { get; set; }
 
-        public void RemoveInternalId() {
-            Id = Id.Remove(0, $"{nameof(Dashboard)}/".Length);
-        }
-
-        public static string AddInternalId(string id) {
+        public static string CreateId(string id) {
             return $"{nameof(Dashboard)}/{id}";
         }
     }

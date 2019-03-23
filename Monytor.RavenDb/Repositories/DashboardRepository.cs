@@ -21,7 +21,7 @@ namespace Monytor.RavenDb {
         public IEnumerable<Dashboard> LoadOverview() {
             using (var session = _store.OpenSession()) {
                 return session.Query<Dashboard>()
-                    .Take(1024);
+                    .Take(1024).ToList();
             }
         }
 

@@ -35,7 +35,7 @@
     <ProjectReference Include="..\Monytor.Implementation\Monytor.Implementation.csproj" />
     <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
     <ProjectReference Include="..\Monytor.RavenDb\Monytor.RavenDb.csproj" />
-    <ProjectReference Include="..\Monytor.Sheduler\Monytor.Sheduler.csproj" />
+    <ProjectReference Include="..\Monytor.Scheduler\Monytor.Scheduler.csproj" />
     <ProjectReference Include="..\Monytor.Startup\Monytor.Startup.csproj" />
   </ItemGroup>
 

@@ -11,6 +11,7 @@ namespace Monytor.WebApi {
                .AddCommandLine(args)
                .SetBasePath(GetCurrentDirectory())
                .AddJsonFile("appsettings.json")
+               .AddJsonFile("appsettings.local.json", true)
                .Build();
 
             BuildWebHost(args, configuration)

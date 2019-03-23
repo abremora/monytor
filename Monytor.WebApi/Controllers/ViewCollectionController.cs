@@ -14,7 +14,7 @@ namespace Monytor.WebApi.Controllers {
             _collectorService = collectorService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{*id}")]
         public Dashboard Get(string id) {
             return _collectorService.Get(id);
         }
@@ -25,9 +25,9 @@ namespace Monytor.WebApi.Controllers {
         }
 
         [HttpPost]
-        public IActionResult Set([FromBody]Dashboard config) {
+        public IActionResult Create([FromBody]Dashboard config) {
             if (config == null) return BadRequest();
-            _collectorService.Set(config);
+            _collectorService.Create(config);
 
             return Ok();
         }

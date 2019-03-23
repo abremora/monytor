@@ -1,13 +1,12 @@
 ﻿using Monytor.Core.Repositories;
 using Monytor.Core.Services;
 using Monytor.Domain.Services;
-using Monytor.RavenDb;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Raven.Client;
-using Monytor.Infrastructure;
+using Monytor.Core.Configurations;
+using System;
 
 namespace Monytor.WebApi {
     public class Startup
@@ -22,19 +21,28 @@ namespace Monytor.WebApi {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var url = Configuration["database:url"];
-            var databaseName = Configuration["database:name"];
-            var store = RavenHelper.CreateStore(url, databaseName);
-
-            services.AddSingleton<IDocumentStore>(store);
-            services.AddTransient<ICollectorService, CollectorService>();
-            services.AddTransient<ISeriesRepository, SeriesRepository>();
-            services.AddTransient<IViewCollectionService, ViewCollectionService>();
-            services.AddTransient<IDashboardRepository, DashboardRepository>();
+            SetupDatabase(services, Configuration);
+            services.AddScoped<ICollectorService, CollectorService>();
+            services.AddScoped<IViewCollectionService, ViewCollectionService>();
 
             services.AddCors();
             services.AddMvc();            
         }
+        private static void SetupDatabase(IServiceCollection services, IConfiguration appConfig) {
+            var storageProvider = appConfig.GetValue<StorageProvider>("storageProvider");
+            switch (storageProvider) {
+                case StorageProvider.PostgreSQL:
+                    PostgreSQL.Bootstrapper.SetupDatabaseAndRegisterRepositories(services, appConfig["storageProviderConnectionString"]);
+                    break;
+                case StorageProvider.RavenDb:
+                    RavenDb.Bootstrapper.SetupDatabaseAndRegisterRepositories(services, appConfig["database:url"], appConfig["database:name"]);
+                    break;
+                default:
+                    throw new NotSupportedException($"The configured value of the setting 'storageProvider' is not supported.");
+            }
+
+        }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

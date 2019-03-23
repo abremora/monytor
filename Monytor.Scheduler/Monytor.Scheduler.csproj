@@ -25,7 +25,6 @@
     <ProjectReference Include="..\Monytor.Implementation.Collectors\Monytor.Implementation.Collectors.csproj" />
     <ProjectReference Include="..\Monytor.Implementation\Monytor.Implementation.csproj" />
     <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
-    <ProjectReference Include="..\Monytor.RavenDb\Monytor.RavenDb.csproj" />
     <ProjectReference Include="..\Monytor.Startup\Monytor.Startup.csproj" />
   </ItemGroup>
 </Project>

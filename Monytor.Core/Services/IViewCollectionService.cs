@@ -6,6 +6,6 @@ namespace Monytor.Core.Services {
     public interface IViewCollectionService {
         Dashboard Get(string id);
         IEnumerable<Dashboard> GetOverview();
-        void Set(Dashboard config);
+        void Create(Dashboard config);
     }
 }
