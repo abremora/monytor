@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 
-namespace Monytor.Sheduler.NetCore {
-    class Program : SheduleRunner {
+namespace Monytor.Scheduler.NetCore {
+    class Program : ScheduleRunner {
         static async Task Main(string[] args) {
             await new Program().RunAsync(args);
         }        

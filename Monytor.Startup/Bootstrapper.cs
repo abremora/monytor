@@ -1,23 +1,21 @@
 ﻿using Autofac;
-using Monytor.RavenDb;
 using Microsoft.Extensions.Configuration;
 using Quartz;
 using Quartz.Impl;
-using Raven.Client;
-using Raven.Client.Document;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Monytor.Infrastructure;
-using Monytor.Core.Repositories;
 using Monytor.Core.Configurations;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using System;
 
 namespace Monytor.Startup {
     public class Bootstrapper {
         public async static Task<IContainer> Setup() {
+            var builder = new ContainerBuilder();
+
             ILoggerFactory loggerFactory = new LoggerFactory();
             loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
 
@@ -25,22 +23,35 @@ namespace Monytor.Startup {
 
             logger.LogInformation("Load config");
             var appConfig = LoadConfig();
-            logger.LogInformation("Load database");
-            var documentStore = SetupDatabase(appConfig);
+
+            SetupDatabase(builder, logger, appConfig);
+
             logger.LogInformation("Setup DI");
-            var builder = await SetupDi(appConfig, documentStore, loggerFactory);
-            
+            await SetupDi(builder, appConfig, loggerFactory);
+
             return builder.Build();
         }
 
-        private static async Task<ContainerBuilder> SetupDi(IConfigurationRoot appConfig, DocumentStore documentStore, ILoggerFactory loggerFactory) {
-            var builder = new ContainerBuilder();
+        private static void SetupDatabase(ContainerBuilder builder, ILogger<Bootstrapper> logger, IConfigurationRoot appConfig) {
+            logger.LogInformation("Load database");
+            var storageProvider = appConfig.GetValue<StorageProvider>("storageProvider");
+            switch (storageProvider) {
+                case StorageProvider.PostgreSQL:
+                    PostgreSQL.Bootstrapper.SetupDatabaseAndRegisterRepositories(builder, appConfig["storageProviderConnectionString"]);
+                    break;
+                case StorageProvider.RavenDb:
+                    RavenDb.Bootstrapper.SetupDatabaseAndRegisterRepositories(builder, appConfig["database:url"], appConfig["database:name"]);
+                    break;
+                default: 
+                    logger.LogError("The configured value of the setting '{}' is not supported.");
+                    throw new NotSupportedException("The configured value of the setting '{}' is not supported.");
+            }
+            
+        }
+
+        private static async Task<ContainerBuilder> SetupDi(ContainerBuilder builder, IConfigurationRoot appConfig, ILoggerFactory loggerFactory) {
             builder.RegisterInstance(appConfig)
-                   .As<IConfigurationRoot>();
-            builder.RegisterInstance(documentStore)
-                   .As<IDocumentStore>();
-            builder.RegisterType<SeriesRepository>()
-                    .As<ISeriesRepository>();
+                   .As<IConfigurationRoot>();                       
             builder.RegisterInstance(loggerFactory)
                     .As<ILoggerFactory>();
             builder.RegisterGeneric(typeof(Logger<>))
@@ -92,19 +103,6 @@ namespace Monytor.Startup {
                 var b = ConfigCreator.LoadBehavior(typeof(CollectorBehavior<>), collector);
                 builder.RegisterType(b).Keyed(collector, typeof(CollectorBehaviorBase));
             }
-        }
-
-        private static DocumentStore SetupDatabase(IConfigurationRoot config) {
-            var url = config["database:url"];
-            var databaseName = config["database:name"];
-
-            var db = RavenHelper.CreateStore(url, databaseName);
-
-            new SeriesIndex().SideBySideExecute(db);
-            new SeriesByDayIndex().SideBySideExecute(db);
-            new SeriesByHourIndex().SideBySideExecute(db);
-            new TagGroupMapReduceIndex().SideBySideExecute(db);
-            return db;
         }
 
         private static IConfigurationRoot LoadConfig() {

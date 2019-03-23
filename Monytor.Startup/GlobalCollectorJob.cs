@@ -1,5 +1,4 @@
 ﻿using Quartz;
-using Raven.Client;
 using System.Threading.Tasks;
 using Autofac;
 using System;
@@ -11,15 +10,16 @@ using Microsoft.Extensions.Logging;
 namespace Monytor.Startup {
     [DisallowConcurrentExecution]
     public class GlobalCollectorJob : IJob {
-        private readonly IDocumentStore _store;
+        private readonly IBulkRepository _bulkRepository;
         private readonly ILifetimeScope _container;
         private readonly ILogger<GlobalCollectorJob> _logger;
 
-        public GlobalCollectorJob(IDocumentStore store, ILifetimeScope container, ILogger<GlobalCollectorJob> logger) {
-            _store = store;
+        public GlobalCollectorJob(IBulkRepository bulkRepository, ILifetimeScope container, ILogger<GlobalCollectorJob> logger) {
+            _bulkRepository = bulkRepository;
             _container = container;
             _logger = logger;
         }
+
         public  Task Execute(IJobExecutionContext context) {
             if (context.CancellationToken.IsCancellationRequested)
                 return Task.FromCanceled(context.CancellationToken);
@@ -39,9 +39,9 @@ namespace Monytor.Startup {
                     var series = collectorBehavior.Run(collectorInstance)
                         .ToList();
 
-                    using (var bulk = _store.BulkInsert()) {
+                    using (var bulk = _bulkRepository.BeginBulkInsert()) {
                         foreach (var serie in series) {
-                            bulk.Store(serie);
+                            _bulkRepository.Store(serie);
                         }
                     }
 

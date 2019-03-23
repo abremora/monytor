@@ -34,6 +34,7 @@
     <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
     <ProjectReference Include="..\Monytor.Domain\Monytor.Domain.csproj" />
     <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
+    <ProjectReference Include="..\Monytor.PostgreSQL\Monytor.PostgreSQL.csproj" />
     <ProjectReference Include="..\Monytor.RavenDb\Monytor.RavenDb.csproj" />
   </ItemGroup>
 

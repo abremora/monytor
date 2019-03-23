@@ -9,8 +9,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Monytor.Sheduler {
-    public abstract class SheduleRunner {
+namespace Monytor.Scheduler {
+    public abstract class ScheduleRunner {
         static IContainer _container;
         static ILogger _logger = null;
         static ManualResetEventSlim _manualReset = new ManualResetEventSlim(false);
@@ -92,7 +92,7 @@ namespace Monytor.Sheduler {
         private static void CreateLoggerForConsole() {
             ILoggerFactory loggerFactory = new LoggerFactory();
             loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
-            _logger = loggerFactory.CreateLogger<SheduleRunner>();
+            _logger = loggerFactory.CreateLogger<ScheduleRunner>();
         }
 
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e) {
