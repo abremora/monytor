@@ -43,8 +43,8 @@ namespace Monytor.Startup {
                     RavenDb.Bootstrapper.SetupDatabaseAndRegisterRepositories(builder, appConfig["database:url"], appConfig["database:name"]);
                     break;
                 default: 
-                    logger.LogError("The configured value of the setting '{}' is not supported.");
-                    throw new NotSupportedException("The configured value of the setting '{}' is not supported.");
+                    logger.LogError("The configured value of the setting 'storageProvider' is not supported.");
+                    throw new NotSupportedException("The configured value of the setting 'storageProvider' is not supported.");
             }
             
         }
