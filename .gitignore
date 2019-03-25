@@ -13,6 +13,7 @@ appsettings.local.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+.docker_temp*
 
 # Build results
 [Dd]ebug/

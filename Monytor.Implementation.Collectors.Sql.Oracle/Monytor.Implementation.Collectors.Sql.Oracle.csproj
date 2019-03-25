@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Monytor.Implementation.Collectors.SQL\Monytor.Implementation.Collectors.Sql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql\Monytor.Implementation.Collectors.Sql.csproj" />
   </ItemGroup>
 
 </Project>

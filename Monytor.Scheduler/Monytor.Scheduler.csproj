@@ -21,7 +21,7 @@
     <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.MySql\Monytor.Implementation.Collectors.Sql.MySql.csproj" />
     <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.Oracle\Monytor.Implementation.Collectors.Sql.Oracle.csproj" />
     <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.PostgreSql\Monytor.Implementation.Collectors.Sql.PostgreSql.csproj" />
-    <ProjectReference Include="..\Monytor.Implementation.Collectors.SQL\Monytor.Implementation.Collectors.Sql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql\Monytor.Implementation.Collectors.Sql.csproj" />
     <ProjectReference Include="..\Monytor.Implementation.Collectors\Monytor.Implementation.Collectors.csproj" />
     <ProjectReference Include="..\Monytor.Implementation\Monytor.Implementation.csproj" />
     <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />
