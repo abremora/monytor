@@ -12,7 +12,7 @@ namespace Monytor.RavenDb {
             _store = store;
         }
 
-        public Dashboard Load(string id) {
+        public Dashboard Get(string id) {
             using (var session = _store.OpenSession()) {
                 return session.Load<Dashboard>(id);
             }
@@ -25,7 +25,7 @@ namespace Monytor.RavenDb {
             }
         }
 
-        public void Save(Dashboard config) {
+        public void Store(Dashboard config) {
             using (var session = _store.OpenSession()) {                
                 session.Store(config);
                 session.SaveChanges();

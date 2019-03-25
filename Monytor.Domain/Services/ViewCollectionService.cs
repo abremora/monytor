@@ -16,7 +16,7 @@ namespace Monytor.Domain.Services {
             if(!id.StartsWith(nameof(Dashboard)+"/", StringComparison.InvariantCultureIgnoreCase)) {
                 id = Dashboard.CreateId(id);
             }
-            return _repository.Load(id);
+            return _repository.Get(id);
         }
 
         public IEnumerable<Dashboard> GetOverview() {
@@ -26,7 +26,7 @@ namespace Monytor.Domain.Services {
 
         public void Create(Dashboard config) {
             config.Id= Dashboard.CreateId(Guid.NewGuid().ToString());
-            _repository.Save(config);
+            _repository.Store(config);
         }
     }
 }

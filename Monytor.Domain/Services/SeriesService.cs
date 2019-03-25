@@ -5,10 +5,10 @@ using System;
 using System.Collections.Generic;
 
 namespace Monytor.Domain.Services {
-    public class CollectorService : ICollectorService {
+    public class SeriesService : ISeriesService {
         private readonly ISeriesRepository _repository;
 
-        public CollectorService(ISeriesRepository repository) {
+        public SeriesService(ISeriesRepository repository) {
             _repository = repository;
         }
 
@@ -41,7 +41,7 @@ namespace Monytor.Domain.Services {
             }
         }
 
-        public void Set(Series series) {
+        public void Create(Series series) {
             _repository.Store(series);
         }
     }

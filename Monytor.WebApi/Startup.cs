@@ -22,7 +22,7 @@ namespace Monytor.WebApi {
         public void ConfigureServices(IServiceCollection services)
         {
             SetupDatabase(services, Configuration);
-            services.AddScoped<ICollectorService, CollectorService>();
+            services.AddScoped<ISeriesService, SeriesService>();
             services.AddScoped<IViewCollectionService, ViewCollectionService>();
 
             services.AddCors();

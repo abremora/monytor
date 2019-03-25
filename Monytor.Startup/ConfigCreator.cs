@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 
 namespace Monytor.Startup {
-    public abstract class ConfigCreator {
+    public abstract class ConfigCreator  {
         public abstract string ConfigFileName { get; }
 
         public bool HasConfig() {
