@@ -10,14 +10,11 @@ namespace Monytor.PostgreSQL {
                 _.Connection(connectionString);
             });
 
-            containerBuilder.RegisterInstance(documentStore)
-                   .As<IDocumentStore>();
-            containerBuilder.RegisterType<SeriesRepository>()
-                    .As<ISeriesRepository>();
-            containerBuilder.RegisterType<DashboardRepository>()
-                    .As<IDashboardRepository>();
-            containerBuilder.RegisterType<BulkRepository>()
-                    .As<IBulkRepository>();
+            containerBuilder.RegisterInstance(documentStore).As<IDocumentStore>();
+            containerBuilder.RegisterType<SeriesRepository>().As<ISeriesRepository>();
+            containerBuilder.RegisterType<DashboardRepository>().As<IDashboardRepository>();
+            containerBuilder.RegisterType<CollectorConfigRepository>().As<ICollectorConfigRepository>();
+            containerBuilder.RegisterType<BulkRepository>().As<IBulkRepository>();
         }
 
         public static void SetupDatabaseAndRegisterRepositories(IServiceCollection serviceCollection, string connectionString) {
@@ -25,11 +22,12 @@ namespace Monytor.PostgreSQL {
                 _.Connection(connectionString);
             });
 
-            serviceCollection.AddSingleton< IDocumentStore>(documentStore);
+            serviceCollection.AddSingleton<IDocumentStore>(documentStore);
             serviceCollection.AddScoped<ISeriesRepository, SeriesRepository>();
             serviceCollection.AddScoped<IDashboardRepository, DashboardRepository>();
+            serviceCollection.AddScoped<ICollectorConfigRepository, CollectorConfigRepository>();
         }
 
-        
+
     }
 }

@@ -4,7 +4,7 @@ using Monytor.Core.Services;
 using System;
 using System.Collections.Generic;
 
-namespace Monytor.Domain.Services {
+namespace Monytor.Domain.Factories {
     public class SeriesService : ISeriesService {
         private readonly ISeriesRepository _repository;
 

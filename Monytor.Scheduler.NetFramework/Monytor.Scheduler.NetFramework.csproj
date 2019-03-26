@@ -192,13 +192,17 @@
       <Project>{0bc4d19f-d896-44b3-af69-72f616045bc8}</Project>
       <Name>Monytor.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.NetFramework.Behaviors\Monytor.Implementation.Collectors.NetFramework.Behaviors.csproj">
+      <Project>{ca7c4abd-1c6e-4437-abb8-37a6b0ad1cc5}</Project>
+      <Name>Monytor.Implementation.Collectors.NetFramework.Behaviors</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.NetFramework\Monytor.Implementation.Collectors.NetFramework.csproj">
+      <Project>{619151f8-a6a9-40c2-aa8c-601e341a5011}</Project>
+      <Name>Monytor.Implementation.Collectors.NetFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Monytor.Implementation.Collectors.RavenDb\Monytor.Implementation.Collectors.RavenDb.csproj">
       <Project>{5a43f70f-0e1c-4d52-9544-00173fb6d91d}</Project>
       <Name>Monytor.Implementation.Collectors.RavenDb</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Monytor.Implementation.Collectors.NetFramework\Monytor.Implementation.Collectors.NetFramework.csproj">
-      <Project>{7D7B15D8-BBE8-4F7C-9565-38459ABA9192}</Project>
-      <Name>Monytor.Implementation.Collectors.NetFramework</Name>
     </ProjectReference>
     <ProjectReference Include="..\Monytor.Implementation.Collectors\Monytor.Implementation.Collectors.csproj">
       <Project>{A4CF8B17-C6E5-4B71-9D67-B35DF1748512}</Project>

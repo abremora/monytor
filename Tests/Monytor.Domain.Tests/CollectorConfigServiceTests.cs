@@ -1,8 +1,9 @@
 ﻿using FluentAssertions;
+using Monytor.Contracts.CollectorConfig;
 using Monytor.Core.Models;
 using Monytor.Core.Services;
-using Monytor.Domain.Services;
-using Monytor.PostgreSQL;
+using Monytor.Domain.Factories;
+using Monytor.RavenDb;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,20 +17,19 @@ namespace Monytor.Domain.Tests {
 
         [Fact]
         public void Create_EmptyConfig_Success() {
-           var store = base.NewDocumentStore(configureStore: ConfigureTestStore);
+           var store = NewDocumentStore(configureStore: ConfigureTestStore);
             var configRepository = new CollectorConfigRepository(store);
 
 
             ICollectorConfigService collectorConfigService = new CollectorConfigService(configRepository);
-            var collectorConfig = new CollectorConfigStored() {
-                Id = CollectorConfigStored.CreateId()
+            var command = new CreateCollectorConfigCommand() {
+                DisplayName = "Test"
             };
-            collectorConfigService.Create(collectorConfig);
+            var id = collectorConfigService.Create(command);
 
-            var loadedConfig = collectorConfigService.Get(collectorConfig.Id);
+            var loadedConfig = collectorConfigService.Get(id);
             loadedConfig.Should().NotBeNull();
-        }
-
-       
+            loadedConfig.DisplayName.Should().BeEquivalentTo(command.DisplayName);
+        }       
     }
 }

@@ -13,15 +13,12 @@ namespace Monytor.RavenDb {
             new SeriesByDayIndex().SideBySideExecute(documentStore);
             new SeriesByHourIndex().SideBySideExecute(documentStore);
             new TagGroupMapReduceIndex().SideBySideExecute(documentStore);
-            
-            containerBuilder.RegisterInstance(documentStore)
-                   .As<IDocumentStore>();
-            containerBuilder.RegisterType<SeriesRepository>()
-                    .As<ISeriesRepository>();
-            containerBuilder.RegisterType<DashboardRepository>()
-                    .As<IDashboardRepository>();
-            containerBuilder.RegisterType<BulkRepository>()
-                    .As<IBulkRepository>();
+
+            containerBuilder.RegisterInstance(documentStore).As<IDocumentStore>();
+            containerBuilder.RegisterType<SeriesRepository>().As<ISeriesRepository>();
+            containerBuilder.RegisterType<DashboardRepository>().As<IDashboardRepository>();
+            containerBuilder.RegisterType<ICollectorConfigRepository>().As<CollectorConfigRepository>();
+            containerBuilder.RegisterType<BulkRepository>().As<IBulkRepository>();
         }
 
         public static void SetupDatabaseAndRegisterRepositories(IServiceCollection serviceCollection, string databaseUrl, string databaseName) {
@@ -29,6 +26,7 @@ namespace Monytor.RavenDb {
             serviceCollection.AddSingleton<IDocumentStore>(documentStore);
             serviceCollection.AddScoped<ISeriesRepository, SeriesRepository>();
             serviceCollection.AddScoped<IDashboardRepository, DashboardRepository>();
+            serviceCollection.AddScoped<ICollectorConfigRepository, CollectorConfigRepository>();
         }
     }
 }

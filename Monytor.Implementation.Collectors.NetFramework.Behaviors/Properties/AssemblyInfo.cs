@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Monytor.Implementation.Collectors.NetFramework")]
+[assembly: AssemblyTitle("Monytor.Implementation.Collectors.NetFramework.Behaviors")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Monytor.Implementation.Collectors.NetFramework")]
+[assembly: AssemblyProduct("Monytor.Implementation.Collectors.NetFramework.Behaviors")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7d7b15d8-bbe8-4f7c-9565-38459aba9192")]
+[assembly: Guid("ca7c4abd-1c6e-4437-abb8-37a6b0ad1cc5")]
 
 // Version information for an assembly consists of the following four values:
 //

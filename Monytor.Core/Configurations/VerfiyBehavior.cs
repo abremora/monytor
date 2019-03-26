@@ -1,5 +1,5 @@
 ﻿namespace Monytor.Core.Configurations {
-    public abstract class VerfiyBehavior<T> : VerifierBehaviorBase
-        where T : Verifier {        
+    public abstract class VerfiyBehavior<TVerifier> : VerifierBehaviorBase
+        where TVerifier : Verifier {        
     }
 }

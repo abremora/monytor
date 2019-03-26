@@ -1,6 +1,6 @@
 ﻿using Monytor.Core.Repositories;
 using Monytor.Core.Services;
-using Monytor.Domain.Services;
+using Monytor.Domain.Factories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +24,7 @@ namespace Monytor.WebApi {
             SetupDatabase(services, Configuration);
             services.AddScoped<ISeriesService, SeriesService>();
             services.AddScoped<IViewCollectionService, ViewCollectionService>();
-
+            services.AddScoped<ICollectorConfigService, CollectorConfigService>();
             services.AddCors();
             services.AddMvc();            
         }

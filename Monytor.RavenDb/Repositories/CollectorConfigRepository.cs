@@ -1,10 +1,8 @@
 ﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Raven.Client;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Monytor.PostgreSQL {
+namespace Monytor.RavenDb {
     public class CollectorConfigRepository : ICollectorConfigRepository {
         private readonly IDocumentStore _store;
 
