@@ -25,13 +25,18 @@
     <None Include="appsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="appsettings.local.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    
     <None Include="wwwroot\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  
+   <ItemGroup Condition="Exists('appsettings.local.json')">
+	   <None Include="appsettings.local.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+   </ItemGroup>
+  
 
   <ItemGroup>
     <ProjectReference Include="..\Monytor.Contracts\Monytor.Contracts.csproj" />
