@@ -30,6 +30,7 @@ namespace Monytor.WebApi {
         }
         private static void SetupDatabase(IServiceCollection services, IConfiguration appConfig) {
             var storageProvider = appConfig.GetValue<StorageProvider>("storageProvider");
+            
             switch (storageProvider) {
                 case StorageProvider.PostgreSQL:
                     PostgreSQL.Bootstrapper.SetupDatabaseAndRegisterRepositories(services, appConfig["storageProviderConnectionString"]);
