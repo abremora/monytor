@@ -10,13 +10,14 @@ namespace Monytor.WebApi {
             var configuration = new ConfigurationBuilder()
                .AddCommandLine(args)
                .SetBasePath(GetCurrentDirectory())
-               .AddJsonFile("appsettings.local.json", true)
-               .AddJsonFile("appsettings.json")               
+               .AddJsonFile("appsettings.json")
+               .AddJsonFile("appsettings.{env.EnvironmentName}.json", true)
                .Build();
 
             BuildWebHost(args, configuration)
                 .Run();
         }
+
         public static IWebHost BuildWebHost(string[] args, IConfiguration configuration) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseConfiguration(configuration)

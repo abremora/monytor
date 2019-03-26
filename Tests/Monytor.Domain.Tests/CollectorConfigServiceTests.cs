@@ -17,19 +17,23 @@ namespace Monytor.Domain.Tests {
 
         [Fact]
         public void Create_EmptyConfig_Success() {
-           var store = NewDocumentStore(configureStore: ConfigureTestStore);
-            var configRepository = new CollectorConfigRepository(store);
-
+            var store = NewDocumentStore(configureStore: ConfigureTestStore);
+            var uow = new UnitOfWork(store);
+            var configRepository = new CollectorConfigRepository(uow);
 
             ICollectorConfigService collectorConfigService = new CollectorConfigService(configRepository);
             var command = new CreateCollectorConfigCommand() {
                 DisplayName = "Test"
             };
+            uow.OpenSession();
             var id = collectorConfigService.Create(command);
+            uow.SaveChanges();
 
-            var loadedConfig = collectorConfigService.Get(id);
-            loadedConfig.Should().NotBeNull();
-            loadedConfig.DisplayName.Should().BeEquivalentTo(command.DisplayName);
-        }       
+            using (var session = store.OpenSession()) {
+                var loadedConfig = session.Load<CollectorConfigStored>(id);
+                loadedConfig.Should().NotBeNull();
+                loadedConfig.DisplayName.Should().BeEquivalentTo(command.DisplayName);
+            }
+        }
     }
 }

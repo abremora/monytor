@@ -45,6 +45,8 @@ namespace Monytor.Domain.Factories {
             collector.Verifiers = new System.Collections.Generic.List<Core.Configurations.Verifier>();
 
             config.Collectors.Add(collector);
+
+            
         }               
     }
 }

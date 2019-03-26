@@ -52,6 +52,7 @@ namespace Monytor.WebApi {
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseMiddleware<UnitOfWorkMiddleware>();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();

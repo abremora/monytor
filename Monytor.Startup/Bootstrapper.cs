@@ -109,8 +109,8 @@ namespace Monytor.Startup {
             var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             return new ConfigurationBuilder()
                 .SetBasePath(directory)
+                .AddJsonFile("appsettings.json")
                 .AddJsonFile("appsettings.local.json", true)
-                .AddJsonFile("appsettings.json")                
                 .Build();
         }
     }

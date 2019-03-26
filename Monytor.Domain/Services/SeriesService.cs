@@ -7,13 +7,15 @@ using System.Collections.Generic;
 namespace Monytor.Domain.Factories {
     public class SeriesService : ISeriesService {
         private readonly ISeriesRepository _repository;
+        private readonly ISeriesQueryRepository _seriesQueryRepository;
 
-        public SeriesService(ISeriesRepository repository) {
+        public SeriesService(ISeriesRepository repository, ISeriesQueryRepository seriesQueryRepository) {
             _repository = repository;
+            _seriesQueryRepository = seriesQueryRepository;
         }
 
         public Dictionary<string, IEnumerable<string>> GetGroupValueSummary() {
-            return _repository.GetGroupValueSummary();
+            return _seriesQueryRepository.GetGroupValueSummary();
         }
 
         public Series GetSerie(int id) {
@@ -33,11 +35,11 @@ namespace Monytor.Domain.Factories {
 
             switch (unescapedQuery.MeanValueType.Trim().ToLower()) {
                 case "day":
-                    return _repository.GetSeriesByDayMean(unescapedQuery);
+                    return _seriesQueryRepository.GetSeriesByDayMean(unescapedQuery);
                 case "hour":
-                    return _repository.GetSeriesByHourMean(unescapedQuery);
+                    return _seriesQueryRepository.GetSeriesByHourMean(unescapedQuery);
                 default:
-                    return _repository.GetSeries(unescapedQuery);
+                    return _seriesQueryRepository.GetSeries(unescapedQuery);
             }
         }
 

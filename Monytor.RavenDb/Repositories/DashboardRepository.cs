@@ -1,35 +1,30 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Monytor.Core.Models;
+﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
-using Raven.Client;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Monytor.RavenDb {
     public class DashboardRepository : IDashboardRepository {
-        private readonly IDocumentStore _store;
+        private readonly UnitOfWork _unitOfWork;
 
-        public DashboardRepository(IDocumentStore store) {
-            _store = store;
+        public DashboardRepository(UnitOfWork unitOfWork) {
+            _unitOfWork = unitOfWork;
         }
 
         public Dashboard Get(string id) {
-            using (var session = _store.OpenSession()) {
-                return session.Load<Dashboard>(id);
-            }
+            return _unitOfWork.Session.Load<Dashboard>(id);
         }
 
         public IEnumerable<Dashboard> LoadOverview() {
-            using (var session = _store.OpenSession()) {
+            // ToDo: Query-Repository
+            using (var session = _unitOfWork.Store.OpenSession()) {
                 return session.Query<Dashboard>()
                     .Take(1024).ToList();
             }
         }
 
         public void Store(Dashboard config) {
-            using (var session = _store.OpenSession()) {                
-                session.Store(config);
-                session.SaveChanges();
-            }
+            _unitOfWork.Session.Store(config);
         }
     }
 }

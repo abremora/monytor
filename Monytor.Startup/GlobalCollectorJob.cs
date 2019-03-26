@@ -54,7 +54,7 @@ namespace Monytor.Startup {
 
                                 var verifierKey = verifier.GetType();
                                 var verifierBehavior = _container.ResolveKeyed<VerifierBehaviorBase>(verifierKey);                                
-                                verifierBehavior.SeriesRepository = _container.Resolve<ISeriesRepository>();
+                                verifierBehavior.SeriesRepository = _container.Resolve<ISeriesQueryRepository>();
                                 var result = verifierBehavior.Verify(verifier, serie);
 
                                 if (result.Successful) {

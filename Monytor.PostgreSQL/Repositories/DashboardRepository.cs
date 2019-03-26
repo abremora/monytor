@@ -6,30 +6,26 @@ using System.Linq;
 
 namespace Monytor.PostgreSQL {
     public class DashboardRepository : IDashboardRepository {
-        private readonly IDocumentStore _store;
+        private readonly UnitOfWork _unitOfWork;
 
-        public DashboardRepository(IDocumentStore store) {
-            _store = store;
+        public DashboardRepository(IUnitOfWork unitOfWork) {
+            _unitOfWork = unitOfWork as UnitOfWork;
         }
 
         public Dashboard Get(string id) {
-            using (var session = _store.OpenSession()) {
-                return session.Load<Dashboard>(id);
-            }
+            return _unitOfWork.Session.Load<Dashboard>(id);
         }
-
+           
         public IEnumerable<Dashboard> LoadOverview() {
-            using (var session = _store.OpenSession()) {
-                return session.Query<Dashboard>()
-                    .Take(1024).ToList();
+            // ToDo: Query-Repository
+            using (var session = _unitOfWork.Store.QuerySession()) {
+                return _unitOfWork.DirtyTrackedSession.Query<Dashboard>()
+                        .Take(1024).ToList();
             }
         }
 
         public void Store(Dashboard config) {
-            using (var session = _store.OpenSession()) {                
-                session.Store(config);
-                session.SaveChanges();
-            }
+            _unitOfWork.Session.Store(config);
         }
     }
 }

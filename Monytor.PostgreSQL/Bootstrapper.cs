@@ -9,11 +9,9 @@ namespace Monytor.PostgreSQL {
             var documentStore = DocumentStore.For(_ => {
                 _.Connection(connectionString);
             });
-
+            
             containerBuilder.RegisterInstance(documentStore).As<IDocumentStore>();
-            containerBuilder.RegisterType<SeriesRepository>().As<ISeriesRepository>();
-            containerBuilder.RegisterType<DashboardRepository>().As<IDashboardRepository>();
-            containerBuilder.RegisterType<CollectorConfigRepository>().As<ICollectorConfigRepository>();
+            containerBuilder.RegisterType<SeriesQueryRepository>().As<ISeriesQueryRepository>();
             containerBuilder.RegisterType<BulkRepository>().As<IBulkRepository>();
         }
 
@@ -23,11 +21,11 @@ namespace Monytor.PostgreSQL {
             });
 
             serviceCollection.AddSingleton<IDocumentStore>(documentStore);
+            serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
             serviceCollection.AddScoped<ISeriesRepository, SeriesRepository>();
+            serviceCollection.AddScoped<ISeriesQueryRepository, SeriesQueryRepository>();
             serviceCollection.AddScoped<IDashboardRepository, DashboardRepository>();
             serviceCollection.AddScoped<ICollectorConfigRepository, CollectorConfigRepository>();
         }
-
-
     }
 }
