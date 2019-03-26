@@ -18,7 +18,7 @@ namespace Monytor.WebApi.Controllers {
 
         [HttpGet("{id}")]
         public ActionResult<CollectorConfigStored> Get(string id) {
-            return Ok(_collectorConfigService.Get(id));
+            return Ok(_collectorConfigService.Get(Uri.UnescapeDataString(id)));
         }
 
         [HttpPost]
@@ -29,7 +29,7 @@ namespace Monytor.WebApi.Controllers {
 
         [HttpPost("{collectorConfigId}/AddSqlCountCollector")]
         public ActionResult<string> AddSqlCountCollector(string collectorConfigId, [FromBody] AddSqlCountCollectorToConfigCommand command) {
-            _collectorConfigService.AddCollector(collectorConfigId, command);
+            _collectorConfigService.AddCollector(Uri.UnescapeDataString(collectorConfigId), command);
             return Ok();
         }
     }   
