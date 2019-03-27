@@ -13,21 +13,19 @@ namespace Monytor.Domain.Services {
         }
 
         public Dashboard Get(string id) {
-            var internalId = Dashboard.AddInternalId(id);
-            return _repository.Load(internalId);
+            if (!Dashboard.HasPrefix(id)) {
+                id = Dashboard.CreateId(id);
+            }
+            return _repository.Load(id);
         }
 
         public IEnumerable<Dashboard> GetOverview() {
             var overview = _repository.LoadOverview();
-            
-            foreach(var view in overview) {
-                view.RemoveInternalId();
-            }
-
             return overview;
         }
 
-        public void Set(Dashboard config) {           
+        public void Create(Dashboard config) {
+            config.Id= Dashboard.CreateId();
             _repository.Save(config);
         }
     }
