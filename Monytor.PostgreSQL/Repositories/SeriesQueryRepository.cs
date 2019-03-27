@@ -75,14 +75,12 @@ namespace Monytor.PostgreSQL {
                         Limit = queryModel.MaxValues
                     });
 
-                foreach (var group in series) {
-                    yield return new Series {
-                        Group = group.Group,
-                        Tag = group.Tag,
-                        Time = group.Time,
-                        Value = group.Value.ToString(CultureInfo.InvariantCulture)
-                    };
-                }
+                return series.Select(group => new Series {
+                    Group = group.Group,
+                    Tag = group.Tag,
+                    Time = group.Time,
+                    Value = group.Value.ToString(CultureInfo.InvariantCulture)
+                });
             }
         }
 
@@ -107,14 +105,12 @@ namespace Monytor.PostgreSQL {
                         queryModel.End,
                         Limit = queryModel.MaxValues
                     });
-                foreach (var group in series) {
-                    yield return new Series {
-                        Group = group.Group,
-                        Tag = group.Tag,
-                        Time = group.Time,
-                        Value = group.Value.ToString(CultureInfo.InvariantCulture)
-                    };
-                }
+                return series.Select(group => new Series {
+                    Group = group.Group,
+                    Tag = group.Tag,
+                    Time = group.Time,
+                    Value = group.Value.ToString(CultureInfo.InvariantCulture)
+                });               
             }
         }
     }
