@@ -8,25 +8,19 @@ using System.Globalization;
 using System.Linq;
 
 namespace Monytor.PostgreSQL {
-
-
     public class SeriesRepository : ISeriesRepository {
-
-       
-
         private readonly IDocumentStore _store;
 
         public SeriesRepository(IDocumentStore store) {
             _store = store;
-        }        
+        }
 
         public Dictionary<string, IEnumerable<string>> GetGroupValueSummary() {
-
             using (var session = _store.QuerySession()) {
                 var result = session.Query<TagGroupResult>(@"SELECT  json_build_object('Group', data->'Group', 'Tag' , data->'Tag') 
 	                                                    FROM public.mt_doc_series
-	                                                    group by data->'Group', data->'Tag'
-	                                                    order by data->'Group', data->'Tag';")
+	                                                    GROUP BY data->'Group', data->'Tag'
+	                                                    ORDER BY data->'Group', data->'Tag';")
                                         .ToList();
 
                 return result.GroupBy(g => g.Group)
@@ -41,7 +35,7 @@ namespace Monytor.PostgreSQL {
         }
 
         public IEnumerable<Series> GetSeries(SeriesQuery queryModel) {
-            using (var session = _store.OpenSession()) {              
+            using (var session = _store.OpenSession()) {
                 var query = session.Query<Series>()
                     .Where(x => x.Time >= queryModel.Start
                     && x.Time <= queryModel.End
@@ -61,29 +55,41 @@ namespace Monytor.PostgreSQL {
             }
         }
 
+        private class SeriesByMeanResult {
+            public string Group { get; set; }
+            public string Tag { get; set; }
+            public DateTime Time { get; set; }
+            public double Value { get; set; }
+        }
+
         public IEnumerable<Series> GetSeriesByDayMean(SeriesQuery queryModel) {
             using (var session = _store.OpenSession()) {
-                var query = session.Query<Series>()
-                    .Where(x => x.MatchesSql("date_trunc('hour',CAST(data->>'Time' as timestamp)) >= ? AND date_trunc('hour',CAST(data->>'Time' as timestamp)) <= ?", queryModel.Start, queryModel.End)                     
-                    && x.Tag == queryModel.Tag
-                    && x.Group == queryModel.Group);
+                string orderDirection = queryModel.OrderBy == Ordering.Ascending ? "asc" : "desc";
 
-                if (queryModel.OrderBy == Ordering.Ascending) {
-                    query = query.OrderBy(x => x.Time);
-                }
-                else {
-                    query = query.OrderByDescending(x => x.Time);
-                }
-                query = query.Take(queryModel.MaxValues);
-
-                var series = query.ToList();
-                var seriesGrouped = series.GroupBy(g => new { g.Group, g.Tag, g.Time.Date });
-                foreach(var group in seriesGrouped) {
+                var series = session.Query<SeriesByMeanResult>(
+                    $@"select json_build_object('Group', data->>'Group', 'Tag', data->>'Tag', 'Time', CAST(data->>'Time' as date), 'Value' ,(SUM( CAST(data->>'Value' as real )) / COUNT(*)))
+                    FROM public.mt_doc_series AS d
+                    WHERE (date_trunc('hour', CAST(data->>'Time' as timestamp)) >= :Start
+	                    AND date_trunc('hour', CAST(data->>'Time' as timestamp)) <= :End
+	                    AND d.data ->> 'Tag' = :Tag
+	                    AND d.data ->> 'Group' = :Group)
+                    GROUP BY data->>'Group', data->>'Tag', CAST(data->>'Time' as date)
+                    ORDER BY CAST(data->>'Time' as date) {orderDirection}
+                   LIMIT :Limit",
+                    new {
+                        queryModel.Group,
+                        queryModel.Tag,
+                        queryModel.Start,
+                        queryModel.End,
+                        Limit = queryModel.MaxValues
+                    });
+                
+                foreach (var group in series) {
                     yield return new Series {
-                        Group = group.Key.Group,
-                        Tag = group.Key.Tag,
-                        Time = group.Key.Date,
-                        Value = (group.Sum(x => double.Parse(x.Value)) / group.Count()).ToString(CultureInfo.InvariantCulture)
+                        Group = group.Group,
+                        Tag = group.Tag,
+                        Time = group.Time,
+                        Value = group.Value.ToString(CultureInfo.InvariantCulture)
                     };
                 }
             }
@@ -91,28 +97,31 @@ namespace Monytor.PostgreSQL {
 
         public IEnumerable<Series> GetSeriesByHourMean(SeriesQuery queryModel) {
             using (var session = _store.OpenSession()) {
-                var query = session.Query<Series>()
-                    .Where(x => x.MatchesSql("CAST(data->>'Time' as date) >= ? AND CAST(data->>'Time' as date) <= ?", queryModel.Start, queryModel.End)
-                    && x.Tag == queryModel.Tag
-                    && x.Group == queryModel.Group);
+                string orderDirection = queryModel.OrderBy == Ordering.Ascending ? "asc" : "desc";
 
-                if (queryModel.OrderBy == Ordering.Ascending) {
-                    query = query.OrderBy(x => x.Time);
-                }
-                else {
-                    query = query.OrderByDescending(x => x.Time);
-                }
-                query = query.Take(queryModel.MaxValues);
-
-                var series = query.ToList();
-                series.ForEach(f => f.Time = f.Time.Date.AddHours(f.Time.Hour));
-                var seriesGrouped = series.GroupBy(g => new { g.Group, g.Tag, g.Time });
-                foreach (var group in seriesGrouped) {
+                var series = session.Query<SeriesByMeanResult>(
+                    $@"select json_build_object('Group', data->>'Group', 'Tag', data->>'Tag', 'Time', date_trunc('hour',CAST(data->>'Time' as timestamp)), 'Value' ,(SUM( CAST(data->>'Value' as real )) / COUNT(*)))
+                    FROM public.mt_doc_series AS d
+                    WHERE (date_trunc('hour', CAST(data->>'Time' as timestamp)) >= :Start
+	                    AND date_trunc('hour', CAST(data->>'Time' as timestamp)) <= :End
+	                    AND d.data ->> 'Tag' = :Tag
+	                    AND d.data ->> 'Group' = :Group)
+                    GROUP BY data->>'Group', data->>'Tag', date_trunc('hour',CAST(data->>'Time' as timestamp))
+                    ORDER BY date_trunc('hour',CAST(data->>'Time' as timestamp)) {orderDirection}
+                   LIMIT :Limit",
+                    new {
+                        queryModel.Group,
+                        queryModel.Tag,
+                        queryModel.Start,
+                        queryModel.End,
+                        Limit = queryModel.MaxValues
+                    });
+                foreach (var group in series) {
                     yield return new Series {
-                        Group = group.Key.Group,
-                        Tag = group.Key.Tag,
-                        Time = group.Key.Time,
-                        Value = (group.Sum(x => double.Parse(x.Value)) / group.Count()).ToString(CultureInfo.InvariantCulture)
+                        Group = group.Group,
+                        Tag = group.Tag,
+                        Time = group.Time,
+                        Value = group.Value.ToString(CultureInfo.InvariantCulture)
                     };
                 }
             }
