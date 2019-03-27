@@ -41,9 +41,7 @@ namespace Monytor.WebApi {
                 default:
                     throw new NotSupportedException($"The configured value of the setting 'storageProvider' is not supported.");
             }
-
         }
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

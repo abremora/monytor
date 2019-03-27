@@ -13,7 +13,7 @@ namespace Monytor.Domain.Factories {
         }
 
         public Dashboard Get(string id) {
-            if(!id.StartsWith(nameof(Dashboard)+"/", StringComparison.InvariantCultureIgnoreCase)) {
+            if (!Dashboard.HasPrefix(id)) {
                 id = Dashboard.CreateId(id);
             }
             return _repository.Get(id);
@@ -25,7 +25,7 @@ namespace Monytor.Domain.Factories {
         }
 
         public void Create(Dashboard config) {
-            config.Id= Dashboard.CreateId(Guid.NewGuid().ToString());
+            config.Id= Dashboard.CreateId();
             _repository.Store(config);
         }
     }
