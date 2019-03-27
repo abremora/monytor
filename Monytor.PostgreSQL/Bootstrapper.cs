@@ -6,8 +6,8 @@ using Monytor.Core.Repositories;
 namespace Monytor.PostgreSQL {
     public static class Bootstrapper {
         public static void SetupDatabaseAndRegisterRepositories(ContainerBuilder containerBuilder, string connectionString) {
-            var documentStore = DocumentStore.For(_ => {
-                _.Connection(connectionString);
+            var documentStore = DocumentStore.For(configure => {
+                configure.Connection(connectionString);
             });
 
             containerBuilder.RegisterInstance(documentStore)
@@ -21,8 +21,8 @@ namespace Monytor.PostgreSQL {
         }
 
         public static void SetupDatabaseAndRegisterRepositories(IServiceCollection serviceCollection, string connectionString) {
-            var documentStore = DocumentStore.For(_ => {
-                _.Connection(connectionString);
+            var documentStore = DocumentStore.For(configure => {
+                configure.Connection(connectionString);
             });
 
             serviceCollection.AddSingleton< IDocumentStore>(documentStore);

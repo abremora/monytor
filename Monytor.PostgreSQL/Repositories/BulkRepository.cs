@@ -14,22 +14,21 @@ namespace Monytor.PostgreSQL {
 
         public IDisposable BeginBulkInsert() {
             if(_currentBulkOperation != null) {
-                _currentBulkOperation.OnDispose -= OnCurrentBulkOperationDisposing;
-                _currentBulkOperation.DocumentsToInsert.Clear();
+                throw new InvalidOperationException("The bulk insert operation can not be started twice.");
             }
 
             _currentBulkOperation = new BulkInsertOperation();
             _currentBulkOperation.OnDispose += OnCurrentBulkOperationDisposing;
             
             return _currentBulkOperation;
+        }     
+
+        public void Store<TDocument>(TDocument entity) {
+            _currentBulkOperation.DocumentsToInsert.Add(entity);
         }
 
         private void OnCurrentBulkOperationDisposing(object sender, List<object> documentsToInsert) {
             _store.BulkInsert(_currentBulkOperation.DocumentsToInsert, BulkInsertMode.InsertsOnly);
-        }
-
-        public void Store<TDocument>(TDocument entity) {
-            _currentBulkOperation.DocumentsToInsert.Add(entity);
         }
     }
 }
