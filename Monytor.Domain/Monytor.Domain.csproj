@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Monytor.Contracts\Monytor.Contracts.csproj" />
     <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.NetFramework\Monytor.Implementation.Collectors.NetFramework.csproj" />
     <ProjectReference Include="..\Monytor.Implementation.Collectors.RavenDb\Monytor.Implementation.Collectors.RavenDb.csproj" />
     <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.MsSql\Monytor.Implementation.Collectors.Sql.MsSql.csproj" />
     <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.MySql\Monytor.Implementation.Collectors.Sql.MySql.csproj" />

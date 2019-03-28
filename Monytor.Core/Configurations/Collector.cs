@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace Monytor.Core.Configurations {
 
     public abstract class Collector {
+        public string Id { get; set; }
         public string DisplayName { get; set; }
         public string Description { get; set; }
         public abstract string GroupName { get; set; }
@@ -16,5 +17,9 @@ namespace Monytor.Core.Configurations {
         public int Priority { get; set; } = 3;
 
         public List<Verifier> Verifiers { get; set; } = new List<Verifier>();
+
+        public string CreateId() {
+            return $"{GetType().Name}/{Guid.NewGuid()}";
+        }
     }
 }

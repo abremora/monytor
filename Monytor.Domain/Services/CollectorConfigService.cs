@@ -1,4 +1,5 @@
 ﻿using Monytor.Contracts.CollectorConfig;
+using Monytor.Core.Configurations;
 using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Monytor.Core.Services;
@@ -28,10 +29,21 @@ namespace Monytor.Domain.Factories {
             return newConfig.Id;
         }
 
-        public void AddCollector(string collectorConfigId, AddSqlCountCollectorToConfigCommand command) {
-            var config = _collectorConfigRespository.Get(collectorConfigId);
+        public void AddCollector(string collectorConfigId, AddCollectorToConfigCommand addCollectorCommand) {
+            Collector collector = CollectorFactory.CreateCollector(addCollectorCommand);
+            if (collector != null) {
+                SetCollectorValues(collector, addCollectorCommand);
+                AddCollectorToConfig(collectorConfigId, collector);
+            }
+        }
 
-            var collector = SqlCollectorFactory.CreateCountCollector(command.SourceProvider);
+        private void AddCollectorToConfig(string collectorConfigId, Collector collector) {
+            var config = _collectorConfigRespository.Get(collectorConfigId);
+            config.Collectors.Add(collector);            
+        }
+
+        private void SetCollectorValues(Collector collector, AddCollectorToConfigCommand command) {
+            collector.Id = collector.CreateId();
             collector.DisplayName = command.DisplayName;
             collector.Description = command.Description;
             collector.StartingTime = command.StartingTime.TryParseDateTimeOffsetFromString();
@@ -42,11 +54,7 @@ namespace Monytor.Domain.Factories {
             collector.RandomTimeDelay = command.RandomTimeDelay.TryParseTimeSpanFromString();
             collector.StartingTimeDelay = command.StartingTimeDelay.TryParseTimeSpanFromString();
             collector.PollingInterval = command.PollingInterval.TryParseTimeSpanFromString();
-            collector.Verifiers = new System.Collections.Generic.List<Core.Configurations.Verifier>();
-
-            config.Collectors.Add(collector);
-
-            
-        }               
+            collector.Verifiers = new System.Collections.Generic.List<Verifier>();
+        }
     }
 }

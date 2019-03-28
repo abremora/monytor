@@ -32,5 +32,41 @@ namespace Monytor.WebApi.Controllers {
             _collectorConfigService.AddCollector(Uri.UnescapeDataString(collectorConfigId), command);
             return Ok();
         }
+
+        [HttpPost("{collectorConfigId}/AddRavenDbStartingWithCollector")]
+        public ActionResult<string> AddRavenDbStartingWithCollector(string collectorConfigId, [FromBody] AddRavenDbStartingWithCollectorToConfigCommand command) {
+            _collectorConfigService.AddCollector(Uri.UnescapeDataString(collectorConfigId), command);
+            return Ok();
+        }
+
+        [HttpPost("{collectorConfigId}/AddRavenDbCollectionCollector")]
+        public ActionResult<string> AddRavenDbCollectionCollector(string collectorConfigId, [FromBody] AddRavenDbCollectionCollectorToConfigCommand command) {
+            _collectorConfigService.AddCollector(Uri.UnescapeDataString(collectorConfigId), command);
+            return Ok();
+        }
+
+        [HttpPost("{collectorConfigId}/AddRavenDbAllCollectionCollector")]
+        public ActionResult<string> AddRavenDbAllCollectionCollector(string collectorConfigId, [FromBody] AddRavenDbAllCollectionCollectorToConfigCommand command) {
+            _collectorConfigService.AddCollector(Uri.UnescapeDataString(collectorConfigId), command);
+            return Ok();
+        }
+
+        [HttpPost("{collectorConfigId}/AddRestApiCollector")]
+        public ActionResult<string> AddRavenDbAllCollectionCollector(string collectorConfigId, [FromBody] AddRestApiCollectorToConfigCommand command) {
+            _collectorConfigService.AddCollector(Uri.UnescapeDataString(collectorConfigId), command);
+            return Ok();
+        }
+
+        [HttpPost("{collectorConfigId}/AddSystemInformationCollector")]
+        public ActionResult<string> AddRavenDbAllCollectionCollector(string collectorConfigId, [FromBody] AddSystemInformationCollectorToConfigCommand command) {
+            _collectorConfigService.AddCollector(Uri.UnescapeDataString(collectorConfigId), command);
+            return Ok();
+        }
+
+        [HttpPost("{collectorConfigId}/AddPerformanceCounterCollector")]
+        public ActionResult<string> AddRavenDbAllCollectionCollector(string collectorConfigId, [FromBody] AddPerformanceCounterCollectorToConfigCommand command) {
+            _collectorConfigService.AddCollector(Uri.UnescapeDataString(collectorConfigId), command);
+            return Ok();
+        }
     }   
 }
