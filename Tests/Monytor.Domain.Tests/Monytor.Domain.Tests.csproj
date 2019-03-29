@@ -35,11 +35,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoFixture, Version=4.8.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoFixture.4.8.0\lib\net452\AutoFixture.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Fare, Version=2.1.0.0, Culture=neutral, PublicKeyToken=ea68d375bf33a7c8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Fare.2.1.1\lib\net35\Fare.dll</HintPath>
+    </Reference>
     <Reference Include="FluentAssertions, Version=5.6.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentAssertions.5.6.0\lib\net47\FluentAssertions.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NSubstitute, Version=4.0.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NSubstitute.4.0.0\lib\net46\NSubstitute.dll</HintPath>
     </Reference>
     <Reference Include="Rachis, Version=3.5.8.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <HintPath>..\..\packages\RavenDB.Tests.Helpers.3.5.8\lib\net45\Rachis.dll</HintPath>
@@ -58,7 +70,12 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -103,6 +120,38 @@
     <ProjectReference Include="..\..\Monytor.Domain\Monytor.Domain.csproj">
       <Project>{6F5AC79B-3836-4B62-89DB-3460BE52B170}</Project>
       <Name>Monytor.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Monytor.Implementation.Collectors.NetFramework\Monytor.Implementation.Collectors.NetFramework.csproj">
+      <Project>{619151f8-a6a9-40c2-aa8c-601e341a5011}</Project>
+      <Name>Monytor.Implementation.Collectors.NetFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Monytor.Implementation.Collectors.RavenDb\Monytor.Implementation.Collectors.RavenDb.csproj">
+      <Project>{5a43f70f-0e1c-4d52-9544-00173fb6d91d}</Project>
+      <Name>Monytor.Implementation.Collectors.RavenDb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Monytor.Implementation.Collectors.Sql.MsSql\Monytor.Implementation.Collectors.Sql.MsSql.csproj">
+      <Project>{48570805-5bd4-4991-b011-17ed9816e7e7}</Project>
+      <Name>Monytor.Implementation.Collectors.Sql.MsSql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Monytor.Implementation.Collectors.Sql.MySql\Monytor.Implementation.Collectors.Sql.MySql.csproj">
+      <Project>{fbe951c6-483c-47f1-aa88-049970030c96}</Project>
+      <Name>Monytor.Implementation.Collectors.Sql.MySql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Monytor.Implementation.Collectors.Sql.Oracle\Monytor.Implementation.Collectors.Sql.Oracle.csproj">
+      <Project>{a01b9494-355a-4f23-8a98-e5979a890b33}</Project>
+      <Name>Monytor.Implementation.Collectors.Sql.Oracle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Monytor.Implementation.Collectors.Sql.PostgreSql\Monytor.Implementation.Collectors.Sql.PostgreSql.csproj">
+      <Project>{F83C69E5-911A-4B57-8576-1907B42C0F4F}</Project>
+      <Name>Monytor.Implementation.Collectors.Sql.PostgreSql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Monytor.Implementation.Collectors.Sql\Monytor.Implementation.Collectors.Sql.csproj">
+      <Project>{8c71a48d-e7fa-4c78-af68-d22931188027}</Project>
+      <Name>Monytor.Implementation.Collectors.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Monytor.Implementation.Collectors\Monytor.Implementation.Collectors.csproj">
+      <Project>{a4cf8b17-c6e5-4b71-9d67-b35df1748512}</Project>
+      <Name>Monytor.Implementation.Collectors</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Monytor.RavenDb\Monytor.RavenDb.csproj">
       <Project>{34A3345C-735C-41B6-802A-24D7D7C95B73}</Project>
