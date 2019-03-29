@@ -17,5 +17,13 @@ namespace Monytor.RavenDb {
         public void Store(CollectorConfigStored collectorConfig) {
             _unitOfWork.Session.Store(collectorConfig);
         }
+
+        public void Delete(string id) {
+            _unitOfWork.Session.Delete(id);
+        }
+
+        public void Delete(CollectorConfigStored collectorConfig) {
+            _unitOfWork.Session.Delete(collectorConfig);
+        }
     }
 }

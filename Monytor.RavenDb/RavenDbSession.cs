@@ -20,5 +20,17 @@ namespace Monytor.RavenDb {
         public void Store<T>(T item) {
             _documentSession.Store(item);
         }
+        
+        public void Delete<T>(T item) {
+            _documentSession.Delete(item);
+        }
+
+        public void Delete(string id) {
+            _documentSession.Delete(id);
+        }
+
+        public void Delete(int id) {
+            _documentSession.Delete(id);
+        }
     }
 }

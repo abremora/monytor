@@ -23,7 +23,7 @@ namespace Monytor.Domain.Tests {
     public class CollectorConfigServiceTests : RavenTestContext {
 
         [Fact]
-        public void Create_EmptyConfig_Success() {
+        public async Task Create_EmptyConfig_Success() {
             var store = NewDocumentStore(configureStore: ConfigureTestStore);
             var uow = new UnitOfWork(store);
             var configRepository = new CollectorConfigRepository(uow);
@@ -33,7 +33,7 @@ namespace Monytor.Domain.Tests {
                 DisplayName = "Test"
             };
             uow.OpenSession();
-            var id = collectorConfigService.Create(command);
+            var id = await collectorConfigService.CreateCollectorConfigAsync(command);
             uow.SaveChanges();
 
             using (var session = store.OpenSession()) {
@@ -57,7 +57,7 @@ namespace Monytor.Domain.Tests {
                 .With(w => w.SourceProvider, SqlCollectorSourceProvider.PostgreSql)
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<CountCollector>();
@@ -76,7 +76,7 @@ namespace Monytor.Domain.Tests {
                 .With(w => w.SourceProvider, SqlCollectorSourceProvider.Oracle)
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<Implementation.Collectors.Sql.Oracle.CountCollector>();
@@ -95,7 +95,7 @@ namespace Monytor.Domain.Tests {
                 .With(w => w.SourceProvider, SqlCollectorSourceProvider.MsSql)
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<Implementation.Collectors.Sql.MsSql.CountCollector>();
@@ -114,7 +114,7 @@ namespace Monytor.Domain.Tests {
                 .With(w => w.SourceProvider, SqlCollectorSourceProvider.MySql)
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<Implementation.Collectors.Sql.MySql.CountCollector>();
@@ -132,7 +132,7 @@ namespace Monytor.Domain.Tests {
             var collectorCommand = new Fixture().Build<AddRavenDbStartingWithCollectorToConfigCommand>()
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<StartingWithCollector>();
@@ -150,7 +150,7 @@ namespace Monytor.Domain.Tests {
             var collectorCommand = new Fixture().Build<AddRavenDbCollectionCollectorToConfigCommand>()
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<CollectionCollector>();
@@ -168,7 +168,7 @@ namespace Monytor.Domain.Tests {
             var collectorCommand = new Fixture().Build<AddRavenDbAllCollectionCollectorToConfigCommand>()
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<AllCollectionCollector>();
@@ -187,7 +187,7 @@ namespace Monytor.Domain.Tests {
                 .With( x => x.RequestUri, "https://github.com/t0ms3n/monytor")
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<RestApiCollector>();
@@ -205,7 +205,7 @@ namespace Monytor.Domain.Tests {
             var collectorCommand = new Fixture().Build<AddSystemInformationCollectorToConfigCommand>()
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<SystemInformationCollector>();
@@ -223,7 +223,7 @@ namespace Monytor.Domain.Tests {
             var collectorCommand = new Fixture().Build<AddPerformanceCounterCollectorToConfigCommand>()
                 .Create();
             var collectorConfigService = new CollectorConfigService(configRepository);
-            collectorConfigService.AddCollector(config.Id, collectorCommand);
+            collectorConfigService.AddCollectorAsync(config.Id, collectorCommand);
 
             // Assert
             config.Collectors.Should().AllBeOfType<PerformanceCounterCollector>();

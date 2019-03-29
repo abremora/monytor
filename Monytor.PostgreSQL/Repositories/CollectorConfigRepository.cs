@@ -11,13 +11,21 @@ namespace Monytor.PostgreSQL {
         public CollectorConfigRepository(IUnitOfWork unitOfWork) {
             _unitOfWork = unitOfWork as UnitOfWork;
         }
-        
+
         public CollectorConfigStored Get(string id) {
             return _unitOfWork.Session.Load<CollectorConfigStored>(id);
         }
 
         public void Store(CollectorConfigStored collectorConfig) {
-             _unitOfWork.Session.Store(collectorConfig);
+            _unitOfWork.Session.Store(collectorConfig);
+        }
+
+        public void Delete(string id) {
+            _unitOfWork.Session.Delete(id);
+        }
+
+        public void Delete(CollectorConfigStored collectorConfig) {
+            _unitOfWork.Session.Delete(collectorConfig);
         }
     }
 }

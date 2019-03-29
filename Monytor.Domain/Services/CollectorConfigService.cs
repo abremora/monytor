@@ -4,37 +4,49 @@ using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Monytor.Core.Services;
 using System;
+using System.Threading.Tasks;
 
 namespace Monytor.Domain.Factories {
     public class CollectorConfigService : ICollectorConfigService {
-        
-
         private readonly ICollectorConfigRepository _collectorConfigRespository;
 
         public CollectorConfigService(ICollectorConfigRepository collectorConfigRespository) {
             _collectorConfigRespository = collectorConfigRespository;
         }
 
-        public CollectorConfigStored Get(string id) {
-            return _collectorConfigRespository.Get(id);
+        public Task<CollectorConfigStored> GetCollectorConfigAsync(string collectorConfigId) {
+            var config = _collectorConfigRespository.Get(collectorConfigId);
+            return Task.FromResult(config);
         }
 
-        public string Create(CreateCollectorConfigCommand command) {
+        public Task<string> CreateCollectorConfigAsync(CreateCollectorConfigCommand command) {
             var newConfig = new CollectorConfigStored() {
                 Id = CollectorConfigStored.CreateId(),
                 DisplayName = command.DisplayName,
                 SchedulerAgentId = command.SchedulerAgentId
             };
             _collectorConfigRespository.Store(newConfig);
-            return newConfig.Id;
+            return Task.FromResult(newConfig.Id);
         }
 
-        public void AddCollector(string collectorConfigId, AddCollectorToConfigCommand addCollectorCommand) {
+        public Task DeleteCollectorConfigAsync(string collectorConfigId) {
+            _collectorConfigRespository.Delete(collectorConfigId);
+            return Task.CompletedTask;
+        }
+
+        public Task AddCollectorAsync(string collectorConfigId, AddCollectorToConfigCommand addCollectorCommand) {
             Collector collector = CollectorFactory.CreateCollector(addCollectorCommand);
             if (collector != null) {
                 SetCollectorValues(collector, addCollectorCommand);
                 AddCollectorToConfig(collectorConfigId, collector);
             }
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteCollectorAsync(string collectorConfigId, string collectorId) {
+            var config = _collectorConfigRespository.Get(collectorConfigId);
+            config.Collectors.RemoveAll(collector => collector.Id.Equals(collectorId, StringComparison.InvariantCultureIgnoreCase));
+            return Task.CompletedTask; 
         }
 
         private void AddCollectorToConfig(string collectorConfigId, Collector collector) {
@@ -56,5 +68,7 @@ namespace Monytor.Domain.Factories {
             collector.PollingInterval = command.PollingInterval.TryParseTimeSpanFromString();
             collector.Verifiers = new System.Collections.Generic.List<Verifier>();
         }
+
+        
     }
 }
