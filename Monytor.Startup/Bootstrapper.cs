@@ -10,29 +10,26 @@ using Monytor.Core.Configurations;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
+using Monytor.Implementation;
 
 namespace Monytor.Startup {
     public class Bootstrapper {
-        public async static Task<IContainer> Setup() {
+        public async static Task<IContainer> Setup(IConfiguration configuration) {
             var builder = new ContainerBuilder();
 
-            ILoggerFactory loggerFactory = new LoggerFactory();
+            var loggerFactory = new LoggerFactory();
             loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
 
             var logger = loggerFactory.CreateLogger<Bootstrapper>();
-
-            logger.LogInformation("Load config");
-            var appConfig = LoadConfig();
-
-            SetupDatabase(builder, logger, appConfig);
+            SetupDatabase(builder, logger, configuration);
 
             logger.LogInformation("Setup DI");
-            await SetupDi(builder, appConfig, loggerFactory);
+            await SetupDi(builder, configuration, loggerFactory);
 
             return builder.Build();
         }
 
-        private static void SetupDatabase(ContainerBuilder builder, ILogger<Bootstrapper> logger, IConfigurationRoot appConfig) {
+        private static void SetupDatabase(ContainerBuilder builder, ILogger<Bootstrapper> logger, IConfiguration appConfig) {
             logger.LogInformation("Load database");
             var storageProvider = appConfig.GetValue<StorageProvider>("storageProvider");
             switch (storageProvider) {
@@ -49,7 +46,7 @@ namespace Monytor.Startup {
             
         }
 
-        private static async Task<ContainerBuilder> SetupDi(ContainerBuilder builder, IConfigurationRoot appConfig, ILoggerFactory loggerFactory) {
+        private static async Task<ContainerBuilder> SetupDi(ContainerBuilder builder, IConfiguration appConfig, ILoggerFactory loggerFactory) {
             builder.RegisterInstance(appConfig)
                    .As<IConfigurationRoot>();                       
             builder.RegisterInstance(loggerFactory)
@@ -67,9 +64,9 @@ namespace Monytor.Startup {
 
             builder.RegisterInstance(collectorConfig);
 
-            SetupCollectors(builder, collectorConfig);
-            SetupVerfiers(builder, collectorConfig);
-            SetupNotifications(builder, collectorConfig);
+            SetupCollectors(builder);
+            SetupVerfiers(builder);
+            SetupNotifications(builder);
 
             var scheduler = await new StdSchedulerFactory().GetScheduler();
 
@@ -78,40 +75,28 @@ namespace Monytor.Startup {
             return builder;
         }
 
-        private static void SetupNotifications(ContainerBuilder builder, CollectorConfig collectorConfig) {
-            foreach (var notification in collectorConfig.Notifications) {
-                var b = ConfigCreator.LoadBehavior(typeof(NotificationBehavior<>), notification.GetType());
-                builder.RegisterType(b).Named(notification.Id, typeof(NotificationBehaviorBase));
-                builder.RegisterInstance(notification).Named(notification.Id, typeof(Notification));
+        private static void SetupNotifications(ContainerBuilder builder) {
+            var notifications = ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(Notification));
+            foreach (var notification in notifications) {
+                var behavior = ImplementationTypeLoader.LoadBehavior(typeof(NotificationBehavior<>), notification);
+                builder.RegisterType(behavior).Keyed(notification.FullName, typeof(NotificationBehaviorBase));
             }
         }
 
-        private static void SetupVerfiers(ContainerBuilder builder, CollectorConfig collectorConfig) {
-            var distinctVerifiers = collectorConfig.Collectors
-                .SelectMany(x => x.Verifiers.Select(y => y.GetType())).Distinct();
-
-            foreach (var verifier in distinctVerifiers) {
-
-                var b = ConfigCreator.LoadBehavior(typeof(VerfiyBehavior<>), verifier);
-                builder.RegisterType(b).Keyed(verifier, typeof(VerifierBehaviorBase));
+        private static void SetupVerfiers(ContainerBuilder builder) {
+            var verifiers = ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(Verifier));
+            foreach (var verifier in verifiers) {
+                var behavior = ImplementationTypeLoader.LoadBehavior(typeof(VerfiyBehavior<>), verifier);
+                builder.RegisterType(behavior).Keyed(verifier.FullName, typeof(VerifierBehaviorBase));
             }
         }
 
-        private static void SetupCollectors(ContainerBuilder builder, CollectorConfig collectorConfig) {
-            var distinctCollectors = collectorConfig.Collectors.Select(x => x.GetType()).Distinct();
-            foreach (var collector in distinctCollectors) {
-                var b = ConfigCreator.LoadBehavior(typeof(CollectorBehavior<>), collector);
-                builder.RegisterType(b).Keyed(collector, typeof(CollectorBehaviorBase));
+        private static void SetupCollectors(ContainerBuilder builder) {
+            var collectors = ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(Collector));
+            foreach (var collector in collectors) {
+                var behavior = ImplementationTypeLoader.LoadBehavior(typeof(CollectorBehavior<>), collector);
+                builder.RegisterType(behavior).Keyed(collector.FullName, typeof(CollectorBehaviorBase));
             }
-        }
-
-        private static IConfigurationRoot LoadConfig() {
-            var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return new ConfigurationBuilder()
-                .SetBasePath(directory)
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile("appsettings.local.json", true)
-                .Build();
-        }
+        }       
     }
 }

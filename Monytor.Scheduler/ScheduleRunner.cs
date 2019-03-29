@@ -1,11 +1,14 @@
 ﻿using Autofac;
 using CommandLine;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Monytor.Core.Configurations;
 using Monytor.Implementation.Collectors;
 using Monytor.Startup;
 using NLog.Extensions.Logging;
 using System;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,21 +35,25 @@ namespace Monytor.Scheduler {
 
                 var config = new CollectorConfigCreator();
                 var parser = new Parser(x => x.CaseSensitive = false);
-                var options = parser.ParseArguments<ConsoleArguments>(args)
-                    .WithParsed(o => { if (o.CreateDefaultConfig) config.CreateDefaultConfig(); });
-
+                var options = parser.ParseArguments<ConsoleArguments>(args);
                 if (options.Tag == ParserResultType.NotParsed) {
                     goto End;
                 }
 
                 var parsedResult = options as Parsed<ConsoleArguments>;
-
                 if (parsedResult.Value.CreateDefaultConfig) {
+                    config.CreateDefaultConfig();
                     _logger.LogInformation("Default config was created");
                     goto End;
                 }
 
-                _container = await Bootstrapper.Setup();
+                var appConfig = LoadConfigurationRoot();
+                var collectorConfigProvider = appConfig.GetValue<CollectorConfigProvider>("collectorConfigProvider");
+                
+
+                
+
+                _container = await Bootstrapper.Setup(appConfig);
                 if (!config.HasConfig()) {
                     _logger.LogWarning($"Config file '{config.ConfigFileName}' not found. Create default config.\nUse --help for further assistance.");
                     return;
@@ -64,6 +71,15 @@ namespace Monytor.Scheduler {
 
         End:
             Console.WriteLine("Bye!");
+        }
+
+        private static IConfigurationRoot LoadConfigurationRoot() {
+            var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            return new ConfigurationBuilder()
+                .SetBasePath(directory)
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.local.json", true)
+                .Build();
         }
 
         static async Task RunAsync() {

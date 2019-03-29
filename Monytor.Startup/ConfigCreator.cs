@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 
 namespace Monytor.Startup {
-    public abstract class ConfigCreator  {
+    public abstract class ConfigCreator {
         public abstract string ConfigFileName { get; }
 
         public bool HasConfig() {
@@ -20,7 +20,7 @@ namespace Monytor.Startup {
         }
 
         public string GetConfigPath() {
-            var directoy = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            var directoy = GetEntryAssemblyDirectoryPath();
             return Path.Combine(directoy, ConfigFileName);
         }
 
@@ -31,12 +31,12 @@ namespace Monytor.Startup {
             };
         }
 
-         public static IEnumerable<T> LoadAll<T>()
-            where T : class {
+        public static IEnumerable<T> LoadAll<T>()
+           where T : class {
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             var instances = loadedAssemblies.SelectMany(s => s.ExportedTypes)
-                .Where(p => typeof(T).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)                
+                .Where(p => typeof(T).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
                 .Select(x => Activator.CreateInstance(x) as T);
             return instances;
         }
@@ -46,14 +46,22 @@ namespace Monytor.Startup {
             return LoadAllConcreteTypesOf(constructedListType).Single();
         }
 
-        private static IEnumerable<Type> LoadAllConcreteTypesOf(Type type) {
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            var types = loadedAssemblies.SelectMany(s => s.GetTypes())
+        internal static IEnumerable<Type> LoadAllConcreteTypesOf(Type type) {
+            var implementationAssemblyFiles = System.IO.Directory.GetFiles(GetEntryAssemblyDirectoryPath(), "Monytor.Implementation*.dll", SearchOption.TopDirectoryOnly);
+            var implementationAssembiles = new List<Assembly>();
+            foreach (var assemblyFile in implementationAssemblyFiles) {
+                implementationAssembiles.Add(Assembly.LoadFile(assemblyFile));
+            }
+            
+            var types = implementationAssembiles.SelectMany(s => s.GetTypes())
                 .Where(p => p.IsClass
                     && !p.IsAbstract
-                    && type.IsAssignableFrom(p));                
+                    && type.IsAssignableFrom(p));
             return types;
+        }
+
+        private static string GetEntryAssemblyDirectoryPath() {
+            return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         }
     }
 }

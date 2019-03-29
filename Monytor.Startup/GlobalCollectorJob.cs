@@ -34,7 +34,7 @@ namespace Monytor.Startup {
                 _logger.LogInformation($"Job: {collectorInstance.GetType().Name} | Group:{collectorInstance.GroupName} | Text:'{collectorInstance.DisplayName}' | Next: {next} ({nextTimeSpan.ToString(@"hh\:mm\:ss")})");
                 
                 using (var scope = _container.BeginLifetimeScope()) {
-                    var collectorKey = collectorInstance.GetType();
+                    var collectorKey = collectorInstance.GetType().FullName;
                     var collectorBehavior = _container.ResolveKeyed<CollectorBehaviorBase>(collectorKey);
                     var series = collectorBehavior.Run(collectorInstance)
                         .ToList();
