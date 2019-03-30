@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Monytor.PostgreSQL {
+namespace Monytor.PostgreSQL.Repositories {
     public class BulkInsertOperation : IDisposable {
         private bool _disposedValue = false;
 

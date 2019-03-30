@@ -9,14 +9,14 @@ using Monytor.Domain.Factories;
 
 namespace Monytor.Domain.Services {
     public class CollectorConfigService : ICollectorConfigService {
-        private readonly ICollectorConfigRepository _collectorConfigRespository;
+        private readonly ICollectorConfigRepository _collectorConfigRepository;
 
-        public CollectorConfigService(ICollectorConfigRepository collectorConfigRespository) {
-            _collectorConfigRespository = collectorConfigRespository;
+        public CollectorConfigService(ICollectorConfigRepository collectorConfigRepository) {
+            _collectorConfigRepository = collectorConfigRepository;
         }
 
         public Task<CollectorConfigStored> GetCollectorConfigAsync(string collectorConfigId) {
-            var config = _collectorConfigRespository.Get(collectorConfigId);
+            var config = _collectorConfigRepository.Get(collectorConfigId);
             return Task.FromResult(config);
         }
 
@@ -26,12 +26,12 @@ namespace Monytor.Domain.Services {
                 DisplayName = command.DisplayName,
                 SchedulerAgentId = command.SchedulerAgentId
             };
-            _collectorConfigRespository.Store(newConfig);
+            _collectorConfigRepository.Store(newConfig);
             return Task.FromResult(newConfig.Id);
         }
 
         public Task DeleteCollectorConfigAsync(string collectorConfigId) {
-            _collectorConfigRespository.Delete(collectorConfigId);
+            _collectorConfigRepository.Delete(collectorConfigId);
             return Task.CompletedTask;
         }
 
@@ -45,13 +45,13 @@ namespace Monytor.Domain.Services {
         }
 
         public Task DeleteCollectorAsync(string collectorConfigId, string collectorId) {
-            var config = _collectorConfigRespository.Get(collectorConfigId);
+            var config = _collectorConfigRepository.Get(collectorConfigId);
             config.Collectors.RemoveAll(collector => collector.Id.Equals(collectorId, StringComparison.InvariantCultureIgnoreCase));
             return Task.CompletedTask; 
         }
 
         private void AddCollectorToConfig(string collectorConfigId, Collector collector) {
-            var config = _collectorConfigRespository.Get(collectorConfigId);
+            var config = _collectorConfigRepository.Get(collectorConfigId);
             config.Collectors.Add(collector);            
         }
 

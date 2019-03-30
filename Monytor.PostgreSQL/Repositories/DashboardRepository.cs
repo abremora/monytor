@@ -1,10 +1,9 @@
-﻿using Marten;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Monytor.Core.Models;
 using Monytor.Core.Repositories;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Monytor.PostgreSQL {
+namespace Monytor.PostgreSQL.Repositories {
     public class DashboardRepository : IDashboardRepository {
         private readonly UnitOfWork _unitOfWork;
 

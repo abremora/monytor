@@ -1,10 +1,7 @@
-﻿using Marten;
-using Monytor.Core.Models;
+﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Monytor.PostgreSQL {
+namespace Monytor.PostgreSQL.Repositories {
     public class CollectorConfigRepository : ICollectorConfigRepository {
         private readonly UnitOfWork _unitOfWork;
 

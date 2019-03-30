@@ -1,8 +1,7 @@
 ﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
-using System;
 
-namespace Monytor.PostgreSQL {
+namespace Monytor.PostgreSQL.Repositories {
 
     public class SeriesRepository : ISeriesRepository {
         private readonly UnitOfWork _unitOfWork;

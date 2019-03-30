@@ -1,11 +1,11 @@
-﻿using Marten;
-using Monytor.Core.Models;
-using Monytor.Core.Repositories;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Marten;
+using Monytor.Core.Models;
+using Monytor.Core.Repositories;
 
-namespace Monytor.PostgreSQL {
+namespace Monytor.PostgreSQL.Repositories {
     public partial class SeriesQueryRepository : ISeriesQueryRepository {
         private readonly IDocumentStore _store;
 

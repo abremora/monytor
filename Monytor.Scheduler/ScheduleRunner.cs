@@ -33,7 +33,7 @@ namespace Monytor.Scheduler {
             try {
                 CreateLoggerForConsole();
                 SetupBinder();
-                var config = new CollectorConfigCreator();
+                var config = new CollectorFileConfigCreator();
                 var parser = new Parser(x => x.CaseSensitive = false);
                 var options = parser.ParseArguments<ConsoleArguments>(args);
                 if (options.Tag == ParserResultType.NotParsed) {
@@ -93,12 +93,12 @@ namespace Monytor.Scheduler {
                 _logger.LogError(e, "Scheduler error");
             }
             finally {
-                scheduler.Dispose();
+                scheduler?.Dispose();
             }
         }
 
         protected virtual void SetupBinder() {
-            new SystemInformationCollector();
+            _ = typeof(SystemInformationCollector);
         }
 
         private static void CreateLoggerForConsole() {
