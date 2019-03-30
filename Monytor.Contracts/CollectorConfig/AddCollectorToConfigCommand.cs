@@ -6,7 +6,7 @@
         public string StartingTimeDelay { get; set; }
         public string RandomTimeDelay { get; set; }
         public string PollingInterval { get; set; }
-        public bool OverlappingReccuring { get; set; }
+        public bool OverlappingRecurring { get; set; }
         public string StartingTime { get; set; }
         public string EndAt { get; set; }
         public int Priority { get; set; }

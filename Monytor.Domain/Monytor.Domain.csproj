@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Monytor.Contracts\Monytor.Contracts.csproj" />
     <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
     <ProjectReference Include="..\Monytor.Implementation.Collectors.NetFramework\Monytor.Implementation.Collectors.NetFramework.csproj" />

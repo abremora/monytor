@@ -62,7 +62,7 @@ namespace Monytor.Domain.Services {
             collector.StartingTime = command.StartingTime.TryParseDateTimeOffsetFromString();
             collector.EndAt = command.EndAt.TryParseDateTimeOffsetFromString();
             collector.Priority = command.Priority;
-            collector.OverlappingReccuring = command.OverlappingReccuring;
+            collector.OverlappingRecurring = command.OverlappingRecurring;
             collector.GroupName = command.GroupName;
             collector.RandomTimeDelay = command.RandomTimeDelay.TryParseTimeSpanFromString();
             collector.StartingTimeDelay = command.StartingTimeDelay.TryParseTimeSpanFromString();
