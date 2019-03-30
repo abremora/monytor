@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Monytor.Implementation {
     public static class ImplementationTypeLoader {
 
-        private static readonly Lazy<List<Assembly>> ImplementationAssemblies = new Lazy<List<Assembly>>(
+        private static readonly Lazy<List<Assembly>> _implementationAssemblies = new Lazy<List<Assembly>>(
             valueFactory: LoadImplementationAssemblies
             );
 
@@ -17,7 +17,7 @@ namespace Monytor.Implementation {
         }
 
         public static IEnumerable<Type> LoadAllConcreteTypesOf(Type type) {
-            var types = ImplementationAssemblies.Value.SelectMany(s => s.GetTypes())
+            var types = _implementationAssemblies.Value.SelectMany(s => s.GetTypes())
                 .Where(p => p.IsClass
                     && !p.IsAbstract
                     && type.IsAssignableFrom(p));
@@ -38,7 +38,7 @@ namespace Monytor.Implementation {
                 var assembly = alreadyLoadedImplemenationAssemblies
                     .FirstOrDefault(f => f.Location == assemblyFile);
                 if (assembly == null) {
-                    assembly = Assembly.LoadFile(assemblyFile);
+                    assembly = Assembly.LoadFrom(assemblyFile);
                 }
                 implementationAssemblies.Add(assembly);
             }

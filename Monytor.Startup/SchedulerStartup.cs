@@ -74,15 +74,15 @@ namespace Monytor.Startup {
         }
 
         #region IDisposable Support
-        private bool disposedValue = false;
+        private bool _disposedValue = false;
 
         protected virtual void Dispose(bool disposing) {
-            if (!disposedValue) {
+            if (!_disposedValue) {
                 if (disposing) {
                     var task = _scheduler.Shutdown(true);
                     task.Wait(5000);
                 }
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

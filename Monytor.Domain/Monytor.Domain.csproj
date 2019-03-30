@@ -15,6 +15,7 @@
     <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.PostgreSql\Monytor.Implementation.Collectors.Sql.PostgreSql.csproj" />
     <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql\Monytor.Implementation.Collectors.Sql.csproj" />
     <ProjectReference Include="..\Monytor.Implementation.Collectors\Monytor.Implementation.Collectors.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation\Monytor.Implementation.csproj" />
   </ItemGroup>
 
 </Project>

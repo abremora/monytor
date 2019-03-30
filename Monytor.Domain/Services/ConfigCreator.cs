@@ -32,10 +32,7 @@ namespace Monytor.Domain.Services {
 
         public static IEnumerable<T> LoadAll<T>()
            where T : class {
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            var instances = loadedAssemblies.SelectMany(s => s.ExportedTypes)
-                .Where(p => typeof(T).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
+            var instances = Implementation.ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(T))
                 .Select(x => Activator.CreateInstance(x) as T);
             return instances;
         }

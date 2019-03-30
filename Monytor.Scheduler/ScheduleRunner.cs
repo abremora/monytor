@@ -33,7 +33,6 @@ namespace Monytor.Scheduler {
             try {
                 CreateLoggerForConsole();
                 SetupBinder();
-
                 var config = new CollectorConfigCreator();
                 var parser = new Parser(x => x.CaseSensitive = false);
                 var options = parser.ParseArguments<ConsoleArguments>(args);
