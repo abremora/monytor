@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentValidation;
+using Monytor.Core.Validator;
 
 namespace Monytor.Core.Configurations {
 
     public abstract class Collector {
+        private static readonly CollectorValidator Validator = new CollectorValidator();
+
         public string Id { get; set; }
         public string DisplayName { get; set; }
         public string Description { get; set; }
@@ -20,6 +24,10 @@ namespace Monytor.Core.Configurations {
 
         public string CreateId() {
             return $"{GetType().Name}/{Guid.NewGuid()}";
+        }
+
+        public virtual void ValidateAndThrow() {
+            Validator.ValidateAndThrow(this);
         }
     }
 }

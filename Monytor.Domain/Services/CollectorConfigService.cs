@@ -26,6 +26,7 @@ namespace Monytor.Domain.Services {
                 DisplayName = command.DisplayName,
                 SchedulerAgentId = command.SchedulerAgentId
             };
+            newConfig.ValidateAndThrow();
             _collectorConfigRepository.Store(newConfig);
             return Task.FromResult(newConfig.Id);
         }
@@ -52,6 +53,7 @@ namespace Monytor.Domain.Services {
 
         private void AddCollectorToConfig(string collectorConfigId, Collector collector) {
             var config = _collectorConfigRepository.Get(collectorConfigId);
+            collector.ValidateAndThrow();
             config.Collectors.Add(collector);            
         }
 
@@ -69,7 +71,5 @@ namespace Monytor.Domain.Services {
             collector.PollingInterval = command.PollingInterval.TryParseTimeSpanFromString();
             collector.Verifiers = new System.Collections.Generic.List<Verifier>();
         }
-
-        
     }
 }

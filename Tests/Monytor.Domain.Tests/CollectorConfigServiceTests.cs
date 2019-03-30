@@ -31,7 +31,8 @@ namespace Monytor.Domain.Tests {
 
             var collectorConfigService = new CollectorConfigService(configRepository);
             var command = new CreateCollectorConfigCommand() {
-                DisplayName = "Test"
+                DisplayName = "Test",
+                SchedulerAgentId = "default"
             };
             uow.OpenSession();
             var id = await collectorConfigService.CreateCollectorConfigAsync(command);
