@@ -7,6 +7,14 @@ using Raven.Client.Document;
 
 namespace Monytor.RavenDb {
     public static class Bootstrapper {
+        public static void SetupDatabaseAndRegisterRepositories(ContainerBuilder containerBuilder,string connectionString) {
+            var documentStore = SetupStore(connectionString);
+
+            containerBuilder.RegisterInstance(documentStore).As<IDocumentStore>();
+            containerBuilder.RegisterType<SeriesQueryRepository>().As<ISeriesQueryRepository>();
+            containerBuilder.RegisterType<BulkRepository>().As<IBulkRepository>();
+        }
+
         public static void SetupDatabaseAndRegisterRepositories(ContainerBuilder containerBuilder, string databaseUrl, string databaseName) {
             var documentStore = SetupStore(databaseUrl, databaseName);
 
@@ -26,14 +34,26 @@ namespace Monytor.RavenDb {
             serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
+        private static DocumentStore SetupStore(string connectionString) {
+            var documentStore = RavenHelper.CreateStore(connectionString);
+
+            SetupIndexes(documentStore);
+            return documentStore;
+        }
+
         private static DocumentStore SetupStore(string databaseUrl, string databaseName) {
             var documentStore = RavenHelper.CreateStore(databaseUrl, databaseName);
 
+            SetupIndexes(documentStore);
+            return documentStore;
+        }
+
+        private static void SetupIndexes(DocumentStore documentStore) {
             new SeriesIndex().SideBySideExecute(documentStore);
             new SeriesByDayIndex().SideBySideExecute(documentStore);
             new SeriesByHourIndex().SideBySideExecute(documentStore);
             new TagGroupMapReduceIndex().SideBySideExecute(documentStore);
-            return documentStore;
         }
+
     }
 }

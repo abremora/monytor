@@ -17,7 +17,7 @@ namespace Monytor.WebApi.Controllers {
 
         [HttpGet("{id}")]
         public Series Get(int id) {
-            return _collectorService.GetSerie(id);
+            return _collectorService.GetSeries(id);
         }
 
         [HttpGet("{start}/{end}/{group}/{tag}")]

@@ -10,6 +10,8 @@ using Monytor.Core.Configurations;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
+using Monytor.Core.Services;
+using Monytor.Domain.Services;
 using Monytor.Implementation;
 
 namespace Monytor.Startup {
@@ -21,7 +23,12 @@ namespace Monytor.Startup {
             loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
 
             var logger = loggerFactory.CreateLogger<Bootstrapper>();
-            SetupDatabase(builder, logger, configuration);
+
+            var schedulerConfiguration = configuration.GetSection("SchedulerConfiguration")
+                .Get<SchedulerConfiguration>();
+            builder.RegisterInstance(schedulerConfiguration);
+
+            SetupDatabase(builder, logger, schedulerConfiguration);
 
             logger.LogInformation("Setup DI");
             await SetupDi(builder, configuration, loggerFactory);
@@ -29,21 +36,19 @@ namespace Monytor.Startup {
             return builder.Build();
         }
 
-        private static void SetupDatabase(ContainerBuilder builder, ILogger<Bootstrapper> logger, IConfiguration appConfig) {
+        private static void SetupDatabase(ContainerBuilder builder, ILogger<Bootstrapper> logger, SchedulerConfiguration schedulerConfiguration) {
             logger.LogInformation("Load database");
-            var storageProvider = appConfig.GetValue<StorageProvider>("storageProvider");
-            switch (storageProvider) {
-                case StorageProvider.PostgreSQL:
-                    PostgreSQL.Bootstrapper.SetupDatabaseAndRegisterRepositories(builder, appConfig["storageProviderConnectionString"]);
+            switch (schedulerConfiguration.StorageProvider) {
+                case StorageProvider.PostgreSql:
+                    PostgreSQL.Bootstrapper.SetupDatabaseAndRegisterRepositories(builder, schedulerConfiguration.StorageProviderConnectionString);
                     break;
                 case StorageProvider.RavenDb:
-                    RavenDb.Bootstrapper.SetupDatabaseAndRegisterRepositories(builder, appConfig["database:url"], appConfig["database:name"]);
+                    RavenDb.Bootstrapper.SetupDatabaseAndRegisterRepositories(builder, schedulerConfiguration.StorageProviderConnectionString);
                     break;
                 default: 
                     logger.LogError("The configured value of the setting 'storageProvider' is not supported.");
                     throw new NotSupportedException("The configured value of the setting 'storageProvider' is not supported.");
             }
-            
         }
 
         private static async Task<ContainerBuilder> SetupDi(ContainerBuilder builder, IConfiguration appConfig, ILoggerFactory loggerFactory) {
@@ -55,17 +60,13 @@ namespace Monytor.Startup {
                 .As(typeof(ILogger<>))
                 .InstancePerDependency();
 
-            builder.RegisterType<CollectorConfig>();
+            
+            builder.RegisterType<SchedulerCollectorConfigService>().SingleInstance().As<ISchedulerCollectorConfigService>();
             builder.RegisterType<SchedulerStartup>();
             builder.RegisterType<AutofacJobFactory>().SingleInstance();
-
-            var config = new CollectorConfigCreator(appConfig["collectorConfigFileName"]);
-            var collectorConfig = config.LoadConfig();
-
-            builder.RegisterInstance(collectorConfig);
-
+            
             SetupCollectors(builder);
-            SetupVerfiers(builder);
+            SetupVerifiers(builder);
             SetupNotifications(builder);
 
             var scheduler = await new StdSchedulerFactory().GetScheduler();
@@ -79,14 +80,19 @@ namespace Monytor.Startup {
             var notifications = ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(Notification));
             foreach (var notification in notifications) {
                 var behavior = ImplementationTypeLoader.LoadBehavior(typeof(NotificationBehavior<>), notification);
+
+                if(behavior ==null)
+                    continue;
                 builder.RegisterType(behavior).Keyed(notification.FullName, typeof(NotificationBehaviorBase));
             }
         }
 
-        private static void SetupVerfiers(ContainerBuilder builder) {
+        private static void SetupVerifiers(ContainerBuilder builder) {
             var verifiers = ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(Verifier));
             foreach (var verifier in verifiers) {
-                var behavior = ImplementationTypeLoader.LoadBehavior(typeof(VerfiyBehavior<>), verifier);
+                var behavior = ImplementationTypeLoader.LoadBehavior(typeof(VerifierBehavior<>), verifier);
+                if(behavior == null)
+                    continue;
                 builder.RegisterType(behavior).Keyed(verifier.FullName, typeof(VerifierBehaviorBase));
             }
         }
@@ -95,6 +101,8 @@ namespace Monytor.Startup {
             var collectors = ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(Collector));
             foreach (var collector in collectors) {
                 var behavior = ImplementationTypeLoader.LoadBehavior(typeof(CollectorBehavior<>), collector);
+                if(behavior == null)
+                    continue;
                 builder.RegisterType(behavior).Keyed(collector.FullName, typeof(CollectorBehaviorBase));
             }
         }       

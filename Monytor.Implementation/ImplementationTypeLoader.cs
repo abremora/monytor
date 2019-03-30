@@ -7,17 +7,17 @@ using System.Reflection;
 namespace Monytor.Implementation {
     public static class ImplementationTypeLoader {
 
-        private static readonly Lazy<List<Assembly>> _implementationAssembiles = new Lazy<List<Assembly>>(
-            valueFactory: () => LoadImplementationAssemblies()
+        private static readonly Lazy<List<Assembly>> ImplementationAssemblies = new Lazy<List<Assembly>>(
+            valueFactory: LoadImplementationAssemblies
             );
 
         public static Type LoadBehavior(Type behaviorType, Type instance) {
             var constructedListType = behaviorType.MakeGenericType(instance);
-            return LoadAllConcreteTypesOf(constructedListType).Single();
+            return LoadAllConcreteTypesOf(constructedListType).SingleOrDefault();
         }
 
         public static IEnumerable<Type> LoadAllConcreteTypesOf(Type type) {
-            var types = _implementationAssembiles.Value.SelectMany(s => s.GetTypes())
+            var types = ImplementationAssemblies.Value.SelectMany(s => s.GetTypes())
                 .Where(p => p.IsClass
                     && !p.IsAbstract
                     && type.IsAssignableFrom(p));

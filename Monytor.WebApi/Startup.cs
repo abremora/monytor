@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Monytor.Core.Configurations;
 using System;
+using Monytor.Domain.Services;
 
 namespace Monytor.WebApi {
     public class Startup
@@ -32,7 +33,7 @@ namespace Monytor.WebApi {
             var storageProvider = appConfig.GetValue<StorageProvider>("storageProvider");
             
             switch (storageProvider) {
-                case StorageProvider.PostgreSQL:
+                case StorageProvider.PostgreSql:
                     PostgreSQL.Bootstrapper.SetupDatabaseAndRegisterRepositories(services, appConfig["storageProviderConnectionString"]);
                     break;
                 case StorageProvider.RavenDb:

@@ -1,12 +1,13 @@
-﻿using Monytor.Contracts.CollectorConfig;
+﻿using System;
+using System.Threading.Tasks;
+using Monytor.Contracts.CollectorConfig;
 using Monytor.Core.Configurations;
 using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Monytor.Core.Services;
-using System;
-using System.Threading.Tasks;
+using Monytor.Domain.Factories;
 
-namespace Monytor.Domain.Factories {
+namespace Monytor.Domain.Services {
     public class CollectorConfigService : ICollectorConfigService {
         private readonly ICollectorConfigRepository _collectorConfigRespository;
 

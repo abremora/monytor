@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 
 namespace Monytor.Implementation.Verifiers {
-    public class SeriesChangedVerifierBehavior : VerfiyBehavior<SeriesChangedVerifier> {
+    public class SeriesChangedVerifierBehavior : VerifierBehavior<SeriesChangedVerifier> {
         public override VerifyResult Verify(Verifier verifier, Series series) {
             var typedVerifier = verifier as SeriesChangedVerifier;
             if(typedVerifier == null)

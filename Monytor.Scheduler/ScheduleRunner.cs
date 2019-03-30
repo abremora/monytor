@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Monytor.Domain.Services;
 
 namespace Monytor.Scheduler {
     public abstract class ScheduleRunner {
@@ -48,9 +49,6 @@ namespace Monytor.Scheduler {
                 }
 
                 var appConfig = LoadConfigurationRoot();
-                var collectorConfigProvider = appConfig.GetValue<CollectorConfigProvider>("collectorConfigProvider");
-                
-
                 
 
                 _container = await Bootstrapper.Setup(appConfig);
@@ -86,9 +84,8 @@ namespace Monytor.Scheduler {
             SchedulerStartup scheduler = null;
             try {
                 scheduler = _container.Resolve<SchedulerStartup>();
-                var collectorConfig = _container.Resolve<CollectorConfig>();
 
-                await scheduler.ConfigScheduler(collectorConfig);
+                await scheduler.ConfigScheduler();
 
                 _logger.LogInformation("Scheduler started");
                 _manualReset.Wait();

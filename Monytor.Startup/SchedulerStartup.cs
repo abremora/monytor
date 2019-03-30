@@ -5,20 +5,26 @@ using System.Threading.Tasks;
 using Monytor.Core.Configurations;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Monytor.Core.Services;
 
 namespace Monytor.Startup {
     public class SchedulerStartup : IDisposable {
         private readonly IScheduler _scheduler;
         private readonly AutofacJobFactory _factory;
         private readonly ILogger<SchedulerStartup> _logger;
+        private readonly ISchedulerCollectorConfigService _schedulerCollectorConfigService;
 
-        public SchedulerStartup(IScheduler scheduler, AutofacJobFactory factory, ILogger<SchedulerStartup> logger) {
+        public SchedulerStartup(IScheduler scheduler, AutofacJobFactory factory, ILogger<SchedulerStartup> logger,
+            ISchedulerCollectorConfigService schedulerCollectorConfigService) {
             _scheduler = scheduler;
             _factory = factory;
             _logger = logger;
+            _schedulerCollectorConfigService = schedulerCollectorConfigService;
         }
 
-        public async Task ConfigScheduler(CollectorConfig collectorConfig) {
+        public async Task ConfigScheduler() {
+            var collectorConfig = await _schedulerCollectorConfigService.GetCollectorConfigurationAsync();
+
             var collectorGroups = collectorConfig.Collectors
                 .GroupBy(x => x.GetType());
 

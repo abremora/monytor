@@ -1,12 +1,11 @@
-﻿using Autofac;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 
-namespace Monytor.Startup {
+namespace Monytor.Domain.Services {
     public abstract class ConfigCreator {
         public abstract string ConfigFileName { get; }
 
@@ -20,8 +19,8 @@ namespace Monytor.Startup {
         }
 
         public string GetConfigPath() {
-            var directoy = GetEntryAssemblyDirectoryPath();
-            return Path.Combine(directoy, ConfigFileName);
+            var directory = GetEntryAssemblyDirectoryPath();
+            return Path.Combine(directory, ConfigFileName);
         }
 
         public static JsonSerializerSettings JsonSerializerSettings() {
@@ -39,25 +38,6 @@ namespace Monytor.Startup {
                 .Where(p => typeof(T).IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
                 .Select(x => Activator.CreateInstance(x) as T);
             return instances;
-        }
-
-        public static Type LoadBehavior(Type behaviorType, Type instance) {
-            var constructedListType = behaviorType.MakeGenericType(instance);
-            return LoadAllConcreteTypesOf(constructedListType).Single();
-        }
-
-        internal static IEnumerable<Type> LoadAllConcreteTypesOf(Type type) {
-            var implementationAssemblyFiles = System.IO.Directory.GetFiles(GetEntryAssemblyDirectoryPath(), "Monytor.Implementation*.dll", SearchOption.TopDirectoryOnly);
-            var implementationAssembiles = new List<Assembly>();
-            foreach (var assemblyFile in implementationAssemblyFiles) {
-                implementationAssembiles.Add(Assembly.LoadFile(assemblyFile));
-            }
-            
-            var types = implementationAssembiles.SelectMany(s => s.GetTypes())
-                .Where(p => p.IsClass
-                    && !p.IsAbstract
-                    && type.IsAssignableFrom(p));
-            return types;
         }
 
         private static string GetEntryAssemblyDirectoryPath() {

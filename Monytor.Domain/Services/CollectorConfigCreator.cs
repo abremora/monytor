@@ -1,15 +1,14 @@
-﻿using Monytor.Core.Configurations;
-using Newtonsoft.Json;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using Monytor.Core.Configurations;
+using Newtonsoft.Json;
 
-namespace Monytor.Startup {
+namespace Monytor.Domain.Services {
     public class CollectorConfigCreator : ConfigCreator {
-        private string _configFileName;
-        public override string ConfigFileName => _configFileName;
+        public override string ConfigFileName { get; }
 
         public CollectorConfigCreator(string configFileName = "collectorconfig.json") {
-            _configFileName = configFileName;
+            ConfigFileName = configFileName;
         }
 
         public void CreateDefaultConfig() {

@@ -1,10 +1,10 @@
-﻿using Monytor.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Monytor.Core.Services;
-using System;
-using System.Collections.Generic;
 
-namespace Monytor.Domain.Factories {
+namespace Monytor.Domain.Services {
     public class SeriesService : ISeriesService {
         private readonly ISeriesRepository _repository;
         private readonly ISeriesQueryRepository _seriesQueryRepository;
@@ -18,7 +18,7 @@ namespace Monytor.Domain.Factories {
             return _seriesQueryRepository.GetGroupValueSummary();
         }
 
-        public Series GetSerie(int id) {
+        public Series GetSeries(int id) {
             return _repository.GetSeries(id);
         }
 

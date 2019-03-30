@@ -1,10 +1,9 @@
-﻿using Monytor.Core.Models;
+﻿using System.Collections.Generic;
+using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Monytor.Core.Services;
-using System;
-using System.Collections.Generic;
 
-namespace Monytor.Domain.Factories {
+namespace Monytor.Domain.Services {
     public class ViewCollectionService : IViewCollectionService {
         private readonly IDashboardRepository _repository;
 

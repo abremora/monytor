@@ -5,7 +5,7 @@ namespace Monytor.Core.Services {
 
     public interface ISeriesService {
         IEnumerable<Series> GetSeries(SeriesQuery query);
-        Series GetSerie(int id);
+        Series GetSeries(int id);
         Dictionary<string, IEnumerable<string>> GetGroupValueSummary();
         void Create(Series series);
     }
