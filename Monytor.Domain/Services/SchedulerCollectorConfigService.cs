@@ -33,6 +33,26 @@ namespace Monytor.Domain.Services {
             return _currentCollectorConfig;
         }
 
+        public CollectorConfig GetCollectorConfiguration(bool forceReload = false)
+        {
+            if (_currentCollectorConfig == null || forceReload)
+            {
+                switch (_schedulerConfiguration.CollectorConfigProvider)
+                {
+                    case CollectorConfigProvider.File:
+                        _currentCollectorConfig = LoadCollectorConfigFromFile();
+                        break;
+                    case CollectorConfigProvider.Database:
+                        _currentCollectorConfig = LoadCollectorConfigFromDatabase();
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
+            return _currentCollectorConfig;
+        }
+
         private CollectorConfig LoadCollectorConfigFromFile() {
             var configCreator = new CollectorFileConfigCreator(_schedulerConfiguration.CollectorConfigFileName);
             return configCreator.LoadConfig();
@@ -41,6 +61,16 @@ namespace Monytor.Domain.Services {
         private async Task<CollectorConfig> LoadCollectorConfigFromDatabaseAsync() {
             var collectorConfig =  await _collectorConfigQueryRepository.GetByAgentIdAsync(_schedulerConfiguration.SchedulerAgentId);
             if (collectorConfig == null) {
+                throw new ArgumentException($"The collector configuration for agent {_schedulerConfiguration.SchedulerAgentId} was not found.");
+            }
+            return collectorConfig;
+        }
+
+        private CollectorConfig LoadCollectorConfigFromDatabase()
+        {
+            var collectorConfig =  _collectorConfigQueryRepository.GetByAgentId(_schedulerConfiguration.SchedulerAgentId);
+            if (collectorConfig == null)
+            {
                 throw new ArgumentException($"The collector configuration for agent {_schedulerConfiguration.SchedulerAgentId} was not found.");
             }
             return collectorConfig;

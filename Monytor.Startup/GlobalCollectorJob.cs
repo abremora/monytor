@@ -6,6 +6,7 @@ using Monytor.Core.Configurations;
 using Monytor.Core.Repositories;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Monytor.Core.Services;
 
 namespace Monytor.Startup {
     [DisallowConcurrentExecution]
@@ -13,14 +14,16 @@ namespace Monytor.Startup {
         private readonly IBulkRepository _bulkRepository;
         private readonly ILifetimeScope _container;
         private readonly ILogger<GlobalCollectorJob> _logger;
+        private readonly ISchedulerCollectorConfigService _schedulerCollectorConfigService;
 
-        public GlobalCollectorJob(IBulkRepository bulkRepository, ILifetimeScope container, ILogger<GlobalCollectorJob> logger) {
+        public GlobalCollectorJob(IBulkRepository bulkRepository, ILifetimeScope container, ILogger<GlobalCollectorJob> logger, ISchedulerCollectorConfigService schedulerCollectorConfigService) {
             _bulkRepository = bulkRepository;
             _container = container;
             _logger = logger;
+            _schedulerCollectorConfigService = schedulerCollectorConfigService;
         }
 
-        public  Task Execute(IJobExecutionContext context) {
+        public Task Execute(IJobExecutionContext context) {
             if (context.CancellationToken.IsCancellationRequested)
                 return Task.FromCanceled(context.CancellationToken);
 
@@ -48,23 +51,30 @@ namespace Monytor.Startup {
                     if (collectorInstance.Verifiers != null) {
                         foreach (var serie in series) {                            
                             foreach (var verifier in collectorInstance.Verifiers) {
-                                if (verifier == null 
-                                    || verifier.Notifications == null
-                                    || verifier.Notifications.Count == 0) continue;
+                                if (verifier?.Notifications == null || verifier.Notifications.Count == 0) continue;
 
-                                var verifierKey = verifier.GetType();
+                                var verifierKey = verifier.GetType().FullName;
                                 var verifierBehavior = _container.ResolveKeyed<VerifierBehaviorBase>(verifierKey);                                
                                 verifierBehavior.SeriesRepository = _container.Resolve<ISeriesQueryRepository>();
                                 var result = verifierBehavior.Verify(verifier, serie);
 
                                 if (result.Successful) {
+                                    var currentConfiguration = _schedulerCollectorConfigService.GetCollectorConfiguration();
+
                                     foreach (var notificationId in verifier.Notifications) {
-                                        if (!_container.IsRegisteredWithName<NotificationBehaviorBase>(notificationId)) {
-                                            _logger.LogError($"'{collectorKey}/{verifierKey}/{notificationId}' not found.");
+                                        var notificationBaseKey = verifier.Notifications.GetType().FullName;
+                                        if (!_container.IsRegisteredWithName<NotificationBehaviorBase>(notificationBaseKey)) {
+                                            _logger.LogError($"'{notificationBaseKey}' not found.");
                                             continue;
                                         }
-                                        var notificationBehavior = _container.ResolveNamed<NotificationBehaviorBase>(notificationId);
-                                        var notification = _container.ResolveNamed<Notification>(notificationId);
+                                        var notificationBehavior = _container.ResolveNamed<NotificationBehaviorBase>(notificationBaseKey);
+                                        var notification = currentConfiguration.Notifications.FirstOrDefault(f =>
+                                            f.Id.Equals(notificationId, StringComparison.InvariantCultureIgnoreCase));
+                                        if (notification == null)
+                                        {
+                                            _logger.LogError($"'No notification with id: '{notificationId}' found.");
+                                            continue;
+                                        }
                                         notificationBehavior.Run(notification, result.NotificationShortDescription, result.NotificationLongDescription);
                                     }
                                 }
@@ -75,7 +85,7 @@ namespace Monytor.Startup {
                 return Task.CompletedTask;
             }
             catch (Exception ex) {
-                _logger.LogError(ex, $"{context.JobDetail.Key} in {collectorInstance.GetType()}");
+                _logger.LogError(ex, $"{context.JobDetail.Key} in {collectorInstance?.GetType()}");
                 return Task.FromException(ex);
             }     
             

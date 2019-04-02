@@ -7,5 +7,6 @@ using Monytor.Core.Configurations;
 namespace Monytor.Core.Services {
     public interface ISchedulerCollectorConfigService {
         Task<CollectorConfig> GetCollectorConfigurationAsync(bool forceReload = false);
+        CollectorConfig GetCollectorConfiguration(bool forceReload = false);
     }
 }
