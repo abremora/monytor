@@ -7,7 +7,7 @@ using Monytor.Core.Services;
 
 namespace Monytor.Domain.Services {
     public class SchedulerCollectorConfigurationWatcher : IDisposable, ISchedulerCollectorConfigurationWatcher {
-        private static readonly TimeSpan MinimumPollingInterval = new TimeSpan(0, 0, 30);
+        private static readonly TimeSpan MinimumPollingInterval = new TimeSpan(0, 0, 15);
         private readonly ISchedulerCollectorConfigurationReadService _schedulerCollectorConfigurationReadService;
         private readonly Subject<bool> _stopTimer = new Subject<bool>();
         
@@ -32,7 +32,7 @@ namespace Monytor.Domain.Services {
             CollectorConfig compareCollectorConfig) {
             _compareCollectorConfig = compareCollectorConfig;
             _compareConfiguration = compareConfiguration;
-            if (_compareConfiguration.CollectorPollingInterval <= MinimumPollingInterval) {
+            if (_compareConfiguration.CollectorPollingInterval < MinimumPollingInterval) {
                 // Log this away or throw exception
                 return;
             }
@@ -57,7 +57,7 @@ namespace Monytor.Domain.Services {
             _stopTimer?.OnNext(true);
         }
 
-        private SchedulerConfigurationChangeResult AnalyzeConfigurationChanges(CollectorConfig loadedConfig, CollectorConfig deserializeObject) {
+        private SchedulerConfigurationChangeResult AnalyzeConfigurationChanges(CollectorConfig loadedConfig, CollectorConfig compareConfiguration) {
             var result = new SchedulerConfigurationChangeResult();
 
             return result;
