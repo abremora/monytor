@@ -24,7 +24,7 @@ namespace Monytor.Implementation.Verifiers {
                 .FirstOrDefault();
 
             return new VerifyResult {
-                Successful = seriesResult.Value == series.Value,
+                Successful = seriesResult != null &&  seriesResult.Value == series.Value,
                 NotificationShortDescription = $"Series '{typedVerifier.Group}:{typedVerifier.Tag}' unchanged",
                 NotificationLongDescription = $"Series '{series.Id}' with '{typedVerifier.Group}:{typedVerifier.Tag}:{series.Value}' is unchanged within the time interval {typedVerifier.TimeInterval}"
             };

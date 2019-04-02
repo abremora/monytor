@@ -62,12 +62,6 @@ namespace Monytor.Startup {
                                     var currentConfiguration = _schedulerCollectorConfigService.GetCollectorConfiguration();
 
                                     foreach (var notificationId in verifier.Notifications) {
-                                        var notificationBaseKey = verifier.Notifications.GetType().FullName;
-                                        if (!_container.IsRegisteredWithName<NotificationBehaviorBase>(notificationBaseKey)) {
-                                            _logger.LogError($"'{notificationBaseKey}' not found.");
-                                            continue;
-                                        }
-                                        var notificationBehavior = _container.ResolveNamed<NotificationBehaviorBase>(notificationBaseKey);
                                         var notification = currentConfiguration.Notifications.FirstOrDefault(f =>
                                             f.Id.Equals(notificationId, StringComparison.InvariantCultureIgnoreCase));
                                         if (notification == null)
@@ -75,6 +69,14 @@ namespace Monytor.Startup {
                                             _logger.LogError($"'No notification with id: '{notificationId}' found.");
                                             continue;
                                         }
+
+                                        var notificationBaseKey = notification.GetType().FullName;
+                                        if (!_container.IsRegisteredWithName<NotificationBehaviorBase>(notificationBaseKey)) {
+                                            _logger.LogError($"'{notificationBaseKey}' not found.");
+                                            continue;
+                                        }
+                                        var notificationBehavior = _container.ResolveNamed<NotificationBehaviorBase>(notificationBaseKey);
+                                        
                                         notificationBehavior.Run(notification, result.NotificationShortDescription, result.NotificationLongDescription);
                                     }
                                 }

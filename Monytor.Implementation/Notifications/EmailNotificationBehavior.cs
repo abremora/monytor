@@ -8,24 +8,26 @@ namespace Monytor.Implementation.Notifications {
             var typedNotification = notification as EmailNotification;
             if (typedNotification == null) return;
 
-            var client = new SmtpClient(typedNotification.Smtp, typedNotification.Port) {
+            using (var client = new SmtpClient(typedNotification.Smtp, typedNotification.Port) {
                 EnableSsl = typedNotification.EnableSsl,
                 UseDefaultCredentials = typedNotification.UseDefaultCredentials,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 Credentials = new NetworkCredential(typedNotification.User, typedNotification.Password),
-            };
+            }) {
 
-            var mailMessage = new MailMessage {
-                From = new MailAddress(typedNotification.From),
-                Body = longDescription,
-                Subject = typedNotification.SubjectPrefix + shortDescription
-            };
+                using (var mailMessage = new MailMessage {
+                    From = new MailAddress(typedNotification.From),
+                    Body = longDescription,
+                    Subject = typedNotification.SubjectPrefix + shortDescription
+                }) {
 
-            foreach (var to in typedNotification.To) {
-                mailMessage.To.Add(to);
+                    foreach (var to in typedNotification.To) {
+                        mailMessage.To.Add(to);
+                    }
+
+                    client.Send(mailMessage);
+                }
             }
-
-            client.Send(mailMessage);
         }
     }
 }
