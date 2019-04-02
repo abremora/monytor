@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,10 +6,13 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="8.2.0" />
+    <PackageReference Include="System.Reactive" Version="4.1.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Monytor.Contracts\Monytor.Contracts.csproj" />
   </ItemGroup>
+
+  
 
 </Project>

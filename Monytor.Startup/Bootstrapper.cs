@@ -61,7 +61,9 @@ namespace Monytor.Startup {
                 .InstancePerDependency();
 
             
-            builder.RegisterType<SchedulerCollectorConfigService>().SingleInstance().As<ISchedulerCollectorConfigService>();
+            builder.RegisterType<SchedulerCollectorConfigurationService>().SingleInstance().As<ISchedulerCollectorConfigurationService>();
+            builder.RegisterType<SchedulerCollectorConfigurationReadService>().SingleInstance().As<ISchedulerCollectorConfigurationReadService>();
+            builder.RegisterType<SchedulerCollectorConfigurationWatcher>().SingleInstance().As<ISchedulerCollectorConfigurationWatcher>();
             builder.RegisterType<SchedulerStartup>();
             builder.RegisterType<AutofacJobFactory>().SingleInstance();
             

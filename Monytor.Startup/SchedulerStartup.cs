@@ -12,18 +12,18 @@ namespace Monytor.Startup {
         private readonly IScheduler _scheduler;
         private readonly AutofacJobFactory _factory;
         private readonly ILogger<SchedulerStartup> _logger;
-        private readonly ISchedulerCollectorConfigService _schedulerCollectorConfigService;
+        private readonly ISchedulerCollectorConfigurationService _schedulerCollectorConfigurationService;
 
         public SchedulerStartup(IScheduler scheduler, AutofacJobFactory factory, ILogger<SchedulerStartup> logger,
-            ISchedulerCollectorConfigService schedulerCollectorConfigService) {
+            ISchedulerCollectorConfigurationService schedulerCollectorConfigurationService) {
             _scheduler = scheduler;
             _factory = factory;
             _logger = logger;
-            _schedulerCollectorConfigService = schedulerCollectorConfigService;
+            _schedulerCollectorConfigurationService = schedulerCollectorConfigurationService;
         }
 
         public async Task ConfigScheduler() {
-            var collectorConfig = await _schedulerCollectorConfigService.GetCollectorConfigurationAsync();
+            var collectorConfig = await _schedulerCollectorConfigurationService.GetCollectorConfigurationAsync();
 
             var collectorGroups = collectorConfig.Collectors
                 .GroupBy(x => x.GetType());

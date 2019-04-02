@@ -14,13 +14,13 @@ namespace Monytor.Startup {
         private readonly IBulkRepository _bulkRepository;
         private readonly ILifetimeScope _container;
         private readonly ILogger<GlobalCollectorJob> _logger;
-        private readonly ISchedulerCollectorConfigService _schedulerCollectorConfigService;
+        private readonly ISchedulerCollectorConfigurationService _schedulerCollectorConfigurationService;
 
-        public GlobalCollectorJob(IBulkRepository bulkRepository, ILifetimeScope container, ILogger<GlobalCollectorJob> logger, ISchedulerCollectorConfigService schedulerCollectorConfigService) {
+        public GlobalCollectorJob(IBulkRepository bulkRepository, ILifetimeScope container, ILogger<GlobalCollectorJob> logger, ISchedulerCollectorConfigurationService schedulerCollectorConfigurationService) {
             _bulkRepository = bulkRepository;
             _container = container;
             _logger = logger;
-            _schedulerCollectorConfigService = schedulerCollectorConfigService;
+            _schedulerCollectorConfigurationService = schedulerCollectorConfigurationService;
         }
 
         public Task Execute(IJobExecutionContext context) {
@@ -59,7 +59,7 @@ namespace Monytor.Startup {
                                 var result = verifierBehavior.Verify(verifier, serie);
 
                                 if (result.Successful) {
-                                    var currentConfiguration = _schedulerCollectorConfigService.GetCollectorConfiguration();
+                                    var currentConfiguration = _schedulerCollectorConfigurationService.GetCollectorConfiguration();
 
                                     foreach (var notificationId in verifier.Notifications) {
                                         var notification = currentConfiguration.Notifications.FirstOrDefault(f =>

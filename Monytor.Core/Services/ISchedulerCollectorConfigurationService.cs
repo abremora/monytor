@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Monytor.Core.Configurations;
 
 namespace Monytor.Core.Services {
-    public interface ISchedulerCollectorConfigService {
+    public interface ISchedulerCollectorConfigurationService {
         Task<CollectorConfig> GetCollectorConfigurationAsync(bool forceReload = false);
         CollectorConfig GetCollectorConfiguration(bool forceReload = false);
     }
