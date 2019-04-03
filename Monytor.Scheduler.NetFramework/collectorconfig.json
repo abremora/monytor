@@ -19,6 +19,7 @@
   "Collectors": [
     {
       "$type": "Monytor.Implementation.Collectors.RestApiCollector, Monytor.Implementation.Collectors",
+      "Id": "RestApiCollector_1",
       "DisplayName": "Subscription position",
       "Description": "Current subscription position",
       "GroupName": "Subscription",
@@ -46,6 +47,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.RestApiCollector, Monytor.Implementation.Collectors",
+      "Id": "RestApiCollector_2",
       "DisplayName": "Last etag 14 days ago",
       "Description": "Etag of last series 14 days ago",
       "GroupName": "LastEtag",
@@ -63,6 +65,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.NetFramework.PerformanceCounterCollector, Monytor.Implementation.Collectors.NetFramework",
+      "Id": "PerformanceCounterCollector_CpuTime",
       "DisplayName": "CPU time",
       "Description": "Collects the current CPU time",
       "GroupName": "PerformanceCounterCollector",
@@ -81,6 +84,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.NetFramework.PerformanceCounterCollector, Monytor.Implementation.Collectors.NetFramework",
+      "Id": "PerformanceCounterCollector_FreeDiskC",
       "DisplayName": "Free Disc C:",
       "Description": "Free disc space C:",
       "GroupName": "PerformanceCounterCollector",
@@ -99,6 +103,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.RavenDb.AllCollectionCollector, Monytor.Implementation.Collectors.RavenDb",
+      "Id": "AllCollectionCollector",
       "Source": {
         "Url": "http://localhost:8080",
         "Database": "Monytor"
@@ -117,6 +122,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.RavenDb.CollectionCollector, Monytor.Implementation.Collectors.RavenDb",
+      "Id": "CollectionCollector_Series",
       "CollectionName": "Series",
       "Source": {
         "Url": "http://localhost:8080",
@@ -146,6 +152,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.RavenDb.StartingWithCollector, Monytor.Implementation.Collectors.RavenDb",
+      "Id": "StartingWithCollector_Series",
       "StartingWith": "Series",
       "Source": {
         "Url": "http://localhost:8080",
@@ -165,6 +172,7 @@
     },
     {
       "$type": "Monytor.Implementation.Collectors.SystemInformationCollector, Monytor.Implementation.Collectors",
+      "Id": "SystemInformationCollector",
       "DisplayName": "System information",
       "Description": "Collects information of the current system",
       "GroupName": "SystemInformation",
