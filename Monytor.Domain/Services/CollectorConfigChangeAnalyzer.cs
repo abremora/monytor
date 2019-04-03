@@ -9,10 +9,10 @@ namespace Monytor.Domain.Services {
     public static class CollectorConfigChangeAnalyzer {
 
         public static CollectorConfigChangeResult AnalyzeConfigurationChanges(CollectorConfig newCollectorConfig,
-            CollectorConfig currentCollectorConfig)
-        {
+            CollectorConfig currentCollectorConfig) {
             var configurationChangeResult = new CollectorConfigChangeResult();
 
+            // ToDo: This will only work for the stored collectors, because file config collectors does not have an Id yet.
             AnalyzeNotificationChanges(configurationChangeResult, newCollectorConfig.Notifications,
                 currentCollectorConfig.Notifications);
 
@@ -23,53 +23,44 @@ namespace Monytor.Domain.Services {
         }
 
         private static void AnalyzeNotificationChanges(CollectorConfigChangeResult configurationChangeResult,
-            List<Notification> loadedConfigNotifications, List<Notification> compareConfigurationNotifications)
-        {
-            // ToDo: This will only work for the stored collectors, because config collectors does not have an Id yet.
+            List<Notification> loadedConfigNotifications, List<Notification> compareConfigurationNotifications) {
             var removedNotifications = compareConfigurationNotifications.Where(w =>
                 loadedConfigNotifications.All(x => !x.Id.EqualsIgnoreCase(w.Id)));
             configurationChangeResult.RemovedNotifications.AddRange(removedNotifications);
 
-            foreach (var notification in loadedConfigNotifications)
-            {
+            foreach (var notification in loadedConfigNotifications) {
                 if (string.IsNullOrWhiteSpace(notification.Id))
                     continue;
 
                 var compareNotification = compareConfigurationNotifications.FirstOrDefault(f =>
                     f.Id.EqualsIgnoreCase(notification.Id));
-                if (compareNotification == null)
-                {
+                if (compareNotification == null) {
                     configurationChangeResult.AddedNotifications.Add(notification);
                 }
-                else
-                {
-                    // Detect modifications
+                else if (!compareNotification.IsEqualByJsonCompare(notification)) {
+                    configurationChangeResult.ChangedNotifications.Add(notification);
                 }
             }
         }
 
         private static void AnalyzeCollectorChanges(CollectorConfigChangeResult configurationChangeResult,
-            List<Collector> loadedConfigCollectors, List<Collector> compareConfigurationCollectors)
-        {
-            // ToDo: This will only work for the stored collectors, because config collectors does not have an Id yet.
+            List<Collector> loadedConfigCollectors, List<Collector> compareConfigurationCollectors) {
+           
             var removedCollectors = compareConfigurationCollectors.Where(w =>
-                    loadedConfigCollectors.All(x => !x.Id.EqualsIgnoreCase(w.Id)));
+                loadedConfigCollectors.All(x => !x.Id.EqualsIgnoreCase(w.Id)));
             configurationChangeResult.RemovedCollectors.AddRange(removedCollectors);
 
-            foreach (var collector in loadedConfigCollectors)
-            {
+            foreach (var collector in loadedConfigCollectors) {
                 if (string.IsNullOrWhiteSpace(collector.Id))
                     continue;
 
                 var compareCollector = compareConfigurationCollectors.FirstOrDefault(f =>
-                     f.Id.EqualsIgnoreCase(collector.Id));
-                if (compareCollector == null)
-                {
+                    f.Id.EqualsIgnoreCase(collector.Id));
+                if (compareCollector == null) {
                     configurationChangeResult.AddedCollectors.Add(collector);
                 }
-                else
-                {
-                    // Detect modifications
+                else if (!compareCollector.IsEqualByJsonCompare(collector)) {
+                    configurationChangeResult.ChangedCollectors.Add(collector);
                 }
             }
         }
