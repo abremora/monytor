@@ -1,12 +1,13 @@
 ﻿using Monytor.Core.Repositories;
 using Monytor.Core.Services;
-using Monytor.Domain.Services;
+using Monytor.Domain.Factories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Monytor.Core.Configurations;
 using System;
+using Monytor.Domain.Services;
 
 namespace Monytor.WebApi {
     public class Startup
@@ -22,16 +23,17 @@ namespace Monytor.WebApi {
         public void ConfigureServices(IServiceCollection services)
         {
             SetupDatabase(services, Configuration);
-            services.AddScoped<ICollectorService, CollectorService>();
+            services.AddScoped<ISeriesService, SeriesService>();
             services.AddScoped<IViewCollectionService, ViewCollectionService>();
-
+            services.AddScoped<ICollectorConfigService, CollectorConfigService>();
             services.AddCors();
             services.AddMvc();            
         }
         private static void SetupDatabase(IServiceCollection services, IConfiguration appConfig) {
             var storageProvider = appConfig.GetValue<StorageProvider>("storageProvider");
+            
             switch (storageProvider) {
-                case StorageProvider.PostgreSQL:
+                case StorageProvider.PostgreSql:
                     PostgreSQL.Bootstrapper.SetupDatabaseAndRegisterRepositories(services, appConfig["storageProviderConnectionString"]);
                     break;
                 case StorageProvider.RavenDb:
@@ -49,6 +51,7 @@ namespace Monytor.WebApi {
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseMiddleware<UnitOfWorkMiddleware>();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();

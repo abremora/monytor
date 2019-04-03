@@ -1,13 +1,17 @@
 ﻿using Autofac;
 using CommandLine;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Monytor.Core.Configurations;
 using Monytor.Implementation.Collectors;
 using Monytor.Startup;
 using NLog.Extensions.Logging;
 using System;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Monytor.Domain.Services;
 
 namespace Monytor.Scheduler {
     public abstract class ScheduleRunner {
@@ -29,24 +33,24 @@ namespace Monytor.Scheduler {
             try {
                 CreateLoggerForConsole();
                 SetupBinder();
-
-                var config = new CollectorConfigCreator();
+                var config = new CollectorFileConfigCreator();
                 var parser = new Parser(x => x.CaseSensitive = false);
-                var options = parser.ParseArguments<ConsoleArguments>(args)
-                    .WithParsed(o => { if (o.CreateDefaultConfig) config.CreateDefaultConfig(); });
-
+                var options = parser.ParseArguments<ConsoleArguments>(args);
                 if (options.Tag == ParserResultType.NotParsed) {
                     goto End;
                 }
 
                 var parsedResult = options as Parsed<ConsoleArguments>;
-
                 if (parsedResult.Value.CreateDefaultConfig) {
+                    config.CreateDefaultConfig();
                     _logger.LogInformation("Default config was created");
                     goto End;
                 }
 
-                _container = await Bootstrapper.Setup();
+                var appConfig = LoadConfigurationRoot();
+                
+
+                _container = await Bootstrapper.Setup(appConfig);
                 if (!config.HasConfig()) {
                     _logger.LogWarning($"Config file '{config.ConfigFileName}' not found. Create default config.\nUse --help for further assistance.");
                     return;
@@ -66,13 +70,21 @@ namespace Monytor.Scheduler {
             Console.WriteLine("Bye!");
         }
 
+        private static IConfigurationRoot LoadConfigurationRoot() {
+            var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            return new ConfigurationBuilder()
+                .SetBasePath(directory)
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.local.json", true)
+                .Build();
+        }
+
         static async Task RunAsync() {
             SchedulerStartup scheduler = null;
             try {
                 scheduler = _container.Resolve<SchedulerStartup>();
-                var collectorConfig = _container.Resolve<CollectorConfig>();
 
-                await scheduler.ConfigScheduler(collectorConfig);
+                await scheduler.ConfigScheduler();
 
                 _logger.LogInformation("Scheduler started");
                 _manualReset.Wait();
@@ -81,12 +93,12 @@ namespace Monytor.Scheduler {
                 _logger.LogError(e, "Scheduler error");
             }
             finally {
-                scheduler.Dispose();
+                scheduler?.Dispose();
             }
         }
 
         protected virtual void SetupBinder() {
-            new SystemInformationCollector();
+            _ = typeof(SystemInformationCollector);
         }
 
         private static void CreateLoggerForConsole() {

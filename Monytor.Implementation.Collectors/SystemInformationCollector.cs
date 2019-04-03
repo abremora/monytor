@@ -3,10 +3,6 @@
 namespace Monytor.Implementation.Collectors {
 
     public class SystemInformationCollector : Collector {
-        public override string GroupName { get; set; }
-
-        public SystemInformationCollector() {
-            GroupName = "SystemInformation";
-        }
+        public override string GroupName { get; set; } = "SystemInformation";
     }
 }

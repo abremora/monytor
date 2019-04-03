@@ -1,35 +1,30 @@
-﻿using Marten;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Monytor.Core.Models;
 using Monytor.Core.Repositories;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Monytor.PostgreSQL {
+namespace Monytor.PostgreSQL.Repositories {
     public class DashboardRepository : IDashboardRepository {
-        private readonly IDocumentStore _store;
+        private readonly UnitOfWork _unitOfWork;
 
-        public DashboardRepository(IDocumentStore store) {
-            _store = store;
+        public DashboardRepository(IUnitOfWork unitOfWork) {
+            _unitOfWork = unitOfWork as UnitOfWork;
         }
 
-        public Dashboard Load(string id) {
-            using (var session = _store.OpenSession()) {
-                return session.Load<Dashboard>(id);
-            }
+        public Dashboard Get(string id) {
+            return _unitOfWork.Session.Load<Dashboard>(id);
         }
-
+           
         public IEnumerable<Dashboard> LoadOverview() {
-            using (var session = _store.OpenSession()) {
-                return session.Query<Dashboard>()
-                    .Take(1024).ToList();
+            // ToDo: Query-Repository
+            using (var session = _unitOfWork.Store.QuerySession()) {
+                return _unitOfWork.DirtyTrackedSession.Query<Dashboard>()
+                        .Take(1024).ToList();
             }
         }
 
-        public void Save(Dashboard config) {
-            using (var session = _store.OpenSession()) {                
-                session.Store(config);
-                session.SaveChanges();
-            }
+        public void Store(Dashboard config) {
+            _unitOfWork.Session.Store(config);
         }
     }
 }

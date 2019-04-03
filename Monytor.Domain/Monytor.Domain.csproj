@@ -5,7 +5,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="System.Reactive" Version="4.1.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Monytor.Contracts\Monytor.Contracts.csproj" />
     <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.NetFramework\Monytor.Implementation.Collectors.NetFramework.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.RavenDb\Monytor.Implementation.Collectors.RavenDb.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.MsSql\Monytor.Implementation.Collectors.Sql.MsSql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.MySql\Monytor.Implementation.Collectors.Sql.MySql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.Oracle\Monytor.Implementation.Collectors.Sql.Oracle.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql.PostgreSql\Monytor.Implementation.Collectors.Sql.PostgreSql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors.Sql\Monytor.Implementation.Collectors.Sql.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation.Collectors\Monytor.Implementation.Collectors.csproj" />
+    <ProjectReference Include="..\Monytor.Implementation\Monytor.Implementation.csproj" />
   </ItemGroup>
 
 </Project>

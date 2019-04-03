@@ -1,9 +1,9 @@
-﻿using Monytor.Core.Models;
-using Raven.Client.Indexes;
-using System;
+﻿using System;
 using System.Linq;
+using Monytor.Core.Models;
+using Raven.Client.Indexes;
 
-namespace Monytor.RavenDb {
+namespace Monytor.RavenDb.Indices {
     public class SeriesIndex : AbstractIndexCreationTask<Series> {
         public class Result {
             public string Tag { get; set; }

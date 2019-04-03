@@ -1,22 +1,24 @@
-﻿using Monytor.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Monytor.Core.Services;
-using System;
-using System.Collections.Generic;
 
 namespace Monytor.Domain.Services {
-    public class CollectorService : ICollectorService {
+    public class SeriesService : ISeriesService {
         private readonly ISeriesRepository _repository;
+        private readonly ISeriesQueryRepository _seriesQueryRepository;
 
-        public CollectorService(ISeriesRepository repository) {
+        public SeriesService(ISeriesRepository repository, ISeriesQueryRepository seriesQueryRepository) {
             _repository = repository;
+            _seriesQueryRepository = seriesQueryRepository;
         }
 
         public Dictionary<string, IEnumerable<string>> GetGroupValueSummary() {
-            return _repository.GetGroupValueSummary();
+            return _seriesQueryRepository.GetGroupValueSummary();
         }
 
-        public Series GetSerie(int id) {
+        public Series GetSeries(int id) {
             return _repository.GetSeries(id);
         }
 
@@ -33,15 +35,15 @@ namespace Monytor.Domain.Services {
 
             switch (unescapedQuery.MeanValueType.Trim().ToLower()) {
                 case "day":
-                    return _repository.GetSeriesByDayMean(unescapedQuery);
+                    return _seriesQueryRepository.GetSeriesByDayMean(unescapedQuery);
                 case "hour":
-                    return _repository.GetSeriesByHourMean(unescapedQuery);
+                    return _seriesQueryRepository.GetSeriesByHourMean(unescapedQuery);
                 default:
-                    return _repository.GetSeries(unescapedQuery);
+                    return _seriesQueryRepository.GetSeries(unescapedQuery);
             }
         }
 
-        public void Set(Series series) {
+        public void Create(Series series) {
             _repository.Store(series);
         }
     }

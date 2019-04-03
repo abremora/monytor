@@ -1,9 +1,9 @@
-﻿using Marten;
-using Monytor.Core.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Marten;
+using Monytor.Core.Repositories;
 
-namespace Monytor.PostgreSQL {
+namespace Monytor.PostgreSQL.Repositories {
     public class BulkRepository : IBulkRepository {
         private readonly IDocumentStore _store;
         private BulkInsertOperation _currentBulkOperation;
