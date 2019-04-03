@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -10,12 +11,13 @@ namespace Monytor.Domain.Services {
         private static readonly TimeSpan MinimumPollingInterval = new TimeSpan(0, 0, 15);
         private readonly ISchedulerCollectorConfigurationReadService _schedulerCollectorConfigurationReadService;
         private readonly Subject<bool> _stopTimer = new Subject<bool>();
-        
+
 
         private SchedulerConfiguration _compareConfiguration;
         private CollectorConfig _compareCollectorConfig;
-        
-        public Subject<SchedulerConfigurationChangeResult> SchedulerConfigurationChanged { get; } = new Subject<SchedulerConfigurationChangeResult>();
+
+        public Subject<CollectorConfigChangeResult> SchedulerConfigurationChanged { get; } =
+            new Subject<CollectorConfigChangeResult>();
 
         public SchedulerCollectorConfigurationWatcher(
             ISchedulerCollectorConfigurationReadService schedulerCollectorConfigurationReadService) {
@@ -38,29 +40,22 @@ namespace Monytor.Domain.Services {
             }
 
             Observable.Timer(_compareConfiguration.CollectorPollingInterval,
-                _compareConfiguration.CollectorPollingInterval)
+                    _compareConfiguration.CollectorPollingInterval)
                 .TakeUntil(_stopTimer)
-                .Subscribe( _ => PollConfigurationForChanges());
+                .Subscribe(_ => PollConfigurationForChanges());
         }
 
         private void PollConfigurationForChanges() {
             var loadedConfig =
                 _schedulerCollectorConfigurationReadService.LoadSchedulerConfiguration(_compareConfiguration);
-            var result = AnalyzeConfigurationChanges(loadedConfig, _compareCollectorConfig);
+            var result = CollectorConfigChangeAnalyzer.AnalyzeConfigurationChanges(loadedConfig, _compareCollectorConfig);
             if (result.HasChanges) {
                 SchedulerConfigurationChanged?.OnNext(result);
             }
         }
 
-
         public void StopCollectorConfigurationChangePolling() {
             _stopTimer?.OnNext(true);
-        }
-
-        private SchedulerConfigurationChangeResult AnalyzeConfigurationChanges(CollectorConfig loadedConfig, CollectorConfig compareConfiguration) {
-            var result = new SchedulerConfigurationChangeResult();
-
-            return result;
         }
     }
 }
