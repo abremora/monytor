@@ -1,4 +1,5 @@
-﻿using Monytor.Core.Services;
+﻿using System;
+using Monytor.Core.Services;
 using System.Net;
 using System.Threading.Tasks;
 using Monytor.Core.Configurations;
@@ -9,6 +10,7 @@ namespace Monytor.Domain.Services {
         private readonly ISchedulerCollectorConfigurationReadService _collectorConfigurationReadService;
         private readonly ISchedulerCollectorConfigurationWatcher _configurationWatcher;
         private CollectorConfig _currentCollectorConfig;
+        
 
         public SchedulerCollectorConfigurationService(SchedulerConfiguration schedulerConfiguration,
             ISchedulerCollectorConfigurationReadService collectorConfigurationReadService,
@@ -37,6 +39,5 @@ namespace Monytor.Domain.Services {
             }
             return _currentCollectorConfig;
         }
-
     }
 }
