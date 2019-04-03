@@ -4,6 +4,7 @@ using System.Linq;
 using Marten;
 using Monytor.Core.Models;
 using Monytor.Core.Repositories;
+using Monytor.PostgreSQL.Results;
 
 namespace Monytor.PostgreSQL.Repositories {
     public partial class SeriesQueryRepository : ISeriesQueryRepository {

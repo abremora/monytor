@@ -1,8 +1,8 @@
-﻿using Monytor.Core.Models;
+﻿using System.Linq;
+using Monytor.Core.Models;
 using Raven.Client.Indexes;
-using System.Linq;
 
-namespace Monytor.RavenDb {
+namespace Monytor.RavenDb.Indices {
     public class TagGroupMapReduceIndex : AbstractIndexCreationTask<Series, TagGroupMapReduceIndex.Result> {
         public class Result {
             public string Group { get; set; }

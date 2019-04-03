@@ -1,11 +1,12 @@
-﻿using Monytor.Core.Models;
-using Monytor.Core.Repositories;
-using Raven.Client;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Monytor.Core.Models;
+using Monytor.Core.Repositories;
+using Monytor.RavenDb.Indices;
+using Raven.Client;
 
-namespace Monytor.RavenDb {
+namespace Monytor.RavenDb.Repositories {
     public class SeriesQueryRepository : ISeriesQueryRepository {
         private readonly IDocumentStore _store;
 

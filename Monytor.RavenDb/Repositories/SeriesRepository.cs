@@ -1,7 +1,7 @@
 ﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 
-namespace Monytor.RavenDb {
+namespace Monytor.RavenDb.Repositories {
     public class SeriesRepository : ISeriesRepository {
         private readonly UnitOfWork _unitOfWork;
 

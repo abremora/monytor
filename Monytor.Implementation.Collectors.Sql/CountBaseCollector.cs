@@ -3,7 +3,7 @@ using FluentValidation;
 using Monytor.Core.Configurations;
 
 namespace Monytor.Implementation.Collectors.Sql {
-    public abstract class CountBaseCollector : Core.Configurations.Collector {
+    public abstract class CountBaseCollector : Collector {
         private static readonly CountCollectorValidator Validator = new CountCollectorValidator();
 
         public string TableName { get; set; }

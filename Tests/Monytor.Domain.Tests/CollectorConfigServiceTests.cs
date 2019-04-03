@@ -17,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Monytor.Domain.Services;
+using Monytor.RavenDb.Repositories;
 using Xunit;
 
 namespace Monytor.Domain.Tests {

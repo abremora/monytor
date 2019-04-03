@@ -1,8 +1,7 @@
 ﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
-using Raven.Client;
 
-namespace Monytor.RavenDb {
+namespace Monytor.RavenDb.Repositories {
     public class CollectorConfigRepository : ICollectorConfigRepository {
         private readonly UnitOfWork _unitOfWork;
 
