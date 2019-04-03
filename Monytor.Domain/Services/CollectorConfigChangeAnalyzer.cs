@@ -12,7 +12,6 @@ namespace Monytor.Domain.Services {
             CollectorConfig currentCollectorConfig) {
             var configurationChangeResult = new CollectorConfigChangeResult();
 
-            // ToDo: This will only work for the stored collectors, because file config collectors does not have an Id yet.
             AnalyzeNotificationChanges(configurationChangeResult, newCollectorConfig.Notifications,
                 currentCollectorConfig.Notifications);
 
