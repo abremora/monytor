@@ -9,18 +9,22 @@ namespace Monytor.Implementation {
 
         private static readonly Lazy<List<Assembly>> _implementationAssemblies = new Lazy<List<Assembly>>(
             valueFactory: LoadImplementationAssemblies
-            );
+        );
 
         public static Type LoadBehavior(Type behaviorType, Type instance) {
             var constructedListType = behaviorType.MakeGenericType(instance);
             return LoadAllConcreteTypesOf(constructedListType).SingleOrDefault();
         }
 
+        public static IEnumerable<Type> LoadAllConcreteTypesOf<TType>() {
+            return LoadAllConcreteTypesOf(typeof(TType));
+        }
+
         public static IEnumerable<Type> LoadAllConcreteTypesOf(Type type) {
             var types = _implementationAssemblies.Value.SelectMany(s => s.GetTypes())
                 .Where(p => p.IsClass
-                    && !p.IsAbstract
-                    && type.IsAssignableFrom(p));
+                            && !p.IsAbstract
+                            && type.IsAssignableFrom(p));
             return types;
         }
 
@@ -32,7 +36,8 @@ namespace Monytor.Implementation {
             var alreadyLoadedImplemenationAssemblies = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(w => w.FullName.StartsWith("Monytor.Implementation")).ToList();
 
-            var implementationAssemblyFiles = Directory.GetFiles(GetEntryAssemblyDirectoryPath(), "Monytor.Implementation*.dll", SearchOption.TopDirectoryOnly);
+            var implementationAssemblyFiles = Directory.GetFiles(GetEntryAssemblyDirectoryPath(),
+                "Monytor.Implementation*.dll", SearchOption.TopDirectoryOnly);
             var implementationAssemblies = new List<Assembly>();
             foreach (var assemblyFile in implementationAssemblyFiles) {
                 var assembly = alreadyLoadedImplemenationAssemblies
@@ -40,8 +45,10 @@ namespace Monytor.Implementation {
                 if (assembly == null) {
                     assembly = Assembly.LoadFrom(assemblyFile);
                 }
+
                 implementationAssemblies.Add(assembly);
             }
+
             return implementationAssemblies;
         }
     }

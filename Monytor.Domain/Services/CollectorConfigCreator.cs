@@ -65,7 +65,7 @@ namespace Monytor.Domain.Services {
 
         public static IEnumerable<T> LoadAll<T>()
            where T : class {
-            var instances = Implementation.ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(T))
+            var instances = Implementation.ImplementationTypeLoader.LoadAllConcreteTypesOf<T>()
                 .Select(x => Activator.CreateInstance(x) as T);
             return instances;
         }

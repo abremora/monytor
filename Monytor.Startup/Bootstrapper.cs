@@ -79,7 +79,7 @@ namespace Monytor.Startup {
         }
 
         private static void SetupNotifications(ContainerBuilder builder) {
-            var notifications = ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(Notification));
+            var notifications = ImplementationTypeLoader.LoadAllConcreteTypesOf<Notification>();
             foreach (var notification in notifications) {
                 var behavior = ImplementationTypeLoader.LoadBehavior(typeof(NotificationBehavior<>), notification);
 
@@ -90,7 +90,7 @@ namespace Monytor.Startup {
         }
 
         private static void SetupVerifiers(ContainerBuilder builder) {
-            var verifiers = ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(Verifier));
+            var verifiers = ImplementationTypeLoader.LoadAllConcreteTypesOf<Verifier>();
             foreach (var verifier in verifiers) {
                 var behavior = ImplementationTypeLoader.LoadBehavior(typeof(VerifierBehavior<>), verifier);
                 if(behavior == null)
@@ -100,7 +100,7 @@ namespace Monytor.Startup {
         }
 
         private static void SetupCollectors(ContainerBuilder builder) {
-            var collectors = ImplementationTypeLoader.LoadAllConcreteTypesOf(typeof(Collector));
+            var collectors = ImplementationTypeLoader.LoadAllConcreteTypesOf<Collector>();
             foreach (var collector in collectors) {
                 var behavior = ImplementationTypeLoader.LoadBehavior(typeof(CollectorBehavior<>), collector);
                 if(behavior == null)
