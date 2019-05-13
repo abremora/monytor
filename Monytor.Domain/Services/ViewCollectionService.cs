@@ -1,8 +1,7 @@
-﻿using Monytor.Core.Models;
+﻿using System.Collections.Generic;
+using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 using Monytor.Core.Services;
-using System;
-using System.Collections.Generic;
 
 namespace Monytor.Domain.Services {
     public class ViewCollectionService : IViewCollectionService {
@@ -16,7 +15,7 @@ namespace Monytor.Domain.Services {
             if (!Dashboard.HasPrefix(id)) {
                 id = Dashboard.CreateId(id);
             }
-            return _repository.Load(id);
+            return _repository.Get(id);
         }
 
         public IEnumerable<Dashboard> GetOverview() {
@@ -26,7 +25,7 @@ namespace Monytor.Domain.Services {
 
         public void Create(Dashboard config) {
             config.Id= Dashboard.CreateId();
-            _repository.Save(config);
+            _repository.Store(config);
         }
     }
 }

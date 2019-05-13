@@ -12,8 +12,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.1.1" />
-    <PackageReference Include="RavenDB.Client" Version="3.5.6" />
+    <PackageReference Include="RavenDB.Client" Version="3.5.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,13 +25,21 @@
     <None Include="appsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="appsettings.local.json" />
+    
     <None Include="wwwroot\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  
+   <ItemGroup Condition="Exists('appsettings.local.json')">
+	   <None Include="appsettings.local.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+   </ItemGroup>
+  
 
   <ItemGroup>
+    <ProjectReference Include="..\Monytor.Contracts\Monytor.Contracts.csproj" />
     <ProjectReference Include="..\Monytor.Core\Monytor.Core.csproj" />
     <ProjectReference Include="..\Monytor.Domain\Monytor.Domain.csproj" />
     <ProjectReference Include="..\Monytor.Infrastructure\Monytor.Infrastructure.csproj" />

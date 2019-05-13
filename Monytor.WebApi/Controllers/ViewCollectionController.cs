@@ -16,7 +16,7 @@ namespace Monytor.WebApi.Controllers {
 
         [HttpGet("{*id}")]
         public Dashboard Get(string id) {
-            return _collectorService.Get(id);
+            return _collectorService.Get(Uri.UnescapeDataString(id));
         }
 
         [HttpGet]

@@ -8,7 +8,7 @@ namespace Monytor.Implementation.Collectors.Sql {
     public abstract class CountBaseCollectorBehavior<TCountCollector> : CollectorBehavior<TCountCollector> where TCountCollector : CountBaseCollector{
         public abstract IDbConnection CreateDbConnection(string connectionString);
 
-        public override IEnumerable<Series> Run(Collector collector) {
+        public override IEnumerable<Series> Run(Core.Configurations.Collector collector) {
             var collectorTyped = collector as TCountCollector;
             if (collectorTyped == null) yield return null;
 

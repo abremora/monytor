@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 
 namespace Monytor.Implementation.Verifiers {
-    public class SeriesChangedVerifierBehavior : VerfiyBehavior<SeriesChangedVerifier> {
+    public class SeriesChangedVerifierBehavior : VerifierBehavior<SeriesChangedVerifier> {
         public override VerifyResult Verify(Verifier verifier, Series series) {
             var typedVerifier = verifier as SeriesChangedVerifier;
             if(typedVerifier == null)
@@ -24,9 +24,9 @@ namespace Monytor.Implementation.Verifiers {
                 .FirstOrDefault();
 
             return new VerifyResult {
-                Successful = seriesResult.Value != series.Value,
+                Successful = seriesResult != null && seriesResult.Value != series.Value,
                 NotificationShortDescription = $"Series '{typedVerifier.Group}:{typedVerifier.Tag}' changed",
-                NotificationLongDescription = $"Series '{series.Id}' with '{typedVerifier.Group}:{typedVerifier.Tag}:{series.Value}' has changed to {seriesResult.Value} within the time interval {typedVerifier.TimeInterval}"
+                NotificationLongDescription = $"Series '{series.Id}' with '{typedVerifier.Group}:{typedVerifier.Tag}:{series.Value}' has changed to {seriesResult?.Value} within the time interval {typedVerifier.TimeInterval}"
             };
         }
     }

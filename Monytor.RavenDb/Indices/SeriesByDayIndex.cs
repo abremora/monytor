@@ -1,10 +1,10 @@
-﻿using Monytor.Core.Models;
-using Raven.Client.Indexes;
-using System;
+﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Monytor.Core.Models;
+using Raven.Client.Indexes;
 
-namespace Monytor.RavenDb {
+namespace Monytor.RavenDb.Indices {
     public class SeriesByDayIndex : AbstractIndexCreationTask<Series, SeriesByDayIndex.Result> {
         public class Result {
             public string Group { get; set; }

@@ -1,137 +1,21 @@
-﻿using Marten;
-using Marten.Linq.MatchesSql;
-using Monytor.Core.Models;
+﻿using Monytor.Core.Models;
 using Monytor.Core.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 
-namespace Monytor.PostgreSQL {
+namespace Monytor.PostgreSQL.Repositories {
+
     public class SeriesRepository : ISeriesRepository {
-        private readonly IDocumentStore _store;
+        private readonly UnitOfWork _unitOfWork;
 
-        public SeriesRepository(IDocumentStore store) {
-            _store = store;
-        }
-
-        public Dictionary<string, IEnumerable<string>> GetGroupValueSummary() {
-            using (var session = _store.QuerySession()) {
-                var result = session.Query<TagGroupResult>(@"SELECT  json_build_object('Group', data->'Group', 'Tag' , data->'Tag') 
-	                                                    FROM public.mt_doc_series
-	                                                    GROUP BY data->'Group', data->'Tag'
-	                                                    ORDER BY data->'Group', data->'Tag';")
-                                        .ToList();
-
-                return result.GroupBy(g => g.Group)
-                     .ToDictionary(g => g.Key, g => g.Select(x => x.Tag));
-            }
+        public SeriesRepository(IUnitOfWork unitOfWork) {
+            _unitOfWork = unitOfWork as UnitOfWork;
         }
 
         public Series GetSeries(int id) {
-            using (var session = _store.OpenSession()) {
-                return session.Load<Series>(id);
-            }
-        }
-
-        public IEnumerable<Series> GetSeries(SeriesQuery queryModel) {
-            using (var session = _store.OpenSession()) {
-                var query = session.Query<Series>()
-                    .Where(x => x.Time >= queryModel.Start
-                    && x.Time <= queryModel.End
-                    && x.Tag == queryModel.Tag
-                    && x.Group == queryModel.Group);
-
-                if (queryModel.OrderBy == Ordering.Ascending) {
-                    query = query.OrderBy(x => x.Time);
-                }
-                else {
-                    query = query.OrderByDescending(x => x.Time);
-                }
-
-                query = query.Take(queryModel.MaxValues);
-
-                return query;
-            }
-        }
-
-        private class SeriesByMeanResult {
-            public string Group { get; set; }
-            public string Tag { get; set; }
-            public DateTime Time { get; set; }
-            public double Value { get; set; }
-        }
-
-        public IEnumerable<Series> GetSeriesByDayMean(SeriesQuery queryModel) {
-            using (var session = _store.OpenSession()) {
-                string orderDirection = queryModel.OrderBy == Ordering.Ascending ? "asc" : "desc";
-
-                var series = session.Query<SeriesByMeanResult>(
-                    $@"select json_build_object('Group', data->>'Group', 'Tag', data->>'Tag', 'Time', CAST(data->>'Time' as date), 'Value' ,(SUM( CAST(data->>'Value' as real )) / COUNT(*)))
-                    FROM public.mt_doc_series AS d
-                    WHERE (date_trunc('hour', CAST(data->>'Time' as timestamp)) >= :Start
-	                    AND date_trunc('hour', CAST(data->>'Time' as timestamp)) <= :End
-	                    AND d.data ->> 'Tag' = :Tag
-	                    AND d.data ->> 'Group' = :Group)
-                    GROUP BY data->>'Group', data->>'Tag', CAST(data->>'Time' as date)
-                    ORDER BY CAST(data->>'Time' as date) {orderDirection}
-                   LIMIT :Limit",
-                    new {
-                        queryModel.Group,
-                        queryModel.Tag,
-                        queryModel.Start,
-                        queryModel.End,
-                        Limit = queryModel.MaxValues
-                    });
-                
-                foreach (var group in series) {
-                    yield return new Series {
-                        Group = group.Group,
-                        Tag = group.Tag,
-                        Time = group.Time,
-                        Value = group.Value.ToString(CultureInfo.InvariantCulture)
-                    };
-                }
-            }
-        }
-
-        public IEnumerable<Series> GetSeriesByHourMean(SeriesQuery queryModel) {
-            using (var session = _store.OpenSession()) {
-                string orderDirection = queryModel.OrderBy == Ordering.Ascending ? "asc" : "desc";
-
-                var series = session.Query<SeriesByMeanResult>(
-                    $@"select json_build_object('Group', data->>'Group', 'Tag', data->>'Tag', 'Time', date_trunc('hour',CAST(data->>'Time' as timestamp)), 'Value' ,(SUM( CAST(data->>'Value' as real )) / COUNT(*)))
-                    FROM public.mt_doc_series AS d
-                    WHERE (date_trunc('hour', CAST(data->>'Time' as timestamp)) >= :Start
-	                    AND date_trunc('hour', CAST(data->>'Time' as timestamp)) <= :End
-	                    AND d.data ->> 'Tag' = :Tag
-	                    AND d.data ->> 'Group' = :Group)
-                    GROUP BY data->>'Group', data->>'Tag', date_trunc('hour',CAST(data->>'Time' as timestamp))
-                    ORDER BY date_trunc('hour',CAST(data->>'Time' as timestamp)) {orderDirection}
-                   LIMIT :Limit",
-                    new {
-                        queryModel.Group,
-                        queryModel.Tag,
-                        queryModel.Start,
-                        queryModel.End,
-                        Limit = queryModel.MaxValues
-                    });
-                foreach (var group in series) {
-                    yield return new Series {
-                        Group = group.Group,
-                        Tag = group.Tag,
-                        Time = group.Time,
-                        Value = group.Value.ToString(CultureInfo.InvariantCulture)
-                    };
-                }
-            }
+            return _unitOfWork.Session.Load<Series>(id);
         }
 
         public void Store(Series series) {
-            using (var session = _store.OpenSession()) {
-                session.Store(series);
-                session.SaveChanges();
-            }
+            _unitOfWork.Session.Store(series);
         }
     }
 }

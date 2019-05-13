@@ -9,15 +9,15 @@ namespace Monytor.WebApi.Controllers {
     [Route("api/[controller]")]
     public class SeriesController : Controller
     {
-        private readonly ICollectorService _collectorService;
+        private readonly ISeriesService _collectorService;
 
-        public SeriesController(ICollectorService collectorService) {
+        public SeriesController(ISeriesService collectorService) {
             _collectorService = collectorService;
         }
 
         [HttpGet("{id}")]
         public Series Get(int id) {
-            return _collectorService.GetSerie(id);
+            return _collectorService.GetSeries(id);
         }
 
         [HttpGet("{start}/{end}/{group}/{tag}")]
@@ -41,7 +41,7 @@ namespace Monytor.WebApi.Controllers {
 
         [HttpPost]
         public void Set([FromBody]Series series) {
-            _collectorService.Set(series);
+            _collectorService.Create(series);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Monytor.Scheduler.NetFramework {
         
         protected override void SetupBinder() {
             base.SetupBinder();
-            new PerformanceCounterCollector();
+            _ = typeof(PerformanceCounterCollector);
         }
     }
 }

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 
 namespace Monytor.Core.Services {
-    public interface ICollectorService {
+
+    public interface ISeriesService {
         IEnumerable<Series> GetSeries(SeriesQuery query);
-        Series GetSerie(int id);
+        Series GetSeries(int id);
         Dictionary<string, IEnumerable<string>> GetGroupValueSummary();
-        void Set(Series series);
+        void Create(Series series);
     }
 }
