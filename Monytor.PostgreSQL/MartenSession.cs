@@ -1,11 +1,13 @@
-﻿using Marten;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Marten;
 using Monytor.Core.Repositories;
 
 namespace Monytor.PostgreSQL {
     public class MartenSession : ISession {
         private readonly IDocumentSession _documentSession;
 
-        public MartenSession(Marten.IDocumentSession documentSession) {
+        public MartenSession(IDocumentSession documentSession) {
             _documentSession = documentSession;
         }
         
@@ -15,6 +17,13 @@ namespace Monytor.PostgreSQL {
 
         public T Load<T>(int id) {
             return _documentSession.Load<T>(id);
+        }
+
+        public IEnumerable<T> LoadAll<T>(int start = 0, int length = 1024) {
+          
+            return _documentSession.Query<T>()
+                .Skip(start)
+                .Take(length);
         }
 
         public void Store<T>(T item) {

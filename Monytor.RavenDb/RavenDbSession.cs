@@ -1,5 +1,7 @@
 ﻿using Monytor.Core.Repositories;
 using Raven.Client;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Monytor.RavenDb {
     public class RavenDbSession : ISession {
@@ -17,6 +19,12 @@ namespace Monytor.RavenDb {
             return _documentSession.Load<T>(id);
         }
 
+        public IEnumerable<T> LoadAll<T>(int start = 0, int length = 1024) {
+            return _documentSession.Query<T>()
+                .Skip(start)
+                .Take(length);
+        }
+
         public void Store<T>(T item) {
             _documentSession.Store(item);
         }
@@ -31,6 +39,6 @@ namespace Monytor.RavenDb {
 
         public void Delete(int id) {
             _documentSession.Delete(id);
-        }
+        }  
     }
 }

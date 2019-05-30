@@ -5,9 +5,9 @@ using Monytor.Core.Repositories;
 
 namespace Monytor.RavenDb.Repositories {
     public class DashboardRepository : IDashboardRepository {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DashboardRepository(UnitOfWork unitOfWork) {
+        public DashboardRepository(IUnitOfWork unitOfWork) {
             _unitOfWork = unitOfWork;
         }
 
@@ -16,11 +16,9 @@ namespace Monytor.RavenDb.Repositories {
         }
 
         public IEnumerable<Dashboard> LoadOverview() {
-            // ToDo: Query-Repository
-            using (var session = _unitOfWork.Store.OpenSession()) {
-                return session.Query<Dashboard>()
-                    .Take(1024).ToList();
-            }
+            // TODO: Currently limited up to 1024
+            return _unitOfWork.Session.LoadAll<Dashboard>()
+                .OrderBy(x => x.Name);
         }
 
         public void Store(Dashboard config) {

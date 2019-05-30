@@ -3,9 +3,9 @@ using Monytor.Core.Repositories;
 
 namespace Monytor.RavenDb.Repositories {
     public class SeriesRepository : ISeriesRepository {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public SeriesRepository(UnitOfWork unitOfWork) {
+        public SeriesRepository(IUnitOfWork unitOfWork) {
             _unitOfWork = unitOfWork;
         }
 
