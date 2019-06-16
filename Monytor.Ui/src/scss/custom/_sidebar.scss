@@ -1,0 +1,16 @@
+.sidebar {
+    position: fixed;
+    z-index: 1000;
+    top: 3rem;
+    left: 235px;
+    bottom: 0;
+    width: 235px;
+    margin-left: -235px;
+    margin-bottom: 45px;
+    padding-bottom: 40px;
+    border: none;
+    border-radius: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
