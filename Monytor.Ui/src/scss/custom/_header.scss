@@ -1,0 +1,11 @@
+@import 'colors';
+
+.header {
+    background-color: $header-background-color;
+    color: $header-text-color;
+    height: 50px;
+
+    .header-title {
+        margin-top: 10px;
+    }
+}

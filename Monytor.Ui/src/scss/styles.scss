@@ -8,11 +8,13 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 
 
 @import 'custom/sidebar';
+@import 'custom/header';
+@import 'custom/bootstrap';
 
 .mt-content {
     position: fixed;
-    top: 3rem;
-    left: 235px;
+    top: 50px;
+    left: 180px;
     bottom: 0;
-    width: 235px;
+    width: 500px;
 }

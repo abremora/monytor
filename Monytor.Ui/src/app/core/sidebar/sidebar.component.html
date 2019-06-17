@@ -1,8 +1,10 @@
-<ul class="nav flex-column sidebar">
-    <li class="nav-item">
-        <a class="nav-link active" [routerLink]="'/dashboard'">Dashboard</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" [routerLink]="'/administration'">Administration</a>
-    </li>
-</ul>
+<div class="row">
+    <div class="col-12">
+        <ul class="nav flex-column sidebar">
+            <li *ngFor="let navigationLink of navigationLinks" class="nav-item">
+                <a class="nav-link" (click)="onLinkClicked(navigationLink)"
+                   [ngClass]="{'active': navigationLink === activeNavigationLink}">{{navigationLink.title}}</a>
+            </li>
+        </ul>
+    </div>
+</div>

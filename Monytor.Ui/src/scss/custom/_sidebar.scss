@@ -1,16 +1,36 @@
+@import 'colors';
+
 .sidebar {
     position: fixed;
     z-index: 1000;
-    top: 3rem;
-    left: 235px;
+    top: 50px;
+    left: 180px;
     bottom: 0;
-    width: 235px;
-    margin-left: -235px;
-    margin-bottom: 45px;
-    padding-bottom: 40px;
+    width: 180px;
+    margin-left: -180px;
+    margin-bottom: 0;
+    padding-bottom: 0;
     border: none;
     border-radius: 0;
     overflow-y: auto;
     overflow-x: hidden;
     white-space: nowrap;
+    background-color: $header-background-color;
+
+    .nav {
+        margin-top: 10px;
+    }
+
+    a {
+        color: $header-text-color !important;
+    }
+
+    a.active {
+        background-color: $header-background-color-200;
+    }
+
+    a:hover {
+        color: $header-text-color-hover !important;
+        cursor: pointer;
+    }
 }
