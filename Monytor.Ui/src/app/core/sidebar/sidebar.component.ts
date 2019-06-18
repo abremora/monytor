@@ -1,28 +1,33 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { NavigationLink } from '../../shared/models/navigation-link.model';
+
+declare const $: any;
+declare interface RouteInfo {
+  path: string;
+  title: string;
+  icon: string;
+  class: string;
+}
+export const ROUTES: RouteInfo[] = [
+  { path: '/dashboard', title: 'Dashboard', icon: 'dashboard', class: '' },
+  { path: '/administration', title: 'Administration', icon: 'person', class: '' }
+];
 
 @Component({
   selector: 'mt-sidebar',
   templateUrl: './sidebar.component.html',
 })
 export class SidebarComponent implements OnInit {
-  public navigationLinks: NavigationLink[] = [
-    new NavigationLink('/dashboard', 'Dashboard'),
-    new NavigationLink('/administration', 'Administration'),
-  ];
+  menuItems: any[];
 
-  public activeNavigationLink: NavigationLink;
-
-  constructor(private router: Router) { }
+  constructor() { }
 
   ngOnInit() {
-    this.activeNavigationLink = this.navigationLinks[0];
+    this.menuItems = ROUTES.filter(menuItem => menuItem);
   }
-
-  public onLinkClicked(navigationLink: NavigationLink) {
-    this.activeNavigationLink = navigationLink;
-    this.router.navigateByUrl(navigationLink.linkUrl);
-  }
-
+  isMobileMenu() {
+    if ($(window).width() > 991) {
+      return false;
+    }
+    return true;
+  };
 }

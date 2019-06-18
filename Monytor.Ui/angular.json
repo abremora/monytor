@@ -28,9 +28,18 @@
               "src/assets"
             ],
             "styles": [
-              "src/scss/styles.scss"
+              "src/scss/styles.scss",
+              "node_modules/perfect-scrollbar/css/perfect-scrollbar.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.js",
+              "node_modules/popper.js/dist/umd/popper.js",
+              "node_modules/bootstrap-material-design/dist/js/bootstrap-material-design.min.js",
+              "node_modules/moment/moment.js",
+              "node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js",
+              "node_modules/bootstrap-notify/bootstrap-notify.js",
+              "node_modules/chartist/dist/chartist.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -108,5 +117,19 @@
       }
     }
   },
-  "defaultProject": "monytor"
+  "defaultProject": "monytor",
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "mt",
+      "spec": false,
+      "inlineStyle": true,
+      "style": "scss"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "mt",
+      "spec": false,
+      "inlineStyle": true,
+      "style": "scss"
+    }
+  }
 }
