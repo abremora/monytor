@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  baseHref: '/'
+  baseHref: '/',
+  monytorWebApiUrl: 'http://localhost:5000/api'
 };

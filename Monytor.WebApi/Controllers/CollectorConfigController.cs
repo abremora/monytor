@@ -16,6 +16,12 @@ namespace Monytor.WebApi.Controllers {
             _collectorConfigService = collectorConfigService;
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<CollectorConfigSearchResult>> SearchCollectorConfig(
+            [FromQuery] string searchTerms = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10) {
+            return Ok(await _collectorConfigService.SearchCollectorConfigAsync(searchTerms, page, pageSize));
+        }
+
         [HttpGet("{*collectorConfigId}")]
         public async Task<ActionResult<CollectorConfigStored>> GetCollectorConfig(string collectorConfigId) {
             return Ok(await _collectorConfigService.GetCollectorConfigAsync(Uri.UnescapeDataString(collectorConfigId)));

@@ -9,5 +9,6 @@ namespace Monytor.Core.Services {
         Task AddCollectorAsync(string collectorConfigId, AddCollectorToConfigCommand command);
         Task DeleteCollectorConfigAsync(string collectorConfigId);
         Task DeleteCollectorAsync(string collectorConfigId, string collectorId);
+        Task<Search<CollectorConfigSearchResult>> SearchCollectorConfigAsync(string searchTerms, int page, int pageSize);
     }
 }

@@ -15,9 +15,14 @@ namespace Monytor.Domain.Services {
             _collectorConfigRepository = collectorConfigRepository;
         }
 
+
         public Task<CollectorConfigStored> GetCollectorConfigAsync(string collectorConfigId) {
             var config = _collectorConfigRepository.Get(collectorConfigId);
             return Task.FromResult(config);
+        }
+
+        public async Task<Search<CollectorConfigSearchResult>> SearchCollectorConfigAsync(string searchTerms, int page, int pageSize) {
+            return await _collectorConfigRepository.SearchAsync(searchTerms, page, pageSize);
         }
 
         public Task<string> CreateCollectorConfigAsync(CreateCollectorConfigCommand command) {
@@ -71,5 +76,7 @@ namespace Monytor.Domain.Services {
             collector.PollingInterval = command.PollingInterval.TryParseTimeSpanFromString();
             collector.Verifiers = new System.Collections.Generic.List<Verifier>();
         }
+
+      
     }
 }

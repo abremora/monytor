@@ -26,7 +26,7 @@ namespace Monytor.WebApi {
             services.AddScoped<ISeriesService, SeriesService>();
             services.AddScoped<IViewCollectionService, ViewCollectionService>();
             services.AddScoped<ICollectorConfigService, CollectorConfigService>();
-            services.AddCors();
+            services.AddCors(setup=> setup.AddPolicy("localhost", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
             services.AddMvc();            
         }
         private static void SetupDatabase(IServiceCollection services, IConfiguration appConfig) {
@@ -55,6 +55,7 @@ namespace Monytor.WebApi {
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.UseCors("localhost");
             app.UseMvc();
         }
     }

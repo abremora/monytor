@@ -1,4 +1,8 @@
-﻿using Monytor.Core.Models;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Marten;
+using Marten.Pagination;
+using Monytor.Core.Models;
 using Monytor.Core.Repositories;
 
 namespace Monytor.PostgreSQL.Repositories {
@@ -23,6 +27,24 @@ namespace Monytor.PostgreSQL.Repositories {
 
         public void Delete(CollectorConfigStored collectorConfig) {
             _unitOfWork.Session.Delete(collectorConfig);
+        }
+
+        public async Task<Search<CollectorConfigSearchResult>> SearchAsync(string searchTerms, int page, int pageSize) {
+            using (var session = _unitOfWork.Store.QuerySession())
+            {
+                var pagedResult = await session.Query<CollectorConfigStored>()
+                    .Where(x => x.Search(searchTerms))
+                    .Select(s => new CollectorConfigSearchResult()
+                    {
+                        CollectorConfigId = s.Id,
+                        CollectorCount = s.Collectors.Count,
+                        DisplayName = s.DisplayName,
+                        NotificationCount = s.Notifications.Count,
+                        SchedulerAgentId = s.SchedulerAgentId
+                    })
+                   .ToPagedListAsync(page, pageSize);
+                return SearchFactory.CreateSearchResult(pagedResult);
+            }
         }
     }
 }

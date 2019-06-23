@@ -1,8 +1,10 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Microsoft.Extensions.DependencyInjection;
 using Monytor.Core.Repositories;
 using Monytor.RavenDb.Indices;
 using Monytor.RavenDb.Repositories;
+using Monytor.RavenDb.Transformer;
 using Raven.Client;
 using Raven.Client.Document;
 
@@ -30,6 +32,7 @@ namespace Monytor.RavenDb {
             var documentStore = RavenHelper.CreateStore(connectionString);
 
             SetupIndexes(documentStore);
+            SetupTransformer(documentStore);
             return documentStore;
         }
 
@@ -37,6 +40,7 @@ namespace Monytor.RavenDb {
             var documentStore = RavenHelper.CreateStore(databaseUrl, databaseName);
 
             SetupIndexes(documentStore);
+            SetupTransformer(documentStore);
             return documentStore;
         }
 
@@ -46,6 +50,12 @@ namespace Monytor.RavenDb {
             new SeriesByDayIndex().SideBySideExecute(documentStore);
             new SeriesByHourIndex().SideBySideExecute(documentStore);
             new TagGroupMapReduceIndex().SideBySideExecute(documentStore);
+           
+        }
+
+        private static void SetupTransformer(DocumentStore documentStore)
+        {
+            new CollectorConfigSearchResultTransformer().Execute(documentStore);
         }
     }
 }
