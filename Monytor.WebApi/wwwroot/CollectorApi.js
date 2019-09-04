@@ -332,10 +332,9 @@ var updateChartConfigDialog = function (chartNumber, linkId) {
 
     group.on('change', function () {
         var tagIndex = this.value;
-        var linkId = $(this).data("linkid");
-        var groupTagData = getJsonGroupTagFromStore(linkId);
+        var groupTagData = getDefaultJsonGroupTagDataFromStore();
         var selectedGroup = groupTagData[tagIndex];
-
+        var tag = $("#tag" + linkId);
         setTagsFromArray(selectedGroup.value, tag, null);
     });
 
