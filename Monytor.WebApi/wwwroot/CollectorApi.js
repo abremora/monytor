@@ -340,7 +340,7 @@ var updateChartConfigDialog = function (chartNumber, linkId) {
     });
 
     var add = $(wrapper).find("#update" + linkId);
-    add.click(addClick);
+    add.click(editClick);
 
     var close = $(wrapper).find(".chart-close");
     close.click(closeChart);
@@ -370,6 +370,101 @@ var addCollector = function (linkId, collectorIndex) {
 
     addCollectorForValues(linkId, group, tag, start, end, meanValueType);
 };
+
+var editCollector = function (linkId, collectorIndex) {
+    var viewRoot = $("#" + linkId);
+    var viewIndex = getElementIndex(viewRoot);
+
+    var dashboard = new Dashboard().load();
+    var collector = dashboard.views[viewIndex].collectors[collectorIndex];
+
+    var group = collector.group;
+    var tag = collector.tag;
+    var start = collector.start;
+    var end = collector.end;
+    var meanValueType = collector.meanValueType;
+
+    editCollectorForValues(linkId, group, tag, start, end, meanValueType);
+};
+
+var editCollectorForValues = function (linkId, group, tag, start, end, meanValueType) {
+    if (group === "" || tag === "")
+        return;
+
+    var apiUrl = getSeriesApiUrl();
+    var url = getUrlRequestSeries(apiUrl, start, end, group, tag, meanValueType);
+
+    $.ajax({
+        url: url
+    }).then(function(data) {
+
+        if (typeof data === 'undefined' && data.length <= 0) {
+            console.debug(url + ": result is empty");
+            return;
+        }
+
+        var result = data.map(a => a.value);
+        var time = data.map(a => moment(a.time));
+
+        var isNumeric = result.length > 0 && $.isNumeric(result[0]);
+
+        var maxTime = moment.max(time);
+        var minTime = moment.min(time);
+
+        var timeLabel = time.map(x => x.toISOString());
+
+        var duration = moment.duration(maxTime.diff(minTime));
+        var unit = 'day';
+        if (duration.years() > 0) {
+            unit = 'year';
+        } else if (duration.months() > 0) {
+            unit = 'month';
+        }
+
+        editChart(linkId, timeLabel, group, tag, result, isNumeric);
+    });
+};
+
+var editChart = function (linkId, timeLabel, group, tag, result, isNumeric) {
+    var color = randomColorGenerator();
+
+    var chart = charts[linkId].value;
+    chart.data.datasets.pop();
+    chart.data.datasets.push({
+        label: group + ": " + tag,
+        borderColor: color,
+        backgroundColor: Color(color).alpha(0.5).rgbString(),
+        fill: false,
+        data: result
+    });
+    chart.data.labels = timeLabel;
+    if (!isNumeric) {
+        var distinct = [...new Set(result)];
+        chart.options.scales.yAxes = nonNumericConfig.options.scales.yAxes;
+        chart.data.yLabels = distinct.reverse();
+    }
+    chart.update();
+}
+
+var addChart = function (linkId, timeLabel, group, tag, result, isNumeric) {
+    var color = randomColorGenerator();
+
+    var chart = charts[linkId].value;
+    chart.data.datasets.push({
+        label: group + ": " + tag,
+        borderColor: color,
+        backgroundColor: Color(color).alpha(0.5).rgbString(),
+        fill: false,
+        data: result
+    });
+    chart.data.labels = timeLabel;
+    if (!isNumeric) {
+        var distinct = [...new Set(result)];
+        chart.options.scales.yAxes = nonNumericConfig.options.scales.yAxes;
+        chart.data.yLabels = distinct.reverse();
+    }
+    chart.update();
+}
 
 var addCollectorForNewView = function (indexOfview, linkId) {
     var dashboard = new Dashboard().load();
@@ -424,24 +519,7 @@ var addCollectorForValues = function (linkId, group, tag, start, end, meanValueT
         else if (duration.months() > 0) {
             unit = 'month';
         }
-
-        var color = randomColorGenerator();
-
-        var chart = charts[linkId].value;
-        chart.data.datasets.push({
-            label: group + ": " + tag,
-            borderColor: color,
-            backgroundColor: Color(color).alpha(0.5).rgbString(),
-            fill: false,
-            data: result
-        });
-        chart.data.labels = timeLabel;
-        if (!isNumeric) {
-            var distinct = [...new Set(result)];           
-            chart.options.scales.yAxes = nonNumericConfig.options.scales.yAxes;
-            chart.data.yLabels = distinct.reverse();
-        }
-        chart.update();
+        addChart(linkId, timeLabel, group, tag, result, isNumeric);
     });
 };
 
@@ -506,7 +584,7 @@ var saveNewView = function () {
     return dashboard.views.length - 1;
 };
 
-var addClick = function (event) {
+var editClick = function (event) {
     var view = $(this).closest(".viewRoot");
 
     var linkId = view.attr("id");
@@ -529,11 +607,12 @@ var addClick = function (event) {
     collector.start = start;
     collector.end = end;
 
+    viewConfig.collectors.pop();
     viewConfig.collectors.push(collector);
 
     new Dashboard().save(views);
 
-    addCollector(linkId, viewConfig.collectors.length - 1);
+    editCollector(linkId, viewConfig.collectors.length - 1);
 };
 
 var delay = (function () {

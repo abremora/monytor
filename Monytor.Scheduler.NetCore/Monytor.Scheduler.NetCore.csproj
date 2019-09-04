@@ -6,7 +6,7 @@
     <Authors>Alexander Bremora</Authors>
     <Company>Alexander Bremora</Company>
     <LangVersion>7.3</LangVersion>
-    <AssemblyName>Monytor.Sheduler.NetCore</AssemblyName>
+    <AssemblyName>Monytor.Scheduler.NetCore</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
