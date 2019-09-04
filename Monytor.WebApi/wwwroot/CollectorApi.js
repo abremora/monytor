@@ -179,26 +179,12 @@ var setGroupTagDataToControls = function (groupControl, tagControl, groupSelecte
     setTagsFromArray(tagValue, tagControl, tagSelected);
 };
 
-var setJsonGroupTagDataToStore = function (linkId, jsonData) {
-    var viewRoot = $("#" + linkId);
-    var viewIndex = getElementIndex(viewRoot);
-
-    var dashboard = new Dashboard().load();
-    var view = dashboard.views[viewIndex];
-    view.jsonData = JSON.stringify(jsonData);
-    new Dashboard().save(dashboard);
-};
-
 var setDefaultJsonGroupTagDataToStore = function (jsonData) {
     sessionStorage.defaultGroupTagData = JSON.stringify(jsonData);
 };
 
-var getJsonGroupTagFromStore = function (linkId) {
-    var viewRoot = $("#" + linkId);
-    var viewIndex = getElementIndex(viewRoot);
-
-    var dashboard = JSON.parse(sessionStorage.dashboard);
-    return JSON.parse(dashboard.views[viewIndex].jsonData);
+var getJsonGroupTagFromStore = function () {
+    return JSON.parse(sessionStorage.defaultGroupTagData);
 };
 
 var getDefaultJsonGroupTagDataFromStore = function (jsonData) {
@@ -332,15 +318,14 @@ var updateChartConfigDialog = function (chartNumber, linkId) {
 
     group.on('change', function () {
         var tagIndex = this.value;
-        var linkId = $(this).data("linkid");
-        var groupTagData = getJsonGroupTagFromStore(linkId);
+        var groupTagData = getJsonGroupTagFromStore();
         var selectedGroup = groupTagData[tagIndex];
 
         setTagsFromArray(selectedGroup.value, tag, null);
     });
 
     var add = $(wrapper).find("#update" + linkId);
-    add.click(addClick);
+    add.click(updateClick);
 
     var close = $(wrapper).find(".chart-close");
     close.click(closeChart);
@@ -367,6 +352,25 @@ var addCollector = function (linkId, collectorIndex) {
     var start = collector.start;
     var end = collector.end;
     var meanValueType = collector.meanValueType;
+
+    addCollectorForValues(linkId, group, tag, start, end, meanValueType);
+};
+
+var updateCollector = function (linkId, collectorIndex) {
+    var viewRoot = $("#" + linkId);
+    var viewIndex = getElementIndex(viewRoot);
+
+    var dashboard = new Dashboard().load();
+    var collector = dashboard.views[viewIndex].collectors[collectorIndex];
+
+    var group = collector.group;
+    var tag = collector.tag;
+    var start = collector.start;
+    var end = collector.end;
+    var meanValueType = collector.meanValueType;
+
+    var chart = charts[linkId].value;
+        chart.data.datasets = [];
 
     addCollectorForValues(linkId, group, tag, start, end, meanValueType);
 };
@@ -441,6 +445,10 @@ var addCollectorForValues = function (linkId, group, tag, start, end, meanValueT
             chart.options.scales.yAxes = nonNumericConfig.options.scales.yAxes;
             chart.data.yLabels = distinct.reverse();
         }
+        else {
+            chart.options.scales.yAxes = [{ ticks: { } }];
+            chart.data.yLabels = null;
+        }
         chart.update();
     });
 };
@@ -506,7 +514,7 @@ var saveNewView = function () {
     return dashboard.views.length - 1;
 };
 
-var addClick = function (event) {
+var updateClick = function (event) {
     var view = $(this).closest(".viewRoot");
 
     var linkId = view.attr("id");
@@ -529,11 +537,12 @@ var addClick = function (event) {
     collector.start = start;
     collector.end = end;
 
+    viewConfig.collectors = [];
     viewConfig.collectors.push(collector);
 
     new Dashboard().save(views);
 
-    addCollector(linkId, viewConfig.collectors.length - 1);
+    updateCollector(linkId, viewConfig.collectors.length - 1);
 };
 
 var delay = (function () {
@@ -554,7 +563,6 @@ function Collector() {
 }
 
 function View() {
-    this.jsonData = null;
     this.collectors = new Array();
 }
 
