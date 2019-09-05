@@ -53,7 +53,49 @@ var getSeriesApiUrl = function () {
     return sessionStorage.defaultSourceUrl + "/series";
 };
 
+var cb = function(start, end) {
+    $('#dateRangePicker span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+}
+
+var updateAllCharts = function(ev, picker) {
+    console.log("it works");
+    var dashboard = new Dashboard().load();
+    var views = dashboard.views;
+
+    console.log(views);
+    views.forEach(function(x) {
+        var collectors = x.collectors;
+        collectors.forEach(function(y) {
+            y.start = picker.startDate.format('YYYY-MM-DD');
+            y.end = picker.endDate.format('YYYY-MM-DD');
+            console.log(y.start);
+            console.log(y.end);
+        });
+    });
+    dashboard.views = views;
+    new Dashboard().save(dashboard);
+}
+
 $(document).ready(function () {
+    var start = moment().subtract(29, 'days');
+    var end = moment();
+
+    $('#daterange').daterangepicker({
+        startDate: start,
+        endDate: end,
+        ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }, cb);
+
+    $('#daterange').on('apply.daterangepicker', updateAllCharts);
+
+    cb(start, end);
     if (typeof(Storage) === "undefined") {
         alert("No support for Web Storage. Please update your browser.");
     }
@@ -119,6 +161,8 @@ $("#settings").click(function () {
     $("#defaultSourceUrlId").val(sessionStorage.defaultSourceUrl);
     $("#defaultTimeRangeId").val(sessionStorage.defaultTimeRangeInDays);
 });
+
+
 
 var loadFromStore = function () {
     var chartNumber = 0;
@@ -514,18 +558,18 @@ var saveNewView = function () {
 };
 
 var updateClick = function (event) {
-    var view = $(this).closest(".viewRoot");
+    var viewRoot = $(this).closest(".viewRoot");
 
-    var linkId = view.attr("id");
+    var linkId = viewRoot.attr("id");
 
     var group = $(document).find("#group" + linkId + " option:selected").text();
     var tag = $(document).find("#tag" + linkId + " option:selected").text();
     var end = $(document).find("#end" + linkId).val();
     var start = $("#start" + linkId).val();
 
-    var viewIndex = getElementIndex(view);
-    var views = JSON.parse(sessionStorage.dashboard);
-    var viewConfig = views.views[viewIndex];
+    var viewIndex = getElementIndex(viewRoot);
+    var dashboard = JSON.parse(sessionStorage.dashboard);
+    var view = dashboard.views[viewIndex];
 
     var collector = new Collector();
     collector.group = group;
@@ -533,12 +577,12 @@ var updateClick = function (event) {
     collector.start = start;
     collector.end = end;
 
-    viewConfig.collectors = [];
-    viewConfig.collectors.push(collector);
+    view.collectors = [];
+    view.collectors.push(collector);
 
     new Dashboard().save(views);
 
-    updateCollector(linkId, viewConfig.collectors.length - 1);
+    updateCollector(linkId, view.collectors.length - 1);
 };
 
 var delay = (function () {

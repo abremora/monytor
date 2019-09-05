@@ -5,13 +5,14 @@
   "private": true,
   "main": "index.js",
   "dependencies": {
-    "jquery": "^3.3.1",
+    "@fortawesome/fontawesome-free": "^5.1.0",
     "bootstrap": "^4.1.1",
-    "popper.js": "^1.14.4",
     "chart.js": "^2.7.3",
+    "daterangepicker": "^3.0.5",
+    "jquery": "^3.3.1",
     "moment": "^2.22.2",
     "mustache": "^2.3.0",
-    "@fortawesome/fontawesome-free": "^5.1.0"
+    "popper.js": "^1.14.4"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

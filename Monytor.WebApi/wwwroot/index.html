@@ -8,6 +8,8 @@
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="vendor/mustache/mustache.min.js"></script>
     <script src="vendor/@fortawesome/js/all.js"></script>
+    <script src="vendor/daterangepicker/daterangepicker.js"></script>
+    <link rel="stylesheet" href="vendor/daterangepicker/daterangepicker.css"></link>
     <title>Monytor Dashboard</title>
     <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
     <style>
@@ -71,13 +73,18 @@
 <body>
     <nav class="navbar navbar-expand-sm navbar-light sticky-top bg-light shadow">
         <a class="navbar-brand" href="#">Monytor Dashboard</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
         <div class="w-100"></div>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
+                    <li class="nav-item text-nowrap m-1">
+                        <div class="input-group mb-3" style="min-width: 250px">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="dateRangePickerPrepend"><i class="fas fa-history"></i></span>
+                                </div>
+                            <input type="text" class="form-control" placeholder="Date Range" aria-label="Date Range" aria-describedby="dateRangePickerPrepend" name="daterange" id="daterange">
+                        </div>
+                    </li>
                 <li class="nav-item text-nowrap m-1">
                     <button type="button" class="btn btn-secondary" id="loadViewCollection" data-toggle="modal" data-target="#loadViewCollectionModal">
                         <span class="fas fa-upload"></span>
@@ -93,8 +100,6 @@
                         <span class="fas fa-cog"></span>
                     </button>
                 </li>
-            </ul>
-            <ul class="navbar-nav mr-auto">
                 <li class="nav-item text-nowrap m-1">
                     <button type="button" class="btn btn-primary" id="addView" data-toggle="modal" data-target="#addViewModal">
                         <div><span class="fas fa-plus"></span> Add view</div>
@@ -313,7 +318,8 @@
             </div>
         </div>
     </div>
-<script src="CollectorApi.js"></script>
+
+    <script src="CollectorApi.js"></script>
     <script src="ViewCollectionApi.js"></script>
 </body>
 </html>
