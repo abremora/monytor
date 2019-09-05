@@ -179,29 +179,11 @@ var setGroupTagDataToControls = function (groupControl, tagControl, groupSelecte
     setTagsFromArray(tagValue, tagControl, tagSelected);
 };
 
-var setJsonGroupTagDataToStore = function (linkId, jsonData) {
-    var viewRoot = $("#" + linkId);
-    var viewIndex = getElementIndex(viewRoot);
-
-    var dashboard = new Dashboard().load();
-    var view = dashboard.views[viewIndex];
-    view.jsonData = JSON.stringify(jsonData);
-    new Dashboard().save(dashboard);
-};
-
 var setDefaultJsonGroupTagDataToStore = function (jsonData) {
     sessionStorage.defaultGroupTagData = JSON.stringify(jsonData);
 };
 
-var getJsonGroupTagFromStore = function (linkId) {
-    var viewRoot = $("#" + linkId);
-    var viewIndex = getElementIndex(viewRoot);
-
-    var dashboard = JSON.parse(sessionStorage.dashboard);
-    return JSON.parse(dashboard.views[viewIndex].jsonData);
-};
-
-var getDefaultJsonGroupTagDataFromStore = function (jsonData) {
+var getDefaultJsonGroupTagDataFromStore = function () {
     if (sessionStorage.defaultGroupTagData === undefined) return null;
     return JSON.parse(sessionStorage.defaultGroupTagData);
 };
@@ -339,7 +321,7 @@ var updateChartConfigDialog = function (chartNumber, linkId) {
     });
 
     var add = $(wrapper).find("#update" + linkId);
-    add.click(editClick);
+    add.click(updateClick);
 
     var close = $(wrapper).find(".chart-close");
     close.click(closeChart);
@@ -370,7 +352,7 @@ var addCollector = function (linkId, collectorIndex) {
     addCollectorForValues(linkId, group, tag, start, end, meanValueType);
 };
 
-var editCollector = function (linkId, collectorIndex) {
+var updateCollector = function (linkId, collectorIndex) {
     var viewRoot = $("#" + linkId);
     var viewIndex = getElementIndex(viewRoot);
 
@@ -383,67 +365,11 @@ var editCollector = function (linkId, collectorIndex) {
     var end = collector.end;
     var meanValueType = collector.meanValueType;
 
-    editCollectorForValues(linkId, group, tag, start, end, meanValueType);
-};
-
-var editCollectorForValues = function (linkId, group, tag, start, end, meanValueType) {
-    if (group === "" || tag === "")
-        return;
-
-    var apiUrl = getSeriesApiUrl();
-    var url = getUrlRequestSeries(apiUrl, start, end, group, tag, meanValueType);
-
-    $.ajax({
-        url: url
-    }).then(function(data) {
-
-        if (typeof data === 'undefined' && data.length <= 0) {
-            console.debug(url + ": result is empty");
-            return;
-        }
-
-        var result = data.map(a => a.value);
-        var time = data.map(a => moment(a.time));
-
-        var isNumeric = result.length > 0 && $.isNumeric(result[0]);
-
-        var maxTime = moment.max(time);
-        var minTime = moment.min(time);
-
-        var timeLabel = time.map(x => x.toISOString());
-
-        var duration = moment.duration(maxTime.diff(minTime));
-        var unit = 'day';
-        if (duration.years() > 0) {
-            unit = 'year';
-        } else if (duration.months() > 0) {
-            unit = 'month';
-        }
-
-        editChart(linkId, timeLabel, group, tag, result, isNumeric);
-    });
-};
-
-var editChart = function (linkId, timeLabel, group, tag, result, isNumeric) {
-    var color = randomColorGenerator();
-
     var chart = charts[linkId].value;
-    chart.data.datasets.pop();
-    chart.data.datasets.push({
-        label: group + ": " + tag,
-        borderColor: color,
-        backgroundColor: Color(color).alpha(0.5).rgbString(),
-        fill: false,
-        data: result
-    });
-    chart.data.labels = timeLabel;
-    if (!isNumeric) {
-        var distinct = [...new Set(result)];
-        chart.options.scales.yAxes = nonNumericConfig.options.scales.yAxes;
-        chart.data.yLabels = distinct.reverse();
-    }
-    chart.update();
-}
+    chart.data.datasets = [];
+
+    addCollectorForValues(linkId, group, tag, start, end, meanValueType);
+};
 
 var addChart = function (linkId, timeLabel, group, tag, result, isNumeric) {
     var color = randomColorGenerator();
@@ -461,6 +387,10 @@ var addChart = function (linkId, timeLabel, group, tag, result, isNumeric) {
         var distinct = [...new Set(result)];
         chart.options.scales.yAxes = nonNumericConfig.options.scales.yAxes;
         chart.data.yLabels = distinct.reverse();
+    }
+    else {
+        chart.options.scales.yAxes = [{ ticks: {} }];
+        chart.data.yLabels = null;
     }
     chart.update();
 }
@@ -583,7 +513,7 @@ var saveNewView = function () {
     return dashboard.views.length - 1;
 };
 
-var editClick = function (event) {
+var updateClick = function (event) {
     var view = $(this).closest(".viewRoot");
 
     var linkId = view.attr("id");
@@ -592,9 +522,6 @@ var editClick = function (event) {
     var tag = $(document).find("#tag" + linkId + " option:selected").text();
     var end = $(document).find("#end" + linkId).val();
     var start = $("#start" + linkId).val();
-    var apiUrl = getdefaultApiUrl();
-
-    var url = getUrlRequestSeries(apiUrl, start, end, group, tag);
 
     var viewIndex = getElementIndex(view);
     var views = JSON.parse(sessionStorage.dashboard);
@@ -606,12 +533,12 @@ var editClick = function (event) {
     collector.start = start;
     collector.end = end;
 
-    viewConfig.collectors.pop();
+    viewConfig.collectors = [];
     viewConfig.collectors.push(collector);
 
     new Dashboard().save(views);
 
-    editCollector(linkId, viewConfig.collectors.length - 1);
+    updateCollector(linkId, viewConfig.collectors.length - 1);
 };
 
 var delay = (function () {
