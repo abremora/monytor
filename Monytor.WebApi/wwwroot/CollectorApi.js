@@ -59,11 +59,12 @@ var cb = function(start, end) {
 
 var updateAllCharts = function(ev, picker) {
     console.log("it works");
-    var dashboard = new Dashboard().load();
-    var views = dashboard.views;
 
-    console.log(views);
-    views.forEach(function(x) {
+    charts = new Array();
+    $("#chartArea").empty();
+    var dashboard = new Dashboard().load();
+
+    dashboard.views.forEach(function(x) {
         var collectors = x.collectors;
         collectors.forEach(function(y) {
             y.start = picker.startDate.format('YYYY-MM-DD');
@@ -72,17 +73,17 @@ var updateAllCharts = function(ev, picker) {
             console.log(y.end);
         });
     });
-    dashboard.views = views;
+
     new Dashboard().save(dashboard);
+
+    loadFromStore();
 }
 
 $(document).ready(function () {
-    var start = moment().subtract(29, 'days');
-    var end = moment();
 
     $('#daterange').daterangepicker({
-        startDate: start,
-        endDate: end,
+        startDate: moment(),
+        endDate: moment(),
         ranges: {
             'Today': [moment(), moment()],
             'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -95,7 +96,8 @@ $(document).ready(function () {
 
     $('#daterange').on('apply.daterangepicker', updateAllCharts);
 
-    cb(start, end);
+    cb(moment(), moment());
+
     if (typeof(Storage) === "undefined") {
         alert("No support for Web Storage. Please update your browser.");
     }
@@ -121,6 +123,8 @@ $(document).ready(function () {
     else {
         loadFromStore();
     }
+    updateAllCharts(null, $('#daterange'));
+    console.log(charts);
 });
 
 $("#addViewButton").click(function () {
@@ -232,7 +236,7 @@ var getDefaultJsonGroupTagDataFromStore = function () {
     return JSON.parse(sessionStorage.defaultGroupTagData);
 };
 
-var createChart = function (canvas, charttype) {
+var createEmptyChart = function (canvas, charttype) {
     if (charttype === "undefined")
         charttype = "line";
 
@@ -325,7 +329,7 @@ var insertChart = function (chartNumber, chartType) {
         
     var canvas = $(wrapper).find("canvas")[0];
     $("#chartArea").append(wrapper);   
-    var newChart = createChart(canvas, chartType);
+    var newChart = createEmptyChart(canvas, chartType);
     var chartView = {
         key: linkId,
         value: newChart
@@ -580,7 +584,7 @@ var updateClick = function (event) {
     view.collectors = [];
     view.collectors.push(collector);
 
-    new Dashboard().save(views);
+    new Dashboard().save(dashboard);
 
     updateCollector(linkId, view.collectors.length - 1);
 };
