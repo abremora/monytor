@@ -111,7 +111,7 @@
     <template id="chartTemplate">
         <div class="flex-item chartWrapper">
             <div class="buttonNav">
-                <button type="button" class="btn btn-success btn-circle" title="Add collector" data-toggle="modal" data-target="#addModal{{linkId}}">
+                <button type="button" class="btn btn-success btn-circle" title="Update view" data-toggle="modal" data-target="#addModal{{linkId}}">
                     <div><span class="fas fa-pen"></span></div>
                 </button>
                 <button type="button" class="btn btn-danger btn-circle chart-close" title="Close view" data-linkid="{{linkId}}">
@@ -159,7 +159,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="update{{linkId}}" data-linkid="{{linkId}}">Update</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="update{{linkId}}" data-linkid="{{linkId}}">Update</button>
                                 </div>
                             </div>
                         </div>
@@ -313,8 +313,7 @@
             </div>
         </div>
     </div>
-
-    <script src="CollectorApi.js"></script>
+<script src="CollectorApi.js"></script>
     <script src="ViewCollectionApi.js"></script>
 </body>
 </html>
