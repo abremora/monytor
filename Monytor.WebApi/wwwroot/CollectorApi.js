@@ -53,13 +53,11 @@ var getSeriesApiUrl = function () {
     return sessionStorage.defaultSourceUrl + "/series";
 };
 
-var cb = function(start, end) {
+var dateRangePickerCallback = function(start, end) {
     $('#dateRangePicker span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 }
 
 var updateAllCharts = function(ev, picker) {
-    console.log("it works");
-
     charts = new Array();
     $("#chartArea").empty();
     var dashboard = new Dashboard().load();
@@ -69,8 +67,6 @@ var updateAllCharts = function(ev, picker) {
         collectors.forEach(function(y) {
             y.start = picker.startDate.format('YYYY-MM-DD');
             y.end = picker.endDate.format('YYYY-MM-DD');
-            console.log(y.start);
-            console.log(y.end);
         });
     });
 
@@ -92,11 +88,11 @@ $(document).ready(function () {
             'This Month': [moment().startOf('month'), moment().endOf('month')],
             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         }
-    }, cb);
+    }, dateRangePickerCallback);
 
     $('#daterange').on('apply.daterangepicker', updateAllCharts);
 
-    cb(moment(), moment());
+    dateRangePickerCallback(moment(), moment());
 
     if (typeof(Storage) === "undefined") {
         alert("No support for Web Storage. Please update your browser.");
@@ -124,7 +120,6 @@ $(document).ready(function () {
         loadFromStore();
     }
     updateAllCharts(null, $('#daterange'));
-    console.log(charts);
 });
 
 $("#addViewButton").click(function () {
