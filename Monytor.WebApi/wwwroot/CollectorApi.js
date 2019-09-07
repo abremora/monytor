@@ -53,7 +53,47 @@ var getSeriesApiUrl = function () {
     return sessionStorage.defaultSourceUrl + "/series";
 };
 
+var dateRangePickerCallback = function(start, end) {
+    $('#dateRangePicker span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+}
+
+var updateAllCharts = function(ev, picker) {
+    charts = new Array();
+    $("#chartArea").empty();
+    var dashboard = new Dashboard().load();
+
+    dashboard.views.forEach(function(x) {
+        var collectors = x.collectors;
+        collectors.forEach(function(y) {
+            y.start = picker.startDate.format('YYYY-MM-DD');
+            y.end = picker.endDate.format('YYYY-MM-DD');
+        });
+    });
+
+    new Dashboard().save(dashboard);
+
+    loadFromStore();
+}
+
 $(document).ready(function () {
+
+    $('#daterange').daterangepicker({
+        startDate: moment(),
+        endDate: moment(),
+        ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }, dateRangePickerCallback);
+
+    $('#daterange').on('apply.daterangepicker', updateAllCharts);
+
+    dateRangePickerCallback(moment(), moment());
+
     if (typeof(Storage) === "undefined") {
         alert("No support for Web Storage. Please update your browser.");
     }
@@ -79,6 +119,7 @@ $(document).ready(function () {
     else {
         loadFromStore();
     }
+    updateAllCharts(null, $('#daterange'));
 });
 
 $("#addViewButton").click(function () {
@@ -119,6 +160,8 @@ $("#settings").click(function () {
     $("#defaultSourceUrlId").val(sessionStorage.defaultSourceUrl);
     $("#defaultTimeRangeId").val(sessionStorage.defaultTimeRangeInDays);
 });
+
+
 
 var loadFromStore = function () {
     var chartNumber = 0;
@@ -188,7 +231,7 @@ var getDefaultJsonGroupTagDataFromStore = function () {
     return JSON.parse(sessionStorage.defaultGroupTagData);
 };
 
-var createChart = function (canvas, charttype) {
+var createEmptyChart = function (canvas, charttype) {
     if (charttype === "undefined")
         charttype = "line";
 
@@ -281,7 +324,7 @@ var insertChart = function (chartNumber, chartType) {
         
     var canvas = $(wrapper).find("canvas")[0];
     $("#chartArea").append(wrapper);   
-    var newChart = createChart(canvas, chartType);
+    var newChart = createEmptyChart(canvas, chartType);
     var chartView = {
         key: linkId,
         value: newChart
@@ -514,18 +557,18 @@ var saveNewView = function () {
 };
 
 var updateClick = function (event) {
-    var view = $(this).closest(".viewRoot");
+    var viewRoot = $(this).closest(".viewRoot");
 
-    var linkId = view.attr("id");
+    var linkId = viewRoot.attr("id");
 
     var group = $(document).find("#group" + linkId + " option:selected").text();
     var tag = $(document).find("#tag" + linkId + " option:selected").text();
     var end = $(document).find("#end" + linkId).val();
     var start = $("#start" + linkId).val();
 
-    var viewIndex = getElementIndex(view);
-    var views = JSON.parse(sessionStorage.dashboard);
-    var viewConfig = views.views[viewIndex];
+    var viewIndex = getElementIndex(viewRoot);
+    var dashboard = JSON.parse(sessionStorage.dashboard);
+    var view = dashboard.views[viewIndex];
 
     var collector = new Collector();
     collector.group = group;
@@ -533,12 +576,12 @@ var updateClick = function (event) {
     collector.start = start;
     collector.end = end;
 
-    viewConfig.collectors = [];
-    viewConfig.collectors.push(collector);
+    view.collectors = [];
+    view.collectors.push(collector);
 
-    new Dashboard().save(views);
+    new Dashboard().save(dashboard);
 
-    updateCollector(linkId, viewConfig.collectors.length - 1);
+    updateCollector(linkId, view.collectors.length - 1);
 };
 
 var delay = (function () {
