@@ -3,6 +3,7 @@ using Monytor.Core.Services;
 using Monytor.Domain.Factories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Monytor.Core.Configurations;
@@ -27,7 +28,7 @@ namespace Monytor.WebApi {
             services.AddScoped<IViewCollectionService, ViewCollectionService>();
             services.AddScoped<ICollectorConfigService, CollectorConfigService>();
             services.AddCors(setup=> setup.AddPolicy("localhost", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
-            services.AddMvc();            
+            services.AddControllers();
         }
         private static void SetupDatabase(IServiceCollection services, IConfiguration appConfig) {
             var storageProvider = appConfig.GetValue<StorageProvider>("storageProvider");
@@ -45,7 +46,7 @@ namespace Monytor.WebApi {
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -56,7 +57,13 @@ namespace Monytor.WebApi {
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseCors("localhost");
-            app.UseMvc();
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+           {
+               //endpoints.MapRazorPages();
+               endpoints.MapControllers();
+           });
         }
     }
 }

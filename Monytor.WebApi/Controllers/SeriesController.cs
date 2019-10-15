@@ -35,8 +35,12 @@ namespace Monytor.WebApi.Controllers {
         }
 
         [HttpGet]
-        public List<KeyValuePair<string, IEnumerable<string>>> GroupValueSummary() {
-            return _collectorService.GetGroupValueSummary().ToList();
+        public ActionResult GroupValueSummary() {
+            return Ok(_collectorService.GetGroupValueSummary().Select(s => new
+            {
+                key = s.Key,
+                value = s.Value
+            }));
         }
 
         [HttpPost]
