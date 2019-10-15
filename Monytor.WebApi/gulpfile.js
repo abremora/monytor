@@ -47,6 +47,10 @@ var deps = {
         "fontawesome-free/**/*.js": "",
         "fontawesome-free/**/*.css": ""
     },
+    "daterangepicker": {
+        "daterangepicker.js" : "",
+        "daterangepicker.css" : ""
+    },
 };
 
 gulp.task("clean", function (cb) {
