@@ -18,8 +18,8 @@ namespace Monytor.Startup {
     public class Bootstrapper {
         public async static Task<IContainer> Setup(IConfiguration configuration) {
             var builder = new ContainerBuilder();
-
             var loggerFactory = new LoggerFactory();
+            
             loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
 
             var logger = loggerFactory.CreateLogger<Bootstrapper>();
