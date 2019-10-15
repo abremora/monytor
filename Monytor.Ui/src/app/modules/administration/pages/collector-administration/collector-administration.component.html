@@ -1,7 +1,20 @@
 <div class="main-content">
   <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="form-group">
+          <input type="text" (keyup)="onSearchValueChange($event.target.value)" placeholder="Search"
+                 class="form-control" />
+        </div>
+      </div>
+    </div>
+    <div *ngIf="(collectorConfigurations$ | async) as searchResult">
+
+    </div>
+
     <p>
-      collector-administration works!
+
 
       <mt-create-collector-configuration></mt-create-collector-configuration>
     </p>
