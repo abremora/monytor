@@ -28,7 +28,7 @@ namespace Monytor.WebApi {
             services.AddScoped<IViewCollectionService, ViewCollectionService>();
             services.AddScoped<ICollectorConfigService, CollectorConfigService>();
             services.AddCors(setup=> setup.AddPolicy("localhost", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
         }
         private static void SetupDatabase(IServiceCollection services, IConfiguration appConfig) {
             var storageProvider = appConfig.GetValue<StorageProvider>("storageProvider");
@@ -53,11 +53,11 @@ namespace Monytor.WebApi {
                 app.UseDeveloperExceptionPage();
             }
             app.UseMiddleware<UnitOfWorkMiddleware>();
-
+            app.UseRouting();
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseCors("localhost");
-            app.UseRouting();
+        
 
             app.UseEndpoints(endpoints =>
            {
