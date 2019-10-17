@@ -6,11 +6,10 @@ import { CollectorConfigSearchResult } from '../../models/collector-config-searc
 import { Search } from 'src/app/shared/models/search.model';
 
 @Component({
-  selector: 'mt-collector-administration',
-  templateUrl: './collector-administration.component.html'
+  selector: 'mt-search-collector-configuration',
+  templateUrl: './search-collector-configuration.component.html'
 })
-export class CollectorAdministrationComponent implements OnInit, OnDestroy {
-
+export class SearchCollectorConfigurationComponent implements OnInit, OnDestroy {
 
   private searchTermSubject = new Subject<string>();
   private unsubscribe = new Subject();
