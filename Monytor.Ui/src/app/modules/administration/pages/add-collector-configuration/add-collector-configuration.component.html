@@ -1,8 +1,14 @@
 <div class="main-content">
   <div class="container-fluid">
-    <div class="row">
-      <i class="material-icons c-pointer" [routerLink]="'/administration'">keyboard_arrow_left</i>
-      <span><strong>Create new Collector Configuration</strong></span>
+    <div class="row ">
+      <div class="col">
+        <button mat-raised-button type="button"
+                [routerLink]="'/administration'"
+                class=" btn btn-primary btn-link btn-sm btn-just-icon">
+          <i class="material-icons">keyboard_arrow_left</i>
+        </button>
+        <span><strong>Create new Collector Configuration</strong></span>
+      </div>
     </div>
   </div>
   <form [formGroup]="collectorConfigurationForm" (ngSubmit)="onSubmit()"
