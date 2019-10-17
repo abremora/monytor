@@ -1,22 +1,24 @@
 <div class="main-content">
   <div class="container-fluid">
-
     <div class="row">
       <div class="col-sm-4">
-        <div class="form-group">
-          <input type="text" (keyup)="onSearchValueChange($event.target.value)" placeholder="Search"
-                 class="form-control" />
-        </div>
+
+        <mat-form-field>
+          <input type="text" (keyup)="onSearchValueChange($event.target.value)"
+                 placeholder="Search configurations"
+                 matInput />
+        </mat-form-field>
+      </div>
+      <div class="col-sm-1">
+        <button mat-raised-button class="btn btn-primary btn-sm btn-danger top-25"
+                [routerLink]="'/administration/add'"><i
+             class="material-icons">add</i></button>
       </div>
     </div>
-    <div *ngIf="(collectorConfigurations$ | async) as searchResult">
+    <ng-container *ngIf="(collectorConfigurations$ | async) as searchResult">
+      <mt-collector-configuration-table [collectorConfigurations]="searchResult">
+      </mt-collector-configuration-table>
+    </ng-container>
 
-    </div>
-
-    <p>
-
-
-      <mt-create-collector-configuration></mt-create-collector-configuration>
-    </p>
   </div>
 </div>

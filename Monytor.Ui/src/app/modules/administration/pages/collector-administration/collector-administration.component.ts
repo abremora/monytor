@@ -24,10 +24,9 @@ export class CollectorAdministrationComponent implements OnInit, OnDestroy {
     this.collectorConfigurations$ = this.searchTermSubject
       .pipe(
         distinct(),
-        filter(x => x.length > 3 || x.length === 0),
+        filter(x => x.length >= 2 || x.length === 0),
         takeUntil(this.unsubscribe),
-        switchMap(term => this.apiService.search(term, 1, 10)),
-        tap(x => console.log(x))
+        switchMap(term => this.apiService.search(term, 1, 25)),
       );
   }
 

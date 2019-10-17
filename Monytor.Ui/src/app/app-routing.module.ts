@@ -1,20 +1,23 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, PreloadingStrategy, PreloadAllModules } from '@angular/router';
 
 const routes: Routes = [
   {
     path: 'administration',
-    loadChildren: './modules/administration/administration.module#AdministrationModule'
+    loadChildren: () => import('./modules/administration/administration.module').then(m => m.AdministrationModule)
   },
   {
     path: 'dashboard',
-    loadChildren: './modules/dashboard/dashboard.module#DashboardModule'
+    loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule)
   },
-  { path: '', redirectTo: 'administration', pathMatch: 'full' }
+  { path: '', redirectTo: 'administration', pathMatch: 'full' },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes,
+    {
+      urlUpdateStrategy: 'eager'
+    })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CollectorConfigApiService } from '../services/collector-config-api.service';
-import { CreateCollectorConfigCommand } from '../models/create-collector-config-command.model';
+import { CollectorConfigApiService } from '../../../../services/collector-config-api.service';
+import { CreateCollectorConfigCommand } from '../../../../models/create-collector-config-command.model';
 
 
 @Component({

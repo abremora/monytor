@@ -3,9 +3,11 @@ import { Injectable, InjectionToken, Inject } from '@angular/core';
 import { CollectorConfigSearchResult } from '../models/collector-config-search-result.model';
 import { Search } from 'src/app/shared/models/search.model';
 import { CreateCollectorConfigCommand } from '../models/create-collector-config-command.model';
+import { CollectorConfiguration } from '../models/collector-configuration.model';
 
 @Injectable()
 export class CollectorConfigApiService {
+
   constructor(
     @Inject('MonytorWebApiUrl') private apiUrl: string,
     private httpClient: HttpClient
@@ -17,6 +19,10 @@ export class CollectorConfigApiService {
       this.apiUrl
       }/collectorconfig/search?searchTerms=${searchTerms}&page=${page}&pageSize=${pageSize}`
     );
+  }
+
+  public getCollectorConfiguration(id: string) {
+    return this.httpClient.get<CollectorConfiguration>(`${this.apiUrl}/collectorconfig/${id}`);
   }
 
   public createCollectorConfig(command: CreateCollectorConfigCommand) {
