@@ -9,6 +9,7 @@ import { AddCollectorConfigurationComponent } from './pages/add-collector-config
 import { EditCollectorConfigurationComponent } from './pages/edit-collector-configuration/edit-collector-configuration.component';
 import { CollectorConfigurationTableComponent } from './pages/search-collector-configuration/components/collector-configuration-table/collector-configuration-table.component';
 import { SearchCollectorConfigurationComponent } from './pages/search-collector-configuration/search-collector-configuration.component';
+import { CoreModule } from 'src/app/core/core.module';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { SearchCollectorConfigurationComponent } from './pages/search-collector-
     EditCollectorConfigurationComponent
   ],
   imports: [CommonModule,
-
+    CoreModule,
     AdministrationRoutingModule,
     ReactiveFormsModule,
     MatFormFieldModule,

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { CollectorConfigSearchResult } from '../../models/collector-config-search-result.model';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CollectorConfigApiService } from '../../services/collector-config-api.service';

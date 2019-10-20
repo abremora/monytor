@@ -1,10 +1,21 @@
 <div class="main-content">
   <div class="container-fluid">
+    <div class="row ">
+      <div class="col">
+        <mt-back-button></mt-back-button>
+        <span><strong>Create new Collector Configuration</strong></span>
+      </div>
+    </div>
+
     <ng-container *ngIf="(collectorConfiguration$ | async) as collectorConfiguration">
 
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">{{collectorConfiguration.id}}</h4>
+          <p class="card-text">{{collectorConfiguration.displayName}}</p>
+        </div>
+      </div>
 
     </ng-container>
-
-
   </div>
 </div>

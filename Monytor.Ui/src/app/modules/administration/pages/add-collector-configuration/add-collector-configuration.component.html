@@ -2,35 +2,32 @@
   <div class="container-fluid">
     <div class="row ">
       <div class="col">
-        <button mat-raised-button type="button"
-                [routerLink]="'/administration'"
-                class=" btn btn-primary btn-link btn-sm btn-just-icon">
-          <i class="material-icons">keyboard_arrow_left</i>
-        </button>
+        <mt-back-button></mt-back-button>
         <span><strong>Create new Collector Configuration</strong></span>
       </div>
     </div>
+
+    <form [formGroup]="collectorConfigurationForm" (ngSubmit)="onSubmit()"
+          class="p-4">
+      <div class="row">
+        <div class="col-sm-4">
+          <mat-form-field>
+            <input matInput type="text" placeholder="Display Name" formControlName="displayName">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <mat-form-field>
+            <input matInput type="text" placeholder="Scheduler Agent" formControlName="schedulerAgent">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <button mat-raised-button class="btn btn-primary btn-danger mat-icon-button"
+              type="submit" [disabled]="!collectorConfigurationForm.valid"><i
+           class="material-icons mr-1">save</i>Save</button>
+    </form>
   </div>
-  <form [formGroup]="collectorConfigurationForm" (ngSubmit)="onSubmit()"
-        class="p-4">
-    <div class="row">
-      <div class="col-sm-4">
-        <mat-form-field>
-          <input matInput type="text" placeholder="Display Name" formControlName="displayName">
-        </mat-form-field>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-4">
-        <mat-form-field>
-          <input matInput type="text" placeholder="Scheduler Agent" formControlName="schedulerAgent">
-        </mat-form-field>
-      </div>
-    </div>
-
-    <button mat-raised-button class="btn btn-primary btn-danger mat-icon-button"
-            type="submit" [disabled]="!collectorConfigurationForm.valid"><i
-         class="material-icons mr-1">save</i>Save</button>
-  </form>
 </div>
