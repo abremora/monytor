@@ -22,18 +22,33 @@ namespace Monytor.Domain.Services {
         }
 
         public async Task<Search<CollectorConfigSearchResult>> SearchCollectorConfigAsync(string searchTerms, int page, int pageSize) {
+            if (string.IsNullOrWhiteSpace(searchTerms))
+            {
+                return new Search<CollectorConfigSearchResult>();
+            }
             return await _collectorConfigRepository.SearchAsync(searchTerms, page, pageSize);
         }
 
         public Task<string> CreateCollectorConfigAsync(CreateCollectorConfigCommand command) {
-            var newConfig = new CollectorConfigStored() {
+            var newCollectorConfig = new CollectorConfigStored() {
                 Id = CollectorConfigStored.CreateId(),
                 DisplayName = command.DisplayName,
                 SchedulerAgentId = command.SchedulerAgentId
             };
-            newConfig.ValidateAndThrow();
-            _collectorConfigRepository.Store(newConfig);
-            return Task.FromResult(newConfig.Id);
+            newCollectorConfig.ValidateAndThrow();
+            _collectorConfigRepository.Store(newCollectorConfig);
+            return Task.FromResult(newCollectorConfig.Id);
+        }
+
+        public Task EditCollectorConfigAsync(EditCollectorConfigCommand command) {
+            var currentCollectorConfig = _collectorConfigRepository.Get(command.Id);
+
+            currentCollectorConfig.DisplayName = command.DisplayName;
+            currentCollectorConfig.SchedulerAgentId = command.SchedulerAgentId;
+
+            currentCollectorConfig.ValidateAndThrow();
+
+            return Task.CompletedTask;
         }
 
         public Task DeleteCollectorConfigAsync(string collectorConfigId) {
@@ -77,6 +92,6 @@ namespace Monytor.Domain.Services {
             collector.Verifiers = new System.Collections.Generic.List<Verifier>();
         }
 
-      
+       
     }
 }

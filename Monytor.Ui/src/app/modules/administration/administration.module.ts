@@ -10,13 +10,15 @@ import { EditCollectorConfigurationComponent } from './pages/edit-collector-conf
 import { CollectorConfigurationTableComponent } from './pages/search-collector-configuration/components/collector-configuration-table/collector-configuration-table.component';
 import { SearchCollectorConfigurationComponent } from './pages/search-collector-configuration/search-collector-configuration.component';
 import { CoreModule } from 'src/app/core/core.module';
+import { CollectorConfigurationFormComponent } from './components/collector-configuration-form/collector-configuration-form.component';
 
 @NgModule({
   declarations: [
     SearchCollectorConfigurationComponent,
     CollectorConfigurationTableComponent,
     AddCollectorConfigurationComponent,
-    EditCollectorConfigurationComponent
+    EditCollectorConfigurationComponent,
+    CollectorConfigurationFormComponent
   ],
   imports: [CommonModule,
     CoreModule,

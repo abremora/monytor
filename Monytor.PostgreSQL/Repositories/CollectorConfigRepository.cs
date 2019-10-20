@@ -32,8 +32,13 @@ namespace Monytor.PostgreSQL.Repositories {
         public async Task<Search<CollectorConfigSearchResult>> SearchAsync(string searchTerms, int page, int pageSize) {
             using (var session = _unitOfWork.Store.QuerySession())
             {
-                var pagedResult = await session.Query<CollectorConfigStored>()
-                    .Where(x => x.Search(searchTerms))
+                var query =  session.Query<CollectorConfigStored>().AsQueryable();
+                if(searchTerms != "***") {
+                    query = query.Where(x => x.Search(searchTerms));
+                }
+
+                var pagedResult =
+                    await query
                     .Select(s => new CollectorConfigSearchResult()
                     {
                         CollectorConfigId = s.Id,

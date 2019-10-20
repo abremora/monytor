@@ -4,6 +4,7 @@ import { CollectorConfigSearchResult } from '../models/collector-config-search-r
 import { Search } from 'src/app/shared/models/search.model';
 import { CreateCollectorConfigCommand } from '../models/create-collector-config-command.model';
 import { CollectorConfiguration } from '../models/collector-configuration.model';
+import { EditCollectorConfigCommand } from '../models/edit-collector-config-command.model';
 
 @Injectable()
 export class CollectorConfigApiService {
@@ -29,5 +30,14 @@ export class CollectorConfigApiService {
     return this.httpClient.post<string>(`${this.apiUrl}/collectorconfig`, command, {
       responseType: 'text' as 'json'
     });
+  }
+
+  public editCollectorConfiguration(command: EditCollectorConfigCommand) {
+    return this.httpClient.post<void>(`${this.apiUrl}/collectorconfig/${command.id}`, command);
+  }
+
+  public deleteCollectorConfiguration(id: string) {
+    id = encodeURIComponent(id);
+    return this.httpClient.delete<void>(`${this.apiUrl}/collectorconfig/${id}`);
   }
 }

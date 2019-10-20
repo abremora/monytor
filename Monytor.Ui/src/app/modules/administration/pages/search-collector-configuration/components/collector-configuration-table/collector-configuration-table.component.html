@@ -1,7 +1,7 @@
 <div class="card-content table-responsive table-full-width">
   <table class="table">
     <thead class="text-danger">
-      <th style="width: 50px;">Actions</th>
+      <th style="width: 100px;">Actions</th>
       <th>Display Name</th>
       <th>Scheduler Agent</th>
       <th>Collectors</th>
@@ -10,9 +10,15 @@
     </thead>
     <tbody>
       <tr *ngFor="let collectorConfiguration of collectorConfigurations.items">
-        <td><button class="btn btn-secondary btn-sm mat-icon-button"
+        <td><button class="btn btn-secondary btn-sm mat-icon-button p-0"
                   [routerLink]="['/administration/edit', collectorConfiguration.collectorConfigId]"><i
-               class="material-icons mr-1">edit</i> </button> </td>
+               class="material-icons ">edit</i> </button>
+
+          <button class="btn btn-secondary btn-sm mat-icon-button p-0"
+                  (click)="deleteCollectorConfiguration(collectorConfiguration.collectorConfigId)"><i
+               class="material-icons ">delete</i> </button>
+
+        </td>
         <td>{{collectorConfiguration.displayName}}</td>
         <td>{{collectorConfiguration.schedulerAgentId}}</td>
         <td>{{collectorConfiguration.notificationCount}}</td>

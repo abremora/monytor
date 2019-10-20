@@ -18,15 +18,19 @@ namespace Monytor.RavenDb.Repositories {
 
         public async Task<Search<CollectorConfigSearchResult>> SearchAsync(string searchTerms, int page, int pageSize) {
             using (var session = _unitOfWork.Store.OpenAsyncSession()) {
-                var query = session.Advanced.AsyncDocumentQuery<CollectorConfigIndex.Result, CollectorConfigIndex>()
-                    .Search(x => x.Content, searchTerms)
-                    .OrderBy(o => o.DisplayName)
+
+                var query = session.Advanced.AsyncDocumentQuery<CollectorConfigIndex.Result, CollectorConfigIndex>();
+                if (searchTerms != "***") {
+                    query = query.Search(x => x.Content, searchTerms);
+                }
+
+                var transformedQuery = query.OrderBy(o => o.DisplayName)
                     .Skip(page - 1 * pageSize)
                     .Take(pageSize)
                     .Statistics(out var stats)
                     .SetResultTransformer<CollectorConfigSearchResultTransformer, CollectorConfigSearchResult>();
 
-                var items = await query.ToListAsync();
+                var items = await transformedQuery.ToListAsync();
                 return SearchFactory.CreateSearchResult(items, stats, page, pageSize);
             }
         }
