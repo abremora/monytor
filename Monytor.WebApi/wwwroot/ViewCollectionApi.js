@@ -34,8 +34,8 @@ var loadDashboardFromDb = function (viewId) {
                 var range = view.range;
                 var timespan = moment.duration(range);
                 var start = endDate.clone().subtract(timespan);
-                
-                var collector = new Collector();                
+
+                var collector = new Collector();
                 collector.group = group;
                 collector.tag = tag;
                 collector.end = endDate.utc().toISOString();
@@ -52,7 +52,7 @@ var loadDashboardFromDb = function (viewId) {
             new Dashboard().save(dashboard);
 
             loadFromStore();
-        }).catch((err) => {
+        }).catch(function (err) {
             alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);
         });
 };
@@ -82,7 +82,7 @@ $("#loadViewCollection").click(function () {
         $("#loadViewListGroup").empty();
         $("#loadViewListGroup").append(items.join(''));
 
-    }).catch((err) => {
+    }).catch(function (err) {
         alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);
     });
 });

@@ -15,10 +15,10 @@
     "popper.js": "^1.14.4"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-concat": "2.6.1",
     "gulp-cssmin": "^0.1.7",
-    "gulp-uglify": "2.0.1",
+    "gulp-uglify": "^3.0.2",
     "merge-stream": "^1.0.1",
     "rimraf": "2.6.1",
     "run-sequence": "^2.2.1"

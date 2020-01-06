@@ -1,12 +1,12 @@
 ﻿var charts = new Array();
-var defaultTimeRangeInDays = 3;
+var defaultTimeRangeInDays = 5;
 
 var nonNumericConfig = {
-    type: 'line',    
+    type: 'line',
     options: {
         responsive: true,
         title: {
-            display: true            
+            display: true
         },
         scales: {
             xAxes: [{
@@ -53,20 +53,26 @@ var getSeriesApiUrl = function () {
     return sessionStorage.defaultSourceUrl + "/series";
 };
 
-var dateRangePickerCallback = function(start, end) {
+var dateRangePickerCallback = function (start, end) {
     $('#dateRangePicker span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 }
 
-var updateAllCharts = function(ev, picker) {
+var updateAllCharts = function (ev, picker) {
     charts = new Array();
     $("#chartArea").empty();
     var dashboard = new Dashboard().load();
 
-    dashboard.views.forEach(function(x) {
+    dashboard.views.forEach(function (x) {
         var collectors = x.collectors;
-        collectors.forEach(function(y) {
-            y.start = picker.startDate.format('YYYY-MM-DD');
-            y.end = picker.endDate.format('YYYY-MM-DD');
+        collectors.forEach(function (y) {
+            if (picker) {
+                if (picker.startDate) {
+                    y.start = picker.startDate.format('YYYY-MM-DD');
+                }
+                if (picker.endDate) {
+                    y.end = picker.endDate.format('YYYY-MM-DD');
+                }
+            }
         });
     });
 
@@ -94,7 +100,7 @@ $(document).ready(function () {
 
     dateRangePickerCallback(moment(), moment());
 
-    if (typeof(Storage) === "undefined") {
+    if (typeof (Storage) === "undefined") {
         alert("No support for Web Storage. Please update your browser.");
     }
 
@@ -189,7 +195,7 @@ var loadAllSeriesGroupsViaUrl = function (url) {
         var groupControl = $(document).find("#group");
         var tagControl = $(document).find("#tag");
         setGroupTagDataToControls(groupControl, tagControl, null, null);
-    }).catch((err) => {
+    }).catch(function (err) {
         alert("'" + err.status + " " + err.statusText + "' " + "for: " + url);
     });
 };
@@ -211,6 +217,9 @@ var setGroupTagDataToControls = function (groupControl, tagControl, groupSelecte
         if (groupText === groupSelected) {
             selectedIndex = index;
         }
+    }
+    if (!jsonData || jsonData.length === 0) {
+        return;
     }
 
     var tagValue = jsonData[0].value;
@@ -252,7 +261,7 @@ var createEmptyChart = function (canvas, charttype) {
                     offset: false,
                     bounds: 'ticks',
                     scaleLabel: {
-                        display: true                       
+                        display: true
                     },
                     type: 'time',
                     time: {
@@ -303,8 +312,8 @@ var setTagsFromArray = function (tages, tagElement, tagSelected) {
     }
 
     if (selectedIndex > 0 && selectedIndex < tages.length) {
-        tagElement.val(selectedIndex);        
-    } 
+        tagElement.val(selectedIndex);
+    }
 };
 
 var insertChart = function (chartNumber, chartType) {
@@ -321,9 +330,9 @@ var insertChart = function (chartNumber, chartType) {
     $(wrapper).attr("class", "viewRoot");
     $(wrapper).attr("id", linkId);
     $(wrapper).html(html);
-        
+
     var canvas = $(wrapper).find("canvas")[0];
-    $("#chartArea").append(wrapper);   
+    $("#chartArea").append(wrapper);
     var newChart = createEmptyChart(canvas, chartType);
     var chartView = {
         key: linkId,
@@ -370,8 +379,7 @@ var updateChartConfigDialog = function (chartNumber, linkId) {
     close.click(closeChart);
 };
 
-$("#updateGroupTag").click( function () {
-});
+$("#updateGroupTag").click(function () {});
 
 $("#closeViews").click(function () {
     charts = new Array();
@@ -416,7 +424,9 @@ var updateCollector = function (linkId, collectorIndex) {
 
 var addChart = function (linkId, timeLabel, group, tag, result, isNumeric) {
     var color = randomColorGenerator();
-
+    if (!charts[linkId]) {
+        return;
+    }
     var chart = charts[linkId].value;
     chart.data.datasets.push({
         label: group + ": " + tag,
@@ -427,12 +437,13 @@ var addChart = function (linkId, timeLabel, group, tag, result, isNumeric) {
     });
     chart.data.labels = timeLabel;
     if (!isNumeric) {
-        var distinct = [...new Set(result)];
+        var distinct = [new Set(result)];
         chart.options.scales.yAxes = nonNumericConfig.options.scales.yAxes;
         chart.data.yLabels = distinct.reverse();
-    }
-    else {
-        chart.options.scales.yAxes = [{ ticks: {} }];
+    } else {
+        chart.options.scales.yAxes = [{
+            ticks: {}
+        }];
         chart.data.yLabels = null;
     }
     chart.update();
@@ -473,22 +484,27 @@ var addCollectorForValues = function (linkId, group, tag, start, end, meanValueT
             return;
         }
 
-        var result = data.map(a => a.value);
-        var time = data.map(a => moment(a.time));
+        var result = data.map(function (a) {
+            return a.value;
+        });
+        var time = data.map(function (a) {
+            return moment(a.time);
+        });
 
         var isNumeric = result.length > 0 && $.isNumeric(result[0]);
 
         var maxTime = moment.max(time);
         var minTime = moment.min(time);
 
-        var timeLabel = time.map(x => x.toISOString());
+        var timeLabel = time.map(function (x) {
+            return x.toISOString();
+        });
 
         var duration = moment.duration(maxTime.diff(minTime));
         var unit = 'day';
         if (duration.years() > 0) {
             unit = 'year';
-        }
-        else if (duration.months() > 0) {
+        } else if (duration.months() > 0) {
             unit = 'month';
         }
         addChart(linkId, timeLabel, group, tag, result, isNumeric);
@@ -516,11 +532,11 @@ var getUrlRequestSeries = function (apiUrl, start, end, group, tag, meanValueTyp
     var endDay = moment(end).add(1, 'day').subtract(1, 'second').toISOString();
     var tagEscaped = encodeURIComponent(tag);
     var groupEscaped = encodeURIComponent(group);
-    var url = apiUrl + "/"
-        + start + "/"
-        + endDay + "/"
-        + groupEscaped + "/"
-        + tagEscaped;
+    var url = apiUrl + "/" +
+        start + "/" +
+        endDay + "/" +
+        groupEscaped + "/" +
+        tagEscaped;
 
     if (meanValueType !== null && meanValueType !== "") {
         url = url + "?meanValueType=" + meanValueType;
@@ -536,9 +552,9 @@ var saveNewView = function () {
     var end = $("#end").val();
     var chartType = $("#charttype option:selected").text();
     var meanValueType = $("#meanValueSelect option:selected").val();
-    
+
     var dashboard = new Dashboard().load();
-        
+
     var collectorConfig = new Collector();
     collectorConfig.group = groupSelected;
     collectorConfig.tag = tagSelected;
@@ -592,7 +608,7 @@ var delay = (function () {
     };
 })();
 
-function Collector() {   
+function Collector() {
     this.group = "";
     this.tag = "";
     this.start = null;

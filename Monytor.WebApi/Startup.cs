@@ -57,7 +57,6 @@ namespace Monytor.WebApi {
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseCors("localhost");
-        
 
             app.UseEndpoints(endpoints =>
            {

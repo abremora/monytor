@@ -111,10 +111,6 @@
     <Compile Include="RavenTestContext.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\packages\RavenDB.Database.3.5.9\tools\Raven.Studio.Html5.zip">
-      <Link>Raven.Studio.Html5.zip</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>

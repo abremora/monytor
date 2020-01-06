@@ -9,13 +9,12 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var rimraf = require("rimraf");
 var merge = require('merge-stream');
-var runSequence = require('run-sequence');
 
 gulp.task("minify", function () {
 
     var streams = [
-        gulp.src(["wwwroot/js/*.js"])
-            .pipe(uglify())
+        gulp.src(["wwwroot/*.js"])
+           .pipe(uglify())
             .pipe(concat("site.min.js"))
             .pipe(gulp.dest("wwwroot/lib/site"))
     ];
@@ -77,8 +76,8 @@ gulp.task("scripts", function () {
 //gulp.task("default", ['clean', 'minify', 'scripts']);
 
 // Gulp 4.0 only
-//gulp.task("default", gulp.series('clean', 'minify', 'scripts'));
+gulp.task("default", gulp.series('clean', 'minify', 'scripts'));
 
-gulp.task("default", function (callback) {
-    runSequence('clean', 'minify', 'scripts');
-});
+//gulp.task("default", function (callback) {
+//    runSequence('clean', 'minify', 'scripts');
+//});
