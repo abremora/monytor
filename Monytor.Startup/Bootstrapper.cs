@@ -16,7 +16,7 @@ using Monytor.Implementation;
 
 namespace Monytor.Startup {
     public class Bootstrapper {
-        public async static Task<IContainer> Setup(IConfiguration configuration) {
+        public static async Task<IContainer> Setup(IConfiguration configuration) {
             var builder = new ContainerBuilder();
             var loggerFactory = new LoggerFactory();
             
@@ -29,7 +29,6 @@ namespace Monytor.Startup {
             builder.RegisterInstance(schedulerConfiguration);
 
             SetupDatabase(builder, logger, schedulerConfiguration);
-
             logger.LogInformation("Setup DI");
             await SetupDi(builder, configuration, loggerFactory);
 

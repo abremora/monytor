@@ -76,6 +76,7 @@ namespace Monytor.Scheduler {
                 .SetBasePath(directory)
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile("appsettings.local.json", true)
+                .AddJsonFile("settings/appsettings.docker.json", true)
                 .Build();
         }
 

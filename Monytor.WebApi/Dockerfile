@@ -5,10 +5,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 WORKDIR /src
-RUN apk add --update npm
-RUN npm install -g gulp@4.0.2
-RUN npm install gulp@4.0.2
 COPY Monytor.WebApi/package.json Monytor.WebApi/package.json 
+RUN apk add --update npm && npm install -g gulp@4.0.2 && npm install gulp@4.0.2
 RUN cd Monytor.WebApi && npm install
 
 COPY ["Monytor.WebApi/Monytor.WebApi.csproj", "Monytor.WebApi/"]
@@ -30,8 +28,7 @@ COPY ["Monytor.PostgreSQL/Monytor.PostgreSQL.csproj", "Monytor.PostgreSQL/"]
 RUN dotnet restore "Monytor.WebApi/Monytor.WebApi.csproj"
 COPY . .
 WORKDIR "/src/Monytor.WebApi"
-RUN gulp -f gulpfile.js
-RUN dotnet build "Monytor.WebApi.csproj" -c Release -o /app/build
+RUN gulp -f gulpfile.js && dotnet build "Monytor.WebApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "Monytor.WebApi.csproj" -c Release -o /app/publish
