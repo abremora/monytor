@@ -3,16 +3,11 @@
     <div class="row">
       <div class="col-sm-4">
 
-        <mat-form-field>
-          <input type="text" (keyup)="onSearchValueChange($event.target.value)"
-                 placeholder="Search configurations"
-                 matInput />
-        </mat-form-field>
+        <input type="text" (keyup)="onSearchValueChange($event.target.value)" placeholder="Search configurations" />
       </div>
       <div class="col-sm-1">
-        <button mat-raised-button class="btn btn-primary btn-sm btn-danger top-25"
-                [routerLink]="'/administration/add'"><i
-             class="material-icons">add</i></button>
+        <button class="btn btn-primary btn-sm btn-danger top-25" [routerLink]="'/administration/add'"><i
+            class="material-icons">add</i></button>
       </div>
     </div>
     <ng-container *ngIf="(collectorConfigurations$ | async) as searchResult">

@@ -11,12 +11,12 @@
     <tbody>
       <tr *ngFor="let collectorConfiguration of collectorConfigurations.items">
         <td><button class="btn btn-secondary btn-sm mat-icon-button p-0"
-                  [routerLink]="['/administration/edit', collectorConfiguration.collectorConfigId]"><i
-               class="material-icons ">edit</i> </button>
+            [routerLink]="['/administration/edit', collectorConfiguration.collectorConfigId]"><i
+              class="material-icons ">edit</i> </button>
 
           <button class="btn btn-secondary btn-sm mat-icon-button p-0"
-                  (click)="deleteCollectorConfiguration(collectorConfiguration.collectorConfigId)"><i
-               class="material-icons ">delete</i> </button>
+            (click)="deleteCollectorConfiguration(collectorConfiguration.collectorConfigId)"><i
+              class="material-icons ">delete</i> </button>
 
         </td>
         <td>{{collectorConfiguration.displayName}}</td>

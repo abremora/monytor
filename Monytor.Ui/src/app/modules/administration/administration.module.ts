@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { AdministrationRoutingModule } from './administration-routing.module';
 import { CollectorConfigApiService } from './services/collector-config-api.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatInputModule } from '@angular/material';
 // tslint:disable-next-line: max-line-length
 import { AddCollectorConfigurationComponent } from './pages/add-collector-configuration/add-collector-configuration.component';
 import { EditCollectorConfigurationComponent } from './pages/edit-collector-configuration/edit-collector-configuration.component';
@@ -23,9 +22,7 @@ import { CollectorConfigurationFormComponent } from './components/collector-conf
   imports: [CommonModule,
     CoreModule,
     AdministrationRoutingModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule
+    ReactiveFormsModule
   ],
   providers: [CollectorConfigApiService],
   entryComponents: [SearchCollectorConfigurationComponent]
