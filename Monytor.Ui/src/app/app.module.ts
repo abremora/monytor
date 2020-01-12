@@ -1,6 +1,7 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { APP_BASE_HREF } from '@angular/common';
@@ -11,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    MDBBootstrapModule.forRoot(),
     BrowserAnimationsModule,
     HttpClientModule,
     CoreModule,

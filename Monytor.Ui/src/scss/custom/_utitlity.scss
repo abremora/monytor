@@ -5,3 +5,13 @@
 .top-25 {
     top: 25%;
 }
+
+.no-shadow{
+    box-shadow: none !important;
+    :focus{
+        box-shadow: none !important;
+    }
+    :hover{
+        box-shadow: none !important;
+    }
+}

@@ -1,9 +1,11 @@
-<div class="main-content">
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-4">
-
-        <input type="text" (keyup)="onSearchValueChange($event.target.value)" placeholder="Search configurations" />
+        <div class="md-form">
+          <input type="text" class="form-control" (keyup)="onSearchValueChange($event.target.value)"
+            id="searchConfigurationInput" mdbInput />
+          <label for="searchConfigurationInput">Search</label>
+        </div>
       </div>
       <div class="col-sm-1">
         <button class="btn btn-primary btn-sm btn-danger top-25" [routerLink]="'/administration/add'"><i
@@ -16,4 +18,3 @@
     </ng-container>
 
   </div>
-</div>

@@ -1,13 +1,18 @@
-<form [formGroup]="collectorConfigurationForm" (ngSubmit)="onSubmit()" class="p-4">
-  <div class="row">
+<form [formGroup]="collectorConfigurationForm" (ngSubmit)="onSubmit()" class="ml-5 mt-3">
+  <div class="row  ">
     <div class="col-sm-4">
-      <input type="text" placeholder="Display Name" formControlName="displayName">
+      <div class="md-form mt-1 mb-1">
+        <input type="text" class="form-control" formControlName="displayName" id="displayNameInput" mdbInput />
+        <label for="displayNameInput">Display Name</label>
+      </div>
     </div>
   </div>
-
   <div class="row">
     <div class="col-sm-4">
-      <input type="text" placeholder="Scheduler Agent" formControlName="schedulerAgent">
+      <div class="md-form mt-1 mb-1">
+        <input type="text" class="form-control" formControlName="schedulerAgent" id="schedulerAgentInput" mdbInput />
+        <label for="schedulerAgentInput">Scheduler Agent</label>
+      </div>
     </div>
   </div>
 

@@ -5,6 +5,7 @@ import { FooterComponent } from './footer/footer.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { RouterModule } from '@angular/router';
 import { BackButtonComponent } from './back-button/back-button.component';
+import { NavbarModule, WavesModule, DropdownModule, ButtonsModule } from 'angular-bootstrap-md';
 
 @NgModule({
     declarations: [
@@ -15,7 +16,12 @@ import { BackButtonComponent } from './back-button/back-button.component';
     ],
     imports: [
         CommonModule,
-        RouterModule
+        RouterModule,
+        NavbarModule,
+        ButtonsModule,
+        DropdownModule.forRoot(),
+        WavesModule.forRoot()
+
     ],
     exports: [FooterComponent,
         NavbarComponent,
