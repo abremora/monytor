@@ -10,7 +10,7 @@ import { CollectorConfigurationTableComponent } from './pages/search-collector-c
 import { SearchCollectorConfigurationComponent } from './pages/search-collector-configuration/search-collector-configuration.component';
 import { CoreModule } from 'src/app/core/core.module';
 import { CollectorConfigurationFormComponent } from './components/collector-configuration-form/collector-configuration-form.component';
-import { InputsModule } from 'angular-bootstrap-md';
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
 @NgModule({
   declarations: [
@@ -24,7 +24,7 @@ import { InputsModule } from 'angular-bootstrap-md';
     CoreModule,
     AdministrationRoutingModule,
     ReactiveFormsModule,
-    InputsModule
+    MDBBootstrapModule
   ],
   providers: [CollectorConfigApiService],
   entryComponents: [SearchCollectorConfigurationComponent]

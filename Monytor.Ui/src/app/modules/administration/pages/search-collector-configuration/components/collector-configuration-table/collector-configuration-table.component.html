@@ -1,29 +1,31 @@
-<div class="card-content table-responsive table-full-width">
-  <table class="table">
-    <thead class="text-danger">
-      <th style="width: 100px;">Actions</th>
-      <th>Display Name</th>
-      <th>Scheduler Agent</th>
-      <th>Collectors</th>
-      <th>Notifations</th>
+<table mdbTable striped="true">
+  <thead>
+    <tr>
+      <th scope="col" style="width: 100px;">Actions</th>
+      <th scope="col">Display Name</th>
+      <th scope="col">Scheduler Agent</th>
+      <th scope="col">Collectors</th>
+      <th scope="col">Notifations</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr mdbTableCol *ngFor="let collectorConfiguration of collectorConfigurations.items">
+      <td>
+        <button mdbBtn class="p-1 m-0 no-shadow"
+          [routerLink]="['/administration/edit', collectorConfiguration.collectorConfigId]">
+          <mdb-icon fas icon="edit" class="indigo-text"></mdb-icon>
+        </button>
 
-    </thead>
-    <tbody>
-      <tr *ngFor="let collectorConfiguration of collectorConfigurations.items">
-        <td><button class="btn btn-secondary btn-sm mat-icon-button p-0"
-            [routerLink]="['/administration/edit', collectorConfiguration.collectorConfigId]"><i
-              class="material-icons ">edit</i> </button>
+        <button mdbBtn class="p-1 m-0 no-shadow"
+          (click)="deleteCollectorConfiguration(collectorConfiguration.collectorConfigId)">
+          <mdb-icon fas icon="trash"></mdb-icon>
+        </button>
+      </td>
+      <td>{{collectorConfiguration.displayName}}</td>
+      <td>{{collectorConfiguration.schedulerAgentId}}</td>
+      <td>{{collectorConfiguration.notificationCount}}</td>
+      <td>{{collectorConfiguration.collectorCount}}</td>
+    </tr>
 
-          <button class="btn btn-secondary btn-sm mat-icon-button p-0"
-            (click)="deleteCollectorConfiguration(collectorConfiguration.collectorConfigId)"><i
-              class="material-icons ">delete</i> </button>
-
-        </td>
-        <td>{{collectorConfiguration.displayName}}</td>
-        <td>{{collectorConfiguration.schedulerAgentId}}</td>
-        <td>{{collectorConfiguration.notificationCount}}</td>
-        <td>{{collectorConfiguration.collectorCount}}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  </tbody>
+</table>

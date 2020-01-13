@@ -15,7 +15,12 @@
       </div>
     </div>
   </div>
-
-  <button class="btn btn-primary btn-danger mat-icon-button" type="submit"
-    [disabled]="!collectorConfigurationForm.valid"><i class="material-icons mr-1">save</i>Save</button>
+  <div class="row">
+    <div class="col-sm-4 ">
+      <button mdbBtn type="submit" color="primary" [disabled]="!collectorConfigurationForm.valid" class="float-right">
+        <mdb-icon fas icon="save"></mdb-icon>
+        Save
+      </button>
+    </div>
+  </div>
 </form>

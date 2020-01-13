@@ -6,10 +6,13 @@
             id="searchConfigurationInput" mdbInput />
           <label for="searchConfigurationInput">Search</label>
         </div>
+
       </div>
-      <div class="col-sm-1">
-        <button class="btn btn-primary btn-sm btn-danger top-25" [routerLink]="'/administration/add'"><i
-            class="material-icons">add</i></button>
+
+      <div class="col-sm-1 align-self-center">
+        <button mdbBtn color="primary" size="sm" [routerLink]="'/administration/add'">
+          <mdb-icon fas icon="plus"></mdb-icon>
+        </button>
       </div>
     </div>
     <ng-container *ngIf="(collectorConfigurations$ | async) as searchResult">
