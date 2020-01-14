@@ -9,14 +9,10 @@
 
     <!-- Links -->
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link waves-light" [routerLink]="'/dashboard'" mdbWavesEffect>Dashboard<span
-            class="sr-only">(current)</span></a>
+      <li *ngFor="let navItem of navItems" class="nav-item" [ngClass]="{'active': navItem == activeNavItem}">
+        <a class="nav-link waves-light" (click)="navigateTo(navItem)" mdbWavesEffect>{{navItem.displayText}}<span
+            *ngIf="navItem == activeNavItem" class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link waves-light" [routerLink]="'/administration'" mdbWavesEffect>Administration</a>
-      </li>
-
     </ul>
     <!-- Links -->
 
