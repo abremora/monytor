@@ -35,9 +35,11 @@ namespace Monytor.WebApi {
             
             switch (storageProvider) {
                 case StorageProvider.PostgreSql:
+                    Console.WriteLine($"Using {appConfig["storageProviderConnectionString"]}");
                     PostgreSQL.Bootstrapper.SetupDatabaseAndRegisterRepositories(services, appConfig["storageProviderConnectionString"]);
                     break;
                 case StorageProvider.RavenDb:
+                    Console.WriteLine($"Using {appConfig["database:url"]} , {appConfig["database:name"]}");
                     RavenDb.Bootstrapper.SetupDatabaseAndRegisterRepositories(services, appConfig["database:url"], appConfig["database:name"]);
                     break;
                 default:

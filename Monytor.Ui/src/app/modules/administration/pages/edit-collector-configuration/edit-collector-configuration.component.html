@@ -1,17 +1,53 @@
-<div class="main-content">
   <div class="container-fluid">
     <div class="row ">
       <div class="col">
         <mt-back-button></mt-back-button>
-        <span><strong>Edit Collector Configuration</strong></span>
+        <h4 class="d-inline">Edit Collector Configuration</h4>
       </div>
     </div>
 
     <ng-container *ngIf="(collectorConfiguration$ | async) as collectorConfiguration">
+      <div class="row">
+        <div class="col">
+          <mt-collector-configuration-form [data]="collectorConfiguration"
+                                           (save)="onSaveCollectorConfiguration($event)">
+          </mt-collector-configuration-form>
+        </div>
+      </div>
 
-      <mt-collector-configuration-form [data]="collectorConfiguration" (save)="onSaveCollectorConfiguration($event)">
-      </mt-collector-configuration-form>
+      <div class="row mt-2">
+        <div class="col">
+          <h5 class="d-inline">Collectors</h5>
+          <button mdbBtn color="secondary" size="sm"
+                  (click)="createCollector()">
+            <mdb-icon fas icon="plus"></mdb-icon> Add
+          </button>
+          <table mdbTable striped="true" small="true" hover="true">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 100px;">Actions</th>
+                <th scope="col">Display Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr mdbTableCol *ngFor="let collector of collectorConfiguration.collectors">
+                <td>
+                  <button mdbBtn class="p-1 m-0 no-shadow"
+                          [routerLink]="['/administration/edit', collector.id]">
+                    <mdb-icon fas icon="edit" class="indigo-text"></mdb-icon>
+                  </button>
 
+                  <button mdbBtn class="p-1 m-0 no-shadow"
+                          (click)="deleteCollector(collector.id)">
+                    <mdb-icon fas icon="trash"></mdb-icon>
+                  </button>
+                </td>
+                <td>{{collector.displayName}}</td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
     </ng-container>
   </div>
-</div>

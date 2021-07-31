@@ -11,6 +11,7 @@ import { SearchCollectorConfigurationComponent } from './pages/search-collector-
 import { CoreModule } from 'src/app/core/core.module';
 import { CollectorConfigurationFormComponent } from './components/collector-configuration-form/collector-configuration-form.component';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
+import { AddCollectorToConfigurationComponent } from './pages/add-collector-to-configuration/add-collector-to-configuration.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
     CollectorConfigurationTableComponent,
     AddCollectorConfigurationComponent,
     EditCollectorConfigurationComponent,
-    CollectorConfigurationFormComponent
+    CollectorConfigurationFormComponent,
+    AddCollectorToConfigurationComponent
   ],
   imports: [CommonModule,
     CoreModule,
